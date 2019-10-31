@@ -7,6 +7,7 @@
 package server;
 import java.net.*;
 
+
 /**
  *
  * @author Christian FisherSYSC3010 T6
@@ -19,7 +20,7 @@ public class ServerUDP {
     public ServerUDP(){
         try{
             socket = new DatagramSocket();
-            ParkingController = InetAddress.getByName("192.168.0.801");
+            ParkingController = InetAddress.getByName("localhost");
 
             
         }catch(Exception e){
