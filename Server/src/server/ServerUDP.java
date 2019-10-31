@@ -13,7 +13,7 @@ import java.net.*;
  */
 public class ServerUDP {
     private final static int PACKETSIZE = 100;
-    private static InetAddress ParkingController;
+   InetAddress ParkingController;
     DatagramSocket socket = null;
     
     public ServerUDP(){
@@ -23,7 +23,7 @@ public class ServerUDP {
 
             
         }catch(Exception e){
-            System.out.println("Error, shit's done fucked");
+            System.out.println(e);
         }
         
         
@@ -43,7 +43,7 @@ public class ServerUDP {
         socket.send(packet);
         socket.receive(ack);
         String messAck = new String(ack.getData()).trim();
-        if("ACK".equals(messAck)){
+        if("LEDack".equals(messAck)){
             System.out.println("LED sucessfully toggled");
         }else{
             System.out.println("LED toggling FAILED");

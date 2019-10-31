@@ -12,15 +12,17 @@ package server;
 public class Spot {
     private boolean occupancy;
     private Occupant occupant;
-    private String label;
+    private String label="";
     public Spot(){
         occupancy = false;
         occupant = null;
+
     }
 
     public void setLabel(String label){
         this.label = label;
     }
+    
     public String getLabel(){
         return label;
     }
