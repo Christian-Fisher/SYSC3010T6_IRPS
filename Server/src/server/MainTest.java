@@ -18,6 +18,7 @@ public class MainTest {
             System.out.println(lot[i].getLabel());
         }
         ServerUDP udp = new ServerUDP();
+        udp.sendToLED(lot[1]);
         
     }
 }
