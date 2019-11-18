@@ -24,11 +24,11 @@ public class DistributedJUnitTest extends TestCase {
     DatagramPacket packet;
 
     public DistributedJUnitTest() {
-        try{
-        Incomingsocket = new DatagramSocket();
-        Outgoingsocket = new DatagramSocket();
-        Incomingsocket.setSoTimeout(2000);
-        } catch(Exception e){
+        try {
+            Incomingsocket = new DatagramSocket(1001);
+            Outgoingsocket = new DatagramSocket();
+            Incomingsocket.setSoTimeout(2000);
+        } catch (Exception e) {
             System.out.println("socket bad");
         }
     }
@@ -41,12 +41,13 @@ public class DistributedJUnitTest extends TestCase {
             packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
             Incomingsocket.receive(packet);
             String MESSAGE = new String(packet.getData()).trim();
+            System.out.println(MESSAGE);
             byte[] ackArray = "LEDack".getBytes();
             DatagramPacket ack = new DatagramPacket(ackArray, ackArray.length, packet.getAddress(), packet.getPort());
             Outgoingsocket.send(ack);
             Assert.assertEquals("LED:A2,true", MESSAGE);
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("TEst" + e);
         }
 
     }
