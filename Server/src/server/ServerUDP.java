@@ -102,64 +102,59 @@ public class ServerUDP {
         }
 
     }
+
+    public static void main(String[] args) {
+        Spot pSpot[] = new Spot[9];
+        boolean occupancyOfSpotToSend = false;
+        String spotToSend;
+        DatagramPacket incomingPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+
+        ServerUDP udp = new ServerUDP();
+
+        udp.sendToLED("A2", true);
+        udp.sendToArduino(true);
+        boolean run = true;
+
+        //INCOMING FORM:
+        /*
+        XXX:YYY,ZZZ
+        X=LED or APP
+        Y=Data
+        Z=Data
+        
+         */
+        while (run) {
+            try {
+                udp.IncomingSocket.receive(incomingPacket);
+                String message = new String(incomingPacket.getData()).trim();
+                String[] split1String = message.split(":");
+                if (split1String[0].equals("IR")) {
+                    spotToSend = split1String[1].split(",")[0];
+                    System.out.println(spotToSend);
+                    if (split1String[1].split(",")[1].equals("true")) {
+                        occupancyOfSpotToSend = true;
+                        System.out.println("true");
+                    }
+                    if (split1String[1].split(",")[1].equals("false")) {
+                        System.out.println("true");
+                        occupancyOfSpotToSend = false;
+                    }
+                    System.out.println(spotToSend + " Boolean " + occupancyOfSpotToSend);
+
+                } else if (split1String[0].equals("LED")) {
+                    String messFromSYS[] = split1String[1].split(",");
+                    if (messFromSYS[1].equals("true")) {
+                        udp.sendToLED(messFromSYS[0], true);
+                    } else if (messFromSYS[1].equals("false")) {
+                        udp.sendToLED(messFromSYS[0], false);
+                    }
+                }
+            } catch (SocketTimeoutException e) {
+                System.out.println("Exception");
+            } catch (Exception e) {
+
+            }
+
+        }
+    }
 }
-//    public static void main(String[] args) {
-//        Spot pSpot[] = new Spot[9];
-//        boolean occupancyOfSpotToSend = false;
-//        String spotToSend;
-//        DatagramPacket incomingPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-//        
-//        ServerUDP udp = new ServerUDP();
-//
-//        udp.sendToLED("A2", true);
-//        udp.sendToArduino(true);
-////        boolean run = true;
-//    }
-//}
-// 
-//while (run) {
-//            try {
-//                udp.IncomingSocket.receive(incomingPacket);
-//                String message = new String(incomingPacket.getData()).trim();
-//                String[] split1String = message.split(":");
-//                if (split1String[0].equals("IR")) {
-//                    spotToSend = split1String[1].split(",")[0];
-//                    System.out.println(spotToSend);
-//                    if (split1String[1].split(",")[1].equals("true")) {
-//                        occupancyOfSpotToSend = true;
-//                        System.out.println("true");
-//                    }
-//                    if (split1String[1].split(",")[1].equals("false")) {
-//                        System.out.println("true");
-//                        occupancyOfSpotToSend = false;
-//                    }
-//                    System.out.println(spotToSend + " Boolean " + occupancyOfSpotToSend);
-//
-//                } else if (split1String[0].equals("SYS")) {
-//                    if (split1String[1].split(",")[0].equals("LED")) {
-//                        String[] SYSmessage = split1String[1].split(",");
-//                        if (SYSmessage[1].equals("true")) {
-//                            udp.sendToLED(SYSmessage[0], false);
-//
-//                        } else if (SYSmessage[1].equals("false")) {
-//                            udp.sendToLED(SYSmessage[0], false);
-//
-//                        }
-//                    } else if (split1String[1].split(",")[0].equals("App")) {
-//                        
-//                    }
-//                  
-//
-//                }
-//                byte[] ackArray = (split1String[0] + "ack").getBytes();
-//                DatagramPacket ack = new DatagramPacket(ackArray, ackArray.length, incomingPacket.getAddress(), incomingPacket.getPort());
-//                udp.IncomingSocket.send(ack);
-//            } catch (SocketTimeoutException e) {
-//                System.out.println("Exception");
-//            } catch (Exception e) {
-//
-//            }
-//
-//        }
-//    }
-//}

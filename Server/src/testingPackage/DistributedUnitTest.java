@@ -1,4 +1,4 @@
-package ServerTestPackage;
+package testingPackage;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -8,25 +8,27 @@ package ServerTestPackage;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import junit.framework.TestCase;
-import org.junit.Assert;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import server.ServerUDP;
 
 /**
  *
  * @author Christian Fisher
  */
-public class DistributedJUnitTest extends TestCase {
+public class DistributedUnitTest {
 
     private final static int PACKETSIZE = 100;
     DatagramSocket Outgoingsocket, Incomingsocket;
     DatagramPacket packet;
     InetAddress ParkingControllerAddress, AppAddress;
 
-    public DistributedJUnitTest() {
+    public static void main(String[] args) {
+        DistributedUnitTest test = new DistributedUnitTest();
+        test.setup();
+        test.ToggleLEDCorrect();
+    }
+
+    public void setup() {
         try {
+
             ParkingControllerAddress = InetAddress.getByName("localhost");  //Defines address of the parking controller
             AppAddress = InetAddress.getByName("localhost");    //Defines the address of the application
             Incomingsocket = new DatagramSocket(1001);
@@ -35,10 +37,10 @@ public class DistributedJUnitTest extends TestCase {
         } catch (Exception e) {
             System.out.println("socket bad");
         }
+
     }
 
-    @Test
-    public void testToggleLEDCOrrect() {
+    public boolean ToggleLEDCorrect() {
         try {
             String message = "LED:A2,true";
             byte initMessageByteArray[] = message.getBytes();
@@ -52,11 +54,14 @@ public class DistributedJUnitTest extends TestCase {
             byte[] ackArray = "LEDack".getBytes();
             DatagramPacket ack = new DatagramPacket(ackArray, ackArray.length, packet.getAddress(), 1002);
             Outgoingsocket.send(ack);
-            Assert.assertEquals("LED:A2,true", MESSAGE);
+            if (MESSAGE.equals(message)) {
+                return true;
+            }
+
         } catch (Exception e) {
             System.err.println("TEst " + e);
         }
-
+        return false;
     }
 
 }
