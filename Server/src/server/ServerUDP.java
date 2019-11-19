@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -13,6 +14,8 @@ public class ServerUDP {
     private final static int PACKETSIZE = 100;      //Defines the default packetsize used for receiving packets.
     InetAddress ParkingControllerAddress, AppAddress;
     DatagramSocket OutgoingSocket, IncomingSocket;
+    private final static byte[] HEARTBEATMESSAGE = "HB".getBytes(); 
+
 
     public ServerUDP() {
         try {
@@ -103,6 +106,22 @@ public class ServerUDP {
 
     }
 
+    public String heartbeat() {
+        try{
+        DatagramPacket heartBeat = new DatagramPacket(HEARTBEATMESSAGE, HEARTBEATMESSAGE.length, ParkingControllerAddress, 1001);
+        DatagramPacket heartAck = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+        OutgoingSocket.send(heartBeat);
+        IncomingSocket.receive(heartAck);
+        String heartAckSplitString[] = new String(heartAck.getData()).trim().split("");
+        if(heartAckString.equals("")){
+            
+        }
+        }catch(IOException e){
+            System.err.println(e + "heartbeat failed");
+        }
+        return "";
+    }
+
     public static void main(String[] args) {
         Spot pSpot[] = new Spot[9];
         boolean occupancyOfSpotToSend = false;
@@ -125,6 +144,8 @@ public class ServerUDP {
          */
         while (run) {
             try {
+                Thread.sleep(250);
+
                 udp.IncomingSocket.receive(incomingPacket);
                 String message = new String(incomingPacket.getData()).trim();
                 String[] split1String = message.split(":");

@@ -23,7 +23,7 @@ public class DistributedUnitTest {
     public static void main(String[] args) {
         DistributedUnitTest test = new DistributedUnitTest();
         test.setup();
-        test.ToggleLEDCorrect();
+        System.out.println(test.ToggleLEDCorrect());
     }
 
     public void setup() {
