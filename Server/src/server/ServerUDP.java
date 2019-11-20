@@ -13,7 +13,7 @@ public class ServerUDP {
 
     private final static int PACKET_SIZE = 100; // Defines the default packetsize used for receiving packets.
     InetAddress ParkingControllerAddress, AppAddress;
-    DatagramSocket OutgoingSocket, IncomingSocket;
+    DatagramSocket socket;
     private final static byte[] HEARTBEAT_MESSAGE = "HB".getBytes();
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
@@ -27,11 +27,10 @@ public class ServerUDP {
 
     public ServerUDP() {
         try {
-            OutgoingSocket = new DatagramSocket(); // Creates new socket for any outgoing packets
-            IncomingSocket = new DatagramSocket(1002); // Creates socket for incoming packets
+            socket = new DatagramSocket(1001); // Creates new socket for any outgoing packets
             ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
             AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
-            IncomingSocket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
+//           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
         } catch (Exception e) { // If the creation fails, the cause will probably be the InetAddress creation.
@@ -61,8 +60,8 @@ public class ServerUDP {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet to receive the
             // acknowledgement signal
             DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 1001); // Create
-            OutgoingSocket.send(packet); // Send the packet
-            IncomingSocket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
+            socket.send(packet); // Send the packet
+            socket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convertt the response to a usable format.
@@ -94,8 +93,8 @@ public class ServerUDP {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet which will use
             // used to store the ack message
             DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 1001);
-            OutgoingSocket.send(packet); // Send this packet
-            OutgoingSocket.receive(ack); // Receive the acknowldgement, if this timesout, the exception will be caught,
+            socket.send(packet); // Send this packet
+            socket.receive(ack); // Receive the acknowldgement, if this timesout, the exception will be caught,
             // and the message will be retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convert the ack message into a usable format.
             if ("Arduinoack".equals(messAck)) { // Read the ack message.
@@ -116,8 +115,8 @@ public class ServerUDP {
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, AppAddress, 1001);
-            OutgoingSocket.send(packet);
-            OutgoingSocket.receive(ack);
+            socket.send(packet);
+            socket.receive(ack);
             String messAck = new String(ack.getData()).trim();
             if ("Arduinoack".equals(messAck)) {
                 System.out.println("Arduino Received packet");
@@ -135,8 +134,9 @@ public class ServerUDP {
                 ParkingControllerAddress, 1001);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            OutgoingSocket.send(heartBeat);
-            IncomingSocket.receive(heartAck);
+            socket.send(heartBeat);
+            System.out.println("Sending heartbeat");
+            socket.receive(heartAck);
 
         } catch (IOException e) {
             System.err.println(e + "heartbeat parking failed");
@@ -148,8 +148,8 @@ public class ServerUDP {
         DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, AppAddress, 1001);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            OutgoingSocket.send(heartBeat);
-            IncomingSocket.receive(heartAck);
+            socket.send(heartBeat);
+            socket.receive(heartAck);
 
         } catch (IOException e) {
             System.err.println(e + "heartbeat app failed");
@@ -161,76 +161,72 @@ public class ServerUDP {
         boolean occupancyOfSpotToSend = false;
         String spotToUpdate;
         ServerUDP udp = new ServerUDP();
-        udp.sendToLED("A2", true);
-        udp.sendToArduino(true);
         boolean run = true;
         /*
 		 * INCOMING MESSAGE FORM: XXX:YYY,ZZZ X=LED or APP Y=Data Z=Data
          */
-        while (run) {
-            try {
-                String heartbeatParkingResponse = udp.heartbeatParking();
 
-                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
+        try {
+            String heartbeatParkingResponse = udp.heartbeatParking();
 
-                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
-                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-                    if (split1String[0].equals(IR_COMMAND)) {
-                        spotToUpdate = split1String[1].split(DATA_SPLIT_REGEX)[0];
-                        System.out.println(spotToUpdate);
-                        if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("true")) {
-                            occupancyOfSpotToSend = true;
-                            System.out.println("true");
-                        }
-                        if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("false")) {
-                            System.out.println("true");
-                            occupancyOfSpotToSend = false;
-                        }
-                        System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
+            if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
-                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-                        udp.sendToArduino(split1String[1].equals("1234"));
-
+                String message = new String(heartbeatParkingResponse.getBytes()).trim();
+                String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+                if (split1String[0].equals(IR_COMMAND)) {
+                    spotToUpdate = split1String[1].split(DATA_SPLIT_REGEX)[0];
+                    System.out.println(spotToUpdate);
+                    if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("true")) {
+                        occupancyOfSpotToSend = true;
+                        System.out.println("true");
                     }
-                }
-                String heartbeatAppResponse = udp.heartbeatApp();
-                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
-                    String message = new String(heartbeatAppResponse.getBytes()).trim();
-                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-
-                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
-                        for (int x = 0; x <= 9; x++) {
-                            occupancyMessage += false + DATA_SPLIT_REGEX;
-                        }
-
-                        DatagramPacket OccupancyUpdate = new DatagramPacket(message.getBytes(), message.getBytes().length, udp.AppAddress, 1001);
-                        DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                        udp.OutgoingSocket.send(OccupancyUpdate);
-                        udp.IncomingSocket.receive(OccAck);
-
-                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
-                        String loginMessage[] = split1String[1].split(DATA_SPLIT_REGEX);
-                        if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
-                            DatagramPacket loginRequest = new DatagramPacket("true".getBytes(), "true".getBytes().length, udp.AppAddress, 1001);
-                            udp.OutgoingSocket.send(loginRequest);
-                        } else {
-                            DatagramPacket loginRequest = new DatagramPacket("false".getBytes(), "false".getBytes().length, udp.AppAddress, 1001);
-                            udp.OutgoingSocket.send(loginRequest);
-                        }
-
-                        DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                        udp.IncomingSocket.receive(LoginAck);
+                    if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("false")) {
+                        System.out.println("true");
+                        occupancyOfSpotToSend = false;
                     }
-                }
-                Thread.sleep(250);
-            } catch (IOException e) {
-                System.out.println("Exception");
+                    System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
-            } catch(InterruptedException e){
-                System.err.println(e);
+                } else if (split1String[0].equals(ARDUINO_COMMAND)) {
+                    udp.sendToArduino(split1String[1].equals("1234"));
+
+                }
             }
+            String heartbeatAppResponse = udp.heartbeatApp();
+            if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
+                String message = new String(heartbeatAppResponse.getBytes()).trim();
+                String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
+                if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+                    String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
+                    for (int x = 0; x <= 9; x++) {
+                        occupancyMessage += false + DATA_SPLIT_REGEX;
+                    }
+                    DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, udp.AppAddress, 1001);
+                    DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                    udp.socket.send(OccupancyUpdate);
+                    udp.socket.receive(OccAck);
+
+                } else if (split1String[0].equals(LOGIN_COMMAND)) {
+                    String loginMessage[] = split1String[1].split(DATA_SPLIT_REGEX);
+                    if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
+                        DatagramPacket loginRequest = new DatagramPacket("true".getBytes(), "true".getBytes().length, udp.AppAddress, 1001);
+                        udp.socket.send(loginRequest);
+                    } else {
+                        DatagramPacket loginRequest = new DatagramPacket("false".getBytes(), "false".getBytes().length, udp.AppAddress, 1001);
+                        udp.socket.send(loginRequest);
+                    }
+
+                    DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                    udp.socket.receive(LoginAck);
+                }
+            }
+            Thread.sleep(250);
+        } catch (IOException e) {
+            System.out.println("Exception");
+
+        } catch (InterruptedException e) {
+            System.err.println(e);
         }
+
     }
 }
