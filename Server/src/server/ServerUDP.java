@@ -22,6 +22,7 @@ public class ServerUDP {
     private final static String NOTHING_TO_REPORT = "NA";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String IR_COMMAND = "IR";
+    private final static String LOGIN_COMMAND = "LOG";
     private final static int LOT_SIZE = 9;
 
     public ServerUDP() {
@@ -187,9 +188,9 @@ public class ServerUDP {
                         }
                         System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
-                    }  else if (split1String[0].equals(ARDUINO_COMMAND)) {
+                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
                         String data = split1String[1];
-                        
+
                     }
                 }
                 String heartbeatAppResponse = udp.heartbeatApp();
@@ -198,19 +199,32 @@ public class ServerUDP {
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
                     if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        String mesage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
+                        String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
                         for (int x = 0; x <= 9; x++) {
-                            message += false + DATA_SPLIT_REGEX;
+                            occupancyMessage += false + DATA_SPLIT_REGEX;
                         }
 
-                        DatagramPacket OccupancyResponse = new DatagramPacket(message.getBytes(), message.getBytes().length, udp.AppAddress, 1001);
+                        DatagramPacket OccupancyUpdate = new DatagramPacket(message.getBytes(), message.getBytes().length, udp.AppAddress, 1001);
                         DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                        udp.OutgoingSocket.send(OccupancyResponse);
+                        udp.OutgoingSocket.send(OccupancyUpdate);
+                        udp.IncomingSocket.receive(OccAck);
+
+                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
+                        String loginMessage[] = split1String[1].split(DATA_SPLIT_REGEX);
+                        if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
+                            DatagramPacket loginRequest = new DatagramPacket("true".getBytes(), "true".getBytes().length, udp.AppAddress, 1001);
+                            udp.OutgoingSocket.send(loginRequest);
+                        }else{
+                            DatagramPacket loginRequest = new DatagramPacket("false".getBytes(), "false".getBytes().length, udp.AppAddress, 1001);
+                            udp.OutgoingSocket.send(loginRequest);
+                        }
+                        
+                        DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
                         udp.IncomingSocket.receive(OccAck);
                     }
                 }
 
-            } catch (Exception e) {
+            } catch (IOException e) {
                 System.out.println("Exception");
 
             }
