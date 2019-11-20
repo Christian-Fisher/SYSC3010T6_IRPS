@@ -14,8 +14,13 @@ public class ServerUDP {
     private final static int PACKETSIZE = 100;      //Defines the default packetsize used for receiving packets.
     InetAddress ParkingControllerAddress, AppAddress;
     DatagramSocket OutgoingSocket, IncomingSocket;
-    private final static byte[] HEARTBEATMESSAGE = "HB".getBytes(); 
-
+    private final static byte[] HEARTBEATMESSAGE = "HB".getBytes();
+    private final static String COMMANDSPLITREGEX = ":";
+    private final static String DATASPLITREGEX = ",";
+    private final static String LEDCOMMAND = "LED";
+    private final static String ARDUINOCOMMAND = "Arduino";
+    private final static String NOTHINGTOREPORT = "NA";
+    private final static String READYTORECEIVE = "RTR";
 
     public ServerUDP() {
         try {
@@ -36,8 +41,8 @@ public class ServerUDP {
     Outputs: Void: The method will not return anything, but will send data packets to teh parking controller.
      */
     public void sendToLED(String spot, Boolean Occupancy) {
-        String data = "LED:";       //Prefix the data being sent with "LED:" to indicate the command relates to the LED controller program
-        data += spot + ",";  //Add the spot identifier to the message
+        String data = LEDCOMMAND + COMMANDSPLITREGEX;       //Prefix the data being sent with "LED:" to indicate the command relates to the LED controller program
+        data += spot + DATASPLITREGEX;  //Add the spot identifier to the message
         if (Occupancy) {      //Test for the occupancy of the spot, and add this occupancy to the message
             data += "true";
         } else {
@@ -66,7 +71,7 @@ public class ServerUDP {
     Outputs: Void: The methodes returns no values, but does communicate with the Parking controller through UDP packets.
      */
     public void sendToArduino(Boolean PinCorrect) {
-        String data = "Arduino:";   //Prefix the message with "Arduino:" to signal the message is meant for the arduino
+        String data = "Arduino" + COMMANDSPLITREGEX;   //Prefix the message with "Arduino:" to signal the message is meant for the arduino
         data += PinCorrect.toString();  //Add the pinCorrect boolean to the messgae
         byte[] byteArray = data.getBytes(); //Convert the message to an array of bytes to add to the packet.
         try {
@@ -107,19 +112,16 @@ public class ServerUDP {
     }
 
     public String heartbeat() {
-        try{
         DatagramPacket heartBeat = new DatagramPacket(HEARTBEATMESSAGE, HEARTBEATMESSAGE.length, ParkingControllerAddress, 1001);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-        OutgoingSocket.send(heartBeat);
-        IncomingSocket.receive(heartAck);
-        String heartAckSplitString[] = new String(heartAck.getData()).trim().split("");
-        if(heartAckString.equals("")){
-            
-        }
-        }catch(IOException e){
+        try {
+            OutgoingSocket.send(heartBeat);
+            IncomingSocket.receive(heartAck);
+
+        } catch (IOException e) {
             System.err.println(e + "heartbeat failed");
         }
-        return "";
+        return (new String(heartAck.getData()).trim());
     }
 
     public static void main(String[] args) {
@@ -144,32 +146,36 @@ public class ServerUDP {
          */
         while (run) {
             try {
-                Thread.sleep(250);
+                String heartbeatResponse = udp.heartbeat();
+                if (!heartbeatResponse.equals(NOTHINGTOREPORT)) {
+                    DatagramPacket readyToReceive = new DatagramPacket(READYTORECEIVE.getBytes(),READYTORECEIVE.getBytes().length);
+                    udp.OutgoingSocket.send(readyToReceive);
+                    udp.IncomingSocket.receive(incomingPacket);
+                    String message = new String(incomingPacket.getData()).trim();
+                    String[] split1String = message.split(":");
+                    if (split1String[0].equals("IR")) {
+                        spotToSend = split1String[1].split(",")[0];
+                        System.out.println(spotToSend);
+                        if (split1String[1].split(",")[1].equals("true")) {
+                            occupancyOfSpotToSend = true;
+                            System.out.println("true");
+                        }
+                        if (split1String[1].split(",")[1].equals("false")) {
+                            System.out.println("true");
+                            occupancyOfSpotToSend = false;
+                        }
+                        System.out.println(spotToSend + " Boolean " + occupancyOfSpotToSend);
 
-                udp.IncomingSocket.receive(incomingPacket);
-                String message = new String(incomingPacket.getData()).trim();
-                String[] split1String = message.split(":");
-                if (split1String[0].equals("IR")) {
-                    spotToSend = split1String[1].split(",")[0];
-                    System.out.println(spotToSend);
-                    if (split1String[1].split(",")[1].equals("true")) {
-                        occupancyOfSpotToSend = true;
-                        System.out.println("true");
-                    }
-                    if (split1String[1].split(",")[1].equals("false")) {
-                        System.out.println("true");
-                        occupancyOfSpotToSend = false;
-                    }
-                    System.out.println(spotToSend + " Boolean " + occupancyOfSpotToSend);
-
-                } else if (split1String[0].equals("LED")) {
-                    String messFromSYS[] = split1String[1].split(",");
-                    if (messFromSYS[1].equals("true")) {
-                        udp.sendToLED(messFromSYS[0], true);
-                    } else if (messFromSYS[1].equals("false")) {
-                        udp.sendToLED(messFromSYS[0], false);
+                    } else if (split1String[0].equals("LED")) {
+                        String messFromSYS[] = split1String[1].split(",");
+                        if (messFromSYS[1].equals("true")) {
+                            udp.sendToLED(messFromSYS[0], true);
+                        } else if (messFromSYS[1].equals("false")) {
+                            udp.sendToLED(messFromSYS[0], false);
+                        }
                     }
                 }
+
             } catch (SocketTimeoutException e) {
                 System.out.println("Exception");
             } catch (Exception e) {
