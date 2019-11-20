@@ -59,7 +59,7 @@ public class DistributedUnitTest {
             }
 
         } catch (Exception e) {
-            System.err.println("TEst " + e);
+            System.err.println("Test " + e);
         }
         return false;
     }

@@ -155,6 +155,7 @@ public class ServerUDP {
         while (run) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
+                
                 if (!heartbeatParkingResponse.equals(NOTHINGTOREPORT)) {
                     DatagramPacket readyToReceive = new DatagramPacket(READYTORECEIVE.getBytes(), READYTORECEIVE.getBytes().length);
                     udp.OutgoingSocket.send(readyToReceive);
