@@ -13,8 +13,9 @@ public class ServerUDP {
 
     private final static int PACKET_SIZE = 100; // Defines the default packetsize used for receiving packets.
     InetAddress ParkingControllerAddress, AppAddress;
-    DatagramSocket socket;
+    DatagramSocket socket, sendSocket;
     private final static byte[] HEARTBEAT_MESSAGE = "HB".getBytes();
+    private final static byte[] HEARTBEAT_MESSAGE_APP = "HBAPP".getBytes();
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
     private final static String LED_COMMAND = "LED";
@@ -27,7 +28,10 @@ public class ServerUDP {
 
     public ServerUDP() {
         try {
-            socket = new DatagramSocket(1001); // Creates new socket for any outgoing packets
+
+            socket = new DatagramSocket(1000); // Creates new socket for any outgoing packets
+            sendSocket = new DatagramSocket();
+
             ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
             AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
@@ -59,8 +63,8 @@ public class ServerUDP {
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet to receive the
             // acknowledgement signal
-            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 1001); // Create
-            socket.send(packet); // Send the packet
+            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2000); // Create
+            sendSocket.send(packet); // Send the packet
             socket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
@@ -92,8 +96,8 @@ public class ServerUDP {
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet which will use
             // used to store the ack message
-            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 1001);
-            socket.send(packet); // Send this packet
+            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2000);
+            sendSocket.send(packet); // Send this packet
             socket.receive(ack); // Receive the acknowldgement, if this timesout, the exception will be caught,
             // and the message will be retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convert the ack message into a usable format.
@@ -108,34 +112,31 @@ public class ServerUDP {
         }
     }
 
-    public void sendToApp() {
-        String data = "Arduino:";
-
-        byte[] byteArray = data.getBytes();
+    public void sendToAppLogin(String loginMessage[]) {
+        String data = "LOG:";
         try {
-            DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, AppAddress, 1001);
-            socket.send(packet);
-            socket.receive(ack);
-            String messAck = new String(ack.getData()).trim();
-            if ("Arduinoack".equals(messAck)) {
-                System.out.println("Arduino Received packet");
+            if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
+                DatagramPacket loginRequest = new DatagramPacket((data + "true").getBytes(), (data + "true").getBytes().length, AppAddress, 2000);
+                sendSocket.send(loginRequest);
             } else {
-                System.out.println("Arduino format error (Nack)");
+                DatagramPacket loginRequest = new DatagramPacket((data + "false").getBytes(), (data + "false").getBytes().length, AppAddress, 2000);
+                sendSocket.send(loginRequest);
             }
+            DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            socket.receive(LoginAck);
+
         } catch (Exception e) {
-            System.out.println("Arduino send failed");
+            System.err.println(e);
         }
 
     }
 
     public String heartbeatParking() {
-        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length,
-                ParkingControllerAddress, 1001);
+        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, ParkingControllerAddress, 2000);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            socket.send(heartBeat);
             System.out.println("Sending heartbeat");
+            sendSocket.send(heartBeat);
             socket.receive(heartAck);
 
         } catch (IOException e) {
@@ -145,10 +146,10 @@ public class ServerUDP {
     }
 
     public String heartbeatApp() {
-        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, AppAddress, 1001);
+        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE_APP, HEARTBEAT_MESSAGE_APP.length, AppAddress, 2000);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            socket.send(heartBeat);
+            sendSocket.send(heartBeat);
             socket.receive(heartAck);
 
         } catch (IOException e) {
@@ -163,12 +164,15 @@ public class ServerUDP {
         ServerUDP udp = new ServerUDP();
         boolean run = true;
         /*
-		 * INCOMING MESSAGE FORM: XXX:YYY,ZZZ X=LED or APP Y=Data Z=Data
+		 * INCOMING MESSAGE FORM: XXX:YYY,ZZZ 
+        X=LED or APP 
+        Y=Data 
+        Z=Data
          */
 
         try {
             String heartbeatParkingResponse = udp.heartbeatParking();
-
+            System.out.println(heartbeatParkingResponse);
             if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
                 String message = new String(heartbeatParkingResponse.getBytes()).trim();
@@ -181,10 +185,9 @@ public class ServerUDP {
                         System.out.println("true");
                     }
                     if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("false")) {
-                        System.out.println("true");
+                        System.out.println("false");
                         occupancyOfSpotToSend = false;
                     }
-                    System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
                 } else if (split1String[0].equals(ARDUINO_COMMAND)) {
                     udp.sendToArduino(split1String[1].equals("1234"));
@@ -201,23 +204,15 @@ public class ServerUDP {
                     for (int x = 0; x <= 9; x++) {
                         occupancyMessage += false + DATA_SPLIT_REGEX;
                     }
-                    DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, udp.AppAddress, 1001);
+                    DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, udp.AppAddress, 2000);
                     DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                    udp.socket.send(OccupancyUpdate);
+                    udp.sendSocket.send(OccupancyUpdate);
                     udp.socket.receive(OccAck);
 
                 } else if (split1String[0].equals(LOGIN_COMMAND)) {
                     String loginMessage[] = split1String[1].split(DATA_SPLIT_REGEX);
-                    if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
-                        DatagramPacket loginRequest = new DatagramPacket("true".getBytes(), "true".getBytes().length, udp.AppAddress, 1001);
-                        udp.socket.send(loginRequest);
-                    } else {
-                        DatagramPacket loginRequest = new DatagramPacket("false".getBytes(), "false".getBytes().length, udp.AppAddress, 1001);
-                        udp.socket.send(loginRequest);
-                    }
+                    udp.sendToAppLogin(loginMessage);
 
-                    DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                    udp.socket.receive(LoginAck);
                 }
             }
             Thread.sleep(250);
