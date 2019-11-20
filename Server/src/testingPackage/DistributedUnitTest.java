@@ -8,6 +8,8 @@ package testingPackage;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  *
@@ -18,24 +20,48 @@ public class DistributedUnitTest {
     private final static int PACKETSIZE = 100;
     DatagramSocket Outgoingsocket, Incomingsocket;
     DatagramPacket packet;
-    InetAddress ParkingControllerAddress, AppAddress;
+    InetAddress ParkingControllerAddress, AppAddress, ServerAddress;
+    Queue<String> messageQueue;
 
     public static void main(String[] args) {
         DistributedUnitTest test = new DistributedUnitTest();
+        
         test.setup();
-        System.out.println(test.ToggleLEDCorrect());
+        while (true) {
+            test.receiveHeartBeat();
+        }
+
     }
 
     public void setup() {
         try {
-
+            messageQueue = new LinkedList();
             ParkingControllerAddress = InetAddress.getByName("localhost");  //Defines address of the parking controller
             AppAddress = InetAddress.getByName("localhost");    //Defines the address of the application
+            ServerAddress = InetAddress.getByName("localhost");
             Incomingsocket = new DatagramSocket(1001);
             Outgoingsocket = new DatagramSocket();
             Incomingsocket.setSoTimeout(2000);
         } catch (Exception e) {
             System.out.println("socket bad");
+        }
+
+    }
+
+    public void receiveHeartBeat() {
+        try {
+            DatagramPacket heartbeat = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+            Incomingsocket.receive(heartbeat);
+            if(messageQueue.peek().equals(null)){
+                DatagramPacket heartbeatAck = new DatagramPacket("NA".getBytes(), "NA".getBytes().length, ServerAddress, 1002);
+                Outgoingsocket.send(heartbeatAck);
+            }else{
+                String heartbeatRespond = messageQueue.remove();
+                DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1002);
+                Outgoingsocket.send(heartbeatAck);
+            }
+        } catch (Exception e) {
+            System.err.println("DICK" +e);
         }
 
     }

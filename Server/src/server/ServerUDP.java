@@ -176,20 +176,20 @@ public class ServerUDP {
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
                     if (split1String[0].equals(IR_COMMAND)) {
-                        spotToUpdate = split1String[1].split(",")[0];
+                        spotToUpdate = split1String[1].split(DATA_SPLIT_REGEX)[0];
                         System.out.println(spotToUpdate);
-                        if (split1String[1].split(",")[1].equals("true")) {
+                        if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("true")) {
                             occupancyOfSpotToSend = true;
                             System.out.println("true");
                         }
-                        if (split1String[1].split(",")[1].equals("false")) {
+                        if (split1String[1].split(DATA_SPLIT_REGEX)[1].equals("false")) {
                             System.out.println("true");
                             occupancyOfSpotToSend = false;
                         }
                         System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
                     } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-                        String data = split1String[1];
+                        udp.sendToArduino(split1String[1].equals("1234"));
 
                     }
                 }
@@ -214,20 +214,23 @@ public class ServerUDP {
                         if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
                             DatagramPacket loginRequest = new DatagramPacket("true".getBytes(), "true".getBytes().length, udp.AppAddress, 1001);
                             udp.OutgoingSocket.send(loginRequest);
-                        }else{
+                        } else {
                             DatagramPacket loginRequest = new DatagramPacket("false".getBytes(), "false".getBytes().length, udp.AppAddress, 1001);
                             udp.OutgoingSocket.send(loginRequest);
                         }
-                        
-                        DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                        udp.IncomingSocket.receive(OccAck);
+
+                        DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                        udp.IncomingSocket.receive(LoginAck);
                     }
                 }
-
+                Thread.sleep(250);
             } catch (IOException e) {
                 System.out.println("Exception");
 
+            } catch(InterruptedException e){
+                System.err.println(e);
             }
+
         }
     }
 }
