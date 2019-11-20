@@ -111,7 +111,7 @@ public class ServerUDP {
 
     }
 
-    public String heartbeat() {
+    public String heartbeatParking() {
         DatagramPacket heartBeat = new DatagramPacket(HEARTBEATMESSAGE, HEARTBEATMESSAGE.length, ParkingControllerAddress, 1001);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
         try {
@@ -119,36 +119,44 @@ public class ServerUDP {
             IncomingSocket.receive(heartAck);
 
         } catch (IOException e) {
-            System.err.println(e + "heartbeat failed");
+            System.err.println(e + "heartbeat parking failed");
+        }
+        return (new String(heartAck.getData()).trim());
+    }
+
+    public String heartbeatApp() {
+        DatagramPacket heartBeat = new DatagramPacket(HEARTBEATMESSAGE, HEARTBEATMESSAGE.length, AppAddress, 1001);
+        DatagramPacket heartAck = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+        try {
+            OutgoingSocket.send(heartBeat);
+            IncomingSocket.receive(heartAck);
+
+        } catch (IOException e) {
+            System.err.println(e + "heartbeat app failed");
         }
         return (new String(heartAck.getData()).trim());
     }
 
     public static void main(String[] args) {
-        Spot pSpot[] = new Spot[9];
         boolean occupancyOfSpotToSend = false;
         String spotToSend;
         DatagramPacket incomingPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-
         ServerUDP udp = new ServerUDP();
-
         udp.sendToLED("A2", true);
         udp.sendToArduino(true);
         boolean run = true;
-
-        //INCOMING FORM:
         /*
+        INCOMING MESSAGE FORM:
         XXX:YYY,ZZZ
         X=LED or APP
         Y=Data
         Z=Data
-        
          */
         while (run) {
             try {
-                String heartbeatResponse = udp.heartbeat();
-                if (!heartbeatResponse.equals(NOTHINGTOREPORT)) {
-                    DatagramPacket readyToReceive = new DatagramPacket(READYTORECEIVE.getBytes(),READYTORECEIVE.getBytes().length);
+                String heartbeatParkingResponse = udp.heartbeatParking();
+                if (!heartbeatParkingResponse.equals(NOTHINGTOREPORT)) {
+                    DatagramPacket readyToReceive = new DatagramPacket(READYTORECEIVE.getBytes(), READYTORECEIVE.getBytes().length);
                     udp.OutgoingSocket.send(readyToReceive);
                     udp.IncomingSocket.receive(incomingPacket);
                     String message = new String(incomingPacket.getData()).trim();
@@ -174,6 +182,10 @@ public class ServerUDP {
                             udp.sendToLED(messFromSYS[0], false);
                         }
                     }
+                }
+                String heartbeatAppResponse = udp.heartbeatApp();
+                if(heartbeatAppResponse.equals(NOTHINGTOREPORT)){
+                    
                 }
 
             } catch (SocketTimeoutException e) {
