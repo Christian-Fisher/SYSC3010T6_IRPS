@@ -20,7 +20,6 @@ public class ServerUDP {
     private final static String LEDCOMMAND = "LED";
     private final static String ARDUINOCOMMAND = "Arduino";
     private final static String NOTHINGTOREPORT = "NA";
-    private final static String READYTORECEIVE = "RTR";
 
     public ServerUDP() {
         try {
@@ -139,7 +138,7 @@ public class ServerUDP {
 
     public static void main(String[] args) {
         boolean occupancyOfSpotToSend = false;
-        String spotToSend;
+        String spotToUpdate;
         DatagramPacket incomingPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
         ServerUDP udp = new ServerUDP();
         udp.sendToLED("A2", true);
@@ -155,16 +154,14 @@ public class ServerUDP {
         while (run) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
-                
+
                 if (!heartbeatParkingResponse.equals(NOTHINGTOREPORT)) {
-                    DatagramPacket readyToReceive = new DatagramPacket(READYTORECEIVE.getBytes(), READYTORECEIVE.getBytes().length);
-                    udp.OutgoingSocket.send(readyToReceive);
-                    udp.IncomingSocket.receive(incomingPacket);
-                    String message = new String(incomingPacket.getData()).trim();
+
+                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
                     String[] split1String = message.split(":");
                     if (split1String[0].equals("IR")) {
-                        spotToSend = split1String[1].split(",")[0];
-                        System.out.println(spotToSend);
+                        spotToUpdate = split1String[1].split(",")[0];
+                        System.out.println(spotToUpdate);
                         if (split1String[1].split(",")[1].equals("true")) {
                             occupancyOfSpotToSend = true;
                             System.out.println("true");
@@ -173,28 +170,26 @@ public class ServerUDP {
                             System.out.println("true");
                             occupancyOfSpotToSend = false;
                         }
-                        System.out.println(spotToSend + " Boolean " + occupancyOfSpotToSend);
+                        System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
                     } else if (split1String[0].equals("LED")) {
-                        String messFromSYS[] = split1String[1].split(",");
-                        if (messFromSYS[1].equals("true")) {
-                            udp.sendToLED(messFromSYS[0], true);
-                        } else if (messFromSYS[1].equals("false")) {
-                            udp.sendToLED(messFromSYS[0], false);
+                        String LEDMessage[] = split1String[1].split(",");
+                        if (LEDMessage[1].equals("true")) {
+                            udp.sendToLED(LEDMessage[0], true);
+                        } else if (LEDMessage[1].equals("false")) {
+                            udp.sendToLED(LEDMessage[0], false);
                         }
                     }
                 }
                 String heartbeatAppResponse = udp.heartbeatApp();
-                if(heartbeatAppResponse.equals(NOTHINGTOREPORT)){
-                    
+                if (heartbeatAppResponse.equals(NOTHINGTOREPORT)) {
+
                 }
 
-            } catch (SocketTimeoutException e) {
-                System.out.println("Exception");
             } catch (Exception e) {
+                System.out.println("Exception");
 
             }
-
         }
     }
 }
