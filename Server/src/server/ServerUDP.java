@@ -81,7 +81,7 @@ public class ServerUDP {
     }
 
     /*
-	 * sendToArdouni method will tell the arduino if the inputted pin is correct or
+	 * sendToArduino method will tell the arduino if the inputted pin is correct or
 	 * incorrect. This method will send this data through a UDP packet to the
 	 * parking controller. Inputs: Boolean PinCorrect: a boolean which states wether
 	 * the pin inputted by the user was valid. Outputs: Void: The methodes returns
@@ -125,7 +125,23 @@ public class ServerUDP {
             DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             socket.receive(LoginAck);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+
+    }
+
+    public void sendToAppOcccupancy() {
+        try {
+            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "true" + DATA_SPLIT_REGEX;
+            for (int x = 1; x < 9; x++) {
+                occupancyMessage += false + DATA_SPLIT_REGEX;
+            }
+            DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
+            DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            sendSocket.send(OccupancyUpdate);
+            socket.receive(OccAck);
+        } catch (IOException e) {
             System.err.println(e);
         }
 
@@ -200,14 +216,7 @@ public class ServerUDP {
                 String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
                 if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                    String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
-                    for (int x = 0; x <= 9; x++) {
-                        occupancyMessage += false + DATA_SPLIT_REGEX;
-                    }
-                    DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, udp.AppAddress, 2000);
-                    DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
-                    udp.sendSocket.send(OccupancyUpdate);
-                    udp.socket.receive(OccAck);
+                    udp.sendToAppOcccupancy();
 
                 } else if (split1String[0].equals(LOGIN_COMMAND)) {
                     String loginMessage[] = split1String[1].split(DATA_SPLIT_REGEX);
@@ -216,9 +225,6 @@ public class ServerUDP {
                 }
             }
             Thread.sleep(250);
-        } catch (IOException e) {
-            System.out.println("Exception");
-
         } catch (InterruptedException e) {
             System.err.println(e);
         }

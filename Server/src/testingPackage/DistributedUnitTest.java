@@ -80,9 +80,10 @@ public class DistributedUnitTest {
                     sendSocket.send(heartbeatAck);
                     System.out.println("SentBackNonZeroApp");
 
-                    if (heartbeatRespond.equals("LOG")) {
+                    if (heartbeatRespond.split(":")[0].equals("LOG")) {
                         DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(login);
+                        System.out.println(new String(login.getData()).trim());
                         sendSocket.send(new DatagramPacket("LOGACK".getBytes(),"LOGACK".getBytes().length, ServerAddress, 1000));
                     }
                 }
@@ -94,7 +95,7 @@ public class DistributedUnitTest {
     }
 
     public void testPinVerification() {
-        appQueue.add("Arduino:1234");
+        parkingControllerQueue.add("Arduino:1234");
     }
 
     public void testToggleLEDCorrect() {
@@ -102,7 +103,10 @@ public class DistributedUnitTest {
     }
 
     public void testLoginVerification() {
-        appQueue.add("LOG:User,Password");
+        appQueue.add("LOG:User,Password!");
+    }
+    public void testLotOccupancy(){
+        appQueue.add("");
     }
 
 }
