@@ -21,6 +21,8 @@ public class ServerUDP {
     private final static String ARDUINO_COMMAND = "Arduino";
     private final static String NOTHING_TO_REPORT = "NA";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
+    private final static String IR_COMMAND = "IR";
+    private final static int LOT_SIZE = 9;
 
     public ServerUDP() {
         try {
@@ -172,7 +174,7 @@ public class ServerUDP {
 
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-                    if (split1String[0].equals("IR")) {
+                    if (split1String[0].equals(IR_COMMAND)) {
                         spotToUpdate = split1String[1].split(",")[0];
                         System.out.println(spotToUpdate);
                         if (split1String[1].split(",")[1].equals("true")) {
@@ -185,13 +187,9 @@ public class ServerUDP {
                         }
                         System.out.println(spotToUpdate + " Boolean " + occupancyOfSpotToSend);
 
-                    } else if (split1String[0].equals("LED")) {
-                        String LEDMessage[] = split1String[1].split(",");
-                        if (LEDMessage[1].equals("true")) {
-                            udp.sendToLED(LEDMessage[0], true);
-                        } else if (LEDMessage[1].equals("false")) {
-                            udp.sendToLED(LEDMessage[0], false);
-                        }
+                    }  else if (split1String[0].equals(ARDUINO_COMMAND)) {
+                        String data = split1String[1];
+                        
                     }
                 }
                 String heartbeatAppResponse = udp.heartbeatApp();
@@ -200,7 +198,15 @@ public class ServerUDP {
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
                     if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                       
+                        String mesage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
+                        for (int x = 0; x <= 9; x++) {
+                            message += false + DATA_SPLIT_REGEX;
+                        }
+
+                        DatagramPacket OccupancyResponse = new DatagramPacket(message.getBytes(), message.getBytes().length, udp.AppAddress, 1001);
+                        DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+                        udp.OutgoingSocket.send(OccupancyResponse);
+                        udp.IncomingSocket.receive(OccAck);
                     }
                 }
 
