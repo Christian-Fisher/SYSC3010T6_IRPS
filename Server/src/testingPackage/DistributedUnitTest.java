@@ -30,7 +30,9 @@ public class DistributedUnitTest {
         DistributedUnitTest test = new DistributedUnitTest();
         test.setup();
         test.testPinVerification();
+        test.testIR();
         test.testLoginVerification();
+        test.testLotOccupancy();
         while (true) {
             test.receive();
         }
@@ -62,29 +64,46 @@ public class DistributedUnitTest {
                 if (parkingControllerQueue.isEmpty()) {
                     DatagramPacket heartbeatAck = new DatagramPacket("NA".getBytes(), "NA".getBytes().length, ServerAddress, 1000);
                     sendSocket.send(heartbeatAck);
-                    System.out.println("SentBack");
+                    System.out.println("NA");
                 } else {
                     String heartbeatRespond = parkingControllerQueue.pop();
                     DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
                     sendSocket.send(heartbeatAck);
-                    System.out.println("SentBackNonZero");
+                    if (heartbeatRespond.split(":")[0].equals("Arduino")) {
+
+                        DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        socket.receive(PinVerificationPacket);
+                        System.out.println(new String(PinVerificationPacket.getData()).trim());
+                        sendSocket.send(new DatagramPacket("ArduinoACK".getBytes(), "ArduinoACK".getBytes().length, ServerAddress, 1000));
+
+                    } else if (heartbeatRespond.split(":")[0].equals("IR")) {
+                        DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        socket.receive(IRPacket);
+                        System.out.println(new String(IRPacket.getData()).trim());
+
+                    }
                 }
             } else if (new String(heartbeat.getData()).trim().equals("HBAPP")) {
                 if (appQueue.isEmpty()) {
                     DatagramPacket heartbeatAck = new DatagramPacket("NA".getBytes(), "NA".getBytes().length, ServerAddress, 1000);
                     sendSocket.send(heartbeatAck);
-                    System.out.println("SentBackApp");
+                    System.out.println("NA");
                 } else {
                     String heartbeatRespond = appQueue.pop();
                     DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
                     sendSocket.send(heartbeatAck);
-                    System.out.println("SentBackNonZeroApp");
 
                     if (heartbeatRespond.split(":")[0].equals("LOG")) {
                         DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(login);
                         System.out.println(new String(login.getData()).trim());
-                        sendSocket.send(new DatagramPacket("LOGACK".getBytes(),"LOGACK".getBytes().length, ServerAddress, 1000));
+                        sendSocket.send(new DatagramPacket("LOGACK".getBytes(), "LOGACK".getBytes().length, ServerAddress, 1000));
+
+                    } else if (heartbeatRespond.split(":")[0].equals("OCC")) {
+                        DatagramPacket lotOccupancyPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        socket.receive(lotOccupancyPacket);
+                        System.out.println(new String(lotOccupancyPacket.getData()).trim());
+                        sendSocket.send(new DatagramPacket("OCCACK".getBytes(), "OCCACK".getBytes().length, ServerAddress, 1000));
                     }
                 }
             }
@@ -92,6 +111,10 @@ public class DistributedUnitTest {
             System.err.println(e);
         }
 
+    }
+
+    public void testIR() {
+        parkingControllerQueue.add("IR:A2,false");
     }
 
     public void testPinVerification() {
@@ -105,8 +128,9 @@ public class DistributedUnitTest {
     public void testLoginVerification() {
         appQueue.add("LOG:User,Password!");
     }
-    public void testLotOccupancy(){
-        appQueue.add("");
+
+    public void testLotOccupancy() {
+        appQueue.add("OCC:");
     }
 
 }
