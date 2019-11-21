@@ -19,24 +19,44 @@ import java.util.Stack;
  */
 public class DistributedUnitTest {
 
+    private final static String COMMAND_SPLIT_REGEX = ":";
+    private final static String DATA_SPLIT_REGEX = ",";
+    private final static String LED_COMMAND = "LED";
+    private final static String ARDUINO_COMMAND = "ARD";
+    private final static String NOTHING_TO_REPORT = "NA";
+    private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
+    private final static String IR_COMMAND = "IR";
+    private final static String LOGIN_COMMAND = "LOG";
+    private final static String CLAIM_COMMAND = "CLA";
+
     private final static int PACKETSIZE = 100;
     DatagramSocket socket, sendSocket;
     DatagramPacket packet;
     InetAddress ParkingControllerAddress, AppAddress, ServerAddress;
-
+    boolean HB = false, IR = false, LED = false, PIN = false, OCC = false, LOG = false, CLAIM = false;
     Stack<String> parkingControllerQueue, appQueue;
 
     public static void main(String[] args) {
         DistributedUnitTest test = new DistributedUnitTest();   //Test
         test.setup();
-
-        test.testPinVerification();
-        test.testIR();
-        test.testClaims();
-        test.testLoginVerification();
-        test.testLotOccupancy();
+        try {
+            test.testHeartbeat();
+            System.out.println("Heartbeat Test Passed");
+            test.HB=true;
+        } catch (IOException e) {
+            System.out.println("Heartbeat test failed");
+        }
+        test.runAlLTests();
         while (true) {
-            test.receive();
+            try {
+                test.receive();
+                if (test.HB && test.CLAIM && test.IR && test.LED && test.LOG && test.OCC && test.PIN) {
+                    System.out.println("All Tests were successful");
+                    return;
+                }
+            } catch (IOException e) {
+
+            }
         }
 
     }
@@ -49,104 +69,138 @@ public class DistributedUnitTest {
             AppAddress = InetAddress.getByName("localhost");    //Defines the address of the application
             ServerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
-            socket.setSoTimeout(2000);
+            socket.setSoTimeout(5000);
             sendSocket = new DatagramSocket();
+
         } catch (SocketException | UnknownHostException e) {
             System.out.println("socket bad");
         }
 
     }
 
-    public void receive() {
-        try {
-            DatagramPacket heartbeat = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-            System.out.println("Ready");
-            socket.receive(heartbeat);
-            if (new String(heartbeat.getData()).trim().equals("HB")) {
+    public void receive() throws IOException {
 
-                if (parkingControllerQueue.isEmpty()) {
-                    DatagramPacket heartbeatAck = new DatagramPacket("NA".getBytes(), "NA".getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
-                    System.out.println("NA");
-                } else {
-                    String heartbeatRespond = parkingControllerQueue.pop();
-                    DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
-                    if (heartbeatRespond.split(":")[0].equals("ARD")) {
+        DatagramPacket heartbeat = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+        socket.receive(heartbeat);
+        if (new String(heartbeat.getData()).trim().equals("HB")) {
 
-                        DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(PinVerificationPacket);
-                        System.out.println(new String(PinVerificationPacket.getData()).trim());
-                        sendSocket.send(new DatagramPacket("ArduinoACK".getBytes(), "ARDuinoACK".getBytes().length, ServerAddress, 1000));
+            if (parkingControllerQueue.isEmpty()) {
+                DatagramPacket heartbeatAck = new DatagramPacket(NOTHING_TO_REPORT.getBytes(), NOTHING_TO_REPORT.getBytes().length, ServerAddress, 1000);
+                sendSocket.send(heartbeatAck);
+            } else {
+                String heartbeatRespond = parkingControllerQueue.pop();
+                DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
+                sendSocket.send(heartbeatAck);
+                if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(ARDUINO_COMMAND)) {
 
-                    } else if (heartbeatRespond.split(":")[0].equals("IR")) {
-                        DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(IRPacket);
-                        System.out.println(new String(IRPacket.getData()).trim());
-
+                    DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(PinVerificationPacket);
+                    sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                    if (new String(PinVerificationPacket.getData()).trim().equals("ARD:true")) {
+                        System.out.println("Arduino Test Passed");
+                        PIN = true;
                     }
-                }
-            } else if (new String(heartbeat.getData()).trim().equals("HBAPP")) {
-                if (appQueue.isEmpty()) {
-                    DatagramPacket heartbeatAck = new DatagramPacket("NA".getBytes(), "NA".getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
-                    System.out.println("NA");
-                } else {
-                    String heartbeatRespond = appQueue.pop();
-                    DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
+                } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(IR_COMMAND)) {
+                    DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(IRPacket);
+                    if (new String(IRPacket.getData()).trim().equals("IRACK")) {
+                        System.out.println("IR Test Passed");
+                        IR=true;
+                    }
 
-                    if (heartbeatRespond.split(":")[0].equals("LOG")) {
-                        DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(login);
-                        System.out.println(new String(login.getData()).trim());
-                        sendSocket.send(new DatagramPacket("LOGACK".getBytes(), "LOGACK".getBytes().length, ServerAddress, 1000));
-
-                    } else if (heartbeatRespond.split(":")[0].equals("OCC")) {
-                        DatagramPacket lotOccupancyPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(lotOccupancyPacket);
-                        System.out.println(new String(lotOccupancyPacket.getData()).trim());
-                        sendSocket.send(new DatagramPacket("OCCACK".getBytes(), "OCCACK".getBytes().length, ServerAddress, 1000));
-                    } else if (heartbeatRespond.split(":")[0].equals("CLA")) {
-                        DatagramPacket ClaimPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(ClaimPacket);
-                        System.out.println(new String(ClaimPacket.getData()).trim());
-                        sendSocket.send(new DatagramPacket("CLAACK".getBytes(), "CLAACK".getBytes().length, ServerAddress, 1000));
+                } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)) {
+                    DatagramPacket LEDPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(LEDPacket);
+                    sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                    if (new String(LEDPacket.getData()).trim().equals("LED:A2,true")) {
+                        System.out.println("LED Test Passed");
+                        LED=Boolean.TRUE;
                     }
                 }
             }
-        } catch (IOException e) {
-            System.err.println(e);
+        } else if (new String(heartbeat.getData()).trim().equals("HBAPP")) {
+            if (appQueue.isEmpty()) {
+                DatagramPacket heartbeatAck = new DatagramPacket(NOTHING_TO_REPORT.getBytes(), NOTHING_TO_REPORT.getBytes().length, ServerAddress, 1000);
+                sendSocket.send(heartbeatAck);
+            } else {
+                String heartbeatRespond = appQueue.pop();
+                DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
+                sendSocket.send(heartbeatAck);
+
+                if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)) {
+                    DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(login);
+                    sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                    if (new String(login.getData()).trim().equals("LOG:true")) {
+                        System.out.println("Login Test Passed");
+                        LOG = true;
+                    }
+
+                } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+                    DatagramPacket lotOccupancyPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(lotOccupancyPacket);
+                    sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                    if (new String(lotOccupancyPacket.getData()).trim().equals("OCC:true,false,false,false,false,false,false,false,false")) {
+                        System.out.println("Lot Occupancy Test Passed");
+                        OCC = true;
+                    }
+                } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(CLAIM_COMMAND)) {
+                    DatagramPacket ClaimPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                    socket.receive(ClaimPacket);
+                    sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                    if (new String(ClaimPacket.getData()).trim().equals("CLA:true")) {
+                        System.out.println("Claim Verification Test Passed");
+                        CLAIM = true;
+                    }
+                }
+            }
         }
 
     }
 
-    public void testIR() {
+    private void testIR() {
+        System.out.println("Beginning Receive: IR Update test");
         parkingControllerQueue.add("IR:A2,false");
     }
 
-    public void testPinVerification() {
+    private void testPinVerification() {
+        System.out.println("Beginning Receive: PIN Verification test");
         parkingControllerQueue.add("ARD:1234");
     }
 
-    public void testToggleLEDCorrect() {
-        parkingControllerQueue.add("LED:A2:false");
+    private void testToggleLED() {
+        System.out.println("Beginning Send: LED Toggle test");
+        parkingControllerQueue.add("LED:A2:true");
     }
 
-    public void testLoginVerification() {
-        appQueue.add("LOG:User,Password!");
+    private void testLoginVerification() {
+        System.out.println("Beginning Receive: Login Verification test");
+        appQueue.add("LOG:User,Password");
     }
 
-    public void testLotOccupancy() {
+    private void testLotOccupancy() {
+        System.out.println("Beginning Receive: Lot Occupancy test");
         appQueue.add("OCC:");
     }
 
-    public void testClaims() {
+    private void testClaims() {
+        System.out.println("Beginning Receive: Claims Verification test");
         appQueue.add("CLA:ABCDE123");
     }
 
-    public void testHeartbeat() {
+    private void testHeartbeat() throws IOException {
+        System.out.println("Testing Heartbeat");
         receive();
+    }
+
+    public void runAlLTests() {
+        testToggleLED();
+        testClaims();
+        testPinVerification();
+        testLoginVerification();
+        testIR();
+        testLotOccupancy();
+
     }
 
 }

@@ -40,7 +40,7 @@ public class ServerUDP {
 
         } catch (Exception e) { // If the creation fails, the cause will probably be the InetAddress creation.
             // This will be output, and the address will be fixed.
-            System.out.println(e);
+            System.err.println(e);
         }
     }
 
@@ -65,12 +65,13 @@ public class ServerUDP {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet to receive the
             // acknowledgement signal
             DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2000); // Create
+//            System.out.println(new String(packet.getData()).trim());
             sendSocket.send(packet); // Send the packet
             socket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convertt the response to a usable format.
-            if ("LEDack".equals(messAck)) { // If the toggling was successful, the message will read "LEDack"
+            if ("LEDACK".equals(messAck)) { // If the toggling was successful, the message will read "LEDack"
                 System.out.println("LED sucessfully Accessed");
             } else {
                 System.out.println("LED Access FAILED"); // The message was sucessfully sent, but the toggle failed.
@@ -115,7 +116,6 @@ public class ServerUDP {
     public void sendToIR(String IRMessage[]) {
         String data = "IRACK";
         try {
-            System.out.println(IRMessage[0] + " " + IRMessage[1]);
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2000);
             sendSocket.send(LoginAck);
 
@@ -163,11 +163,10 @@ public class ServerUDP {
 
     public void sendToAppOcccupancy() {
         try {
-            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "true" + DATA_SPLIT_REGEX;
-            for (int x = 1; x < 9; x++) {
-                occupancyMessage += false + DATA_SPLIT_REGEX;
+            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "true";
+            for (int x = 1; x < LOT_SIZE; x++) {
+                occupancyMessage += DATA_SPLIT_REGEX + false;
             }
-            System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
             DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(OccupancyUpdate);
@@ -206,17 +205,15 @@ public class ServerUDP {
 
     public static void main(String[] args) {
         ServerUDP udp = new ServerUDP();
-        int run = 4;
         /*
-		 * INCOMING MESSAGE FORM: XXX:YYY,ZZZ 
+        INCOMING MESSAGE FORM: XXX:YYY,ZZZ 
         X=LED or APP 
         Y=Data 
         Z=Data
          */
-        while (run >= 0) {
+        while (true) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
-                System.out.println(heartbeatParkingResponse);
                 if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
@@ -228,6 +225,8 @@ public class ServerUDP {
                     } else if (split1String[0].equals(ARDUINO_COMMAND)) {
                         udp.sendToArduino(split1String[1].equals("1234"));
 
+                    }else if(split1String[0].equals(LED_COMMAND)){
+                        udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
                 String heartbeatAppResponse = udp.heartbeatApp();
@@ -241,11 +240,10 @@ public class ServerUDP {
                     } else if (split1String[0].equals(LOGIN_COMMAND)) {
                         udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
-                    }else if (split1String[0].equals(CLAIM_COMMAND)){
-                    udp.sendToAppClaim(split1String[1]);
+                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
+                        udp.sendToAppClaim(split1String[1]);
+                    }
                 }
-                }
-                run--;
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 System.err.println(e);
