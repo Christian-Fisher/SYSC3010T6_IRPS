@@ -209,6 +209,7 @@ public class ServerUDP {
         while (true) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
+
                 if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
@@ -220,7 +221,7 @@ public class ServerUDP {
                     } else if (split1String[0].equals(ARDUINO_COMMAND)) {
                         udp.sendToArduino(split1String[1].equals("1234"));
 
-                    }else if(split1String[0].equals(LED_COMMAND)){
+                    } else if (split1String[0].equals(LED_COMMAND)) {
                         udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
@@ -239,7 +240,7 @@ public class ServerUDP {
                         udp.sendToAppClaim(split1String[1]);
                     }
                 }
-                Thread.sleep(500);
+                Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
             }
