@@ -32,7 +32,7 @@ public class DistributedUnitTest {
     private final static int PACKETSIZE = 100;
     DatagramSocket socket, sendSocket;
     DatagramPacket packet;
-    InetAddress ParkingControllerAddress, AppAddress, ServerAddress;
+    InetAddress ServerAddress;
     boolean HB = false, IR = false, LED = false, PIN = false, OCC = false, LOG = false, CLAIM = false;
     Stack<String> parkingControllerQueue, appQueue;
 
@@ -65,8 +65,6 @@ public class DistributedUnitTest {
         try {
             parkingControllerQueue = new Stack<>();
             appQueue = new Stack<>();
-            ParkingControllerAddress = InetAddress.getByName("localhost");  //Defines address of the parking controller
-            AppAddress = InetAddress.getByName("localhost");    //Defines the address of the application
             ServerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
             socket.setSoTimeout(5000);

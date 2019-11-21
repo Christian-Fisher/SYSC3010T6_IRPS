@@ -71,11 +71,6 @@ public class ServerUDP {
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convertt the response to a usable format.
-            if ("LEDACK".equals(messAck)) { // If the toggling was successful, the message will read "LEDack"
-                System.out.println("LED sucessfully Accessed");
-            } else {
-                System.out.println("LED Access FAILED"); // The message was sucessfully sent, but the toggle failed.
-            }
         } catch (Exception e) {
             System.err.println(e); // The message did not get sent properly, and the message should be
             // retransmitted.
