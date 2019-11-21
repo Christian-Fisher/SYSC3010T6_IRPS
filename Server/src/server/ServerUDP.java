@@ -19,11 +19,12 @@ public class ServerUDP {
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
     private final static String LED_COMMAND = "LED";
-    private final static String ARDUINO_COMMAND = "Arduino";
+    private final static String ARDUINO_COMMAND = "ARD";
     private final static String NOTHING_TO_REPORT = "NA";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String IR_COMMAND = "IR";
     private final static String LOGIN_COMMAND = "LOG";
+    private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;
 
     public ServerUDP() {
@@ -89,7 +90,7 @@ public class ServerUDP {
 	 * packets.
      */
     public void sendToArduino(Boolean PinCorrect) {
-        String data = "Arduino" + COMMAND_SPLIT_REGEX; // Prefix the message with "Arduino:" to signal the message is
+        String data = ARDUINO_COMMAND + COMMAND_SPLIT_REGEX; // Prefix the message with "Arduino:" to signal the message is
         // meant for the arduino
         data += PinCorrect; // Add the pinCorrect boolean to the messgae
         byte[] byteArray = data.getBytes(); // Convert the message to an array of bytes to add to the packet.
@@ -101,8 +102,7 @@ public class ServerUDP {
             socket.receive(ack); // Receive the acknowldgement, if this timesout, the exception will be caught,
             // and the message will be retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convert the ack message into a usable format.
-            if ("ArduinoACK".equals(messAck)) { // Read the ack message.
-                System.out.println("Arduino Received packet"); // The operation was successful
+            if ("ARDACK".equals(messAck)) { // Read the ack message.
             } else {
                 System.out.println("Arduino format error (Nack)"); // The message was sent properly, but there was an
                 // error in teh format of the message
@@ -144,6 +144,23 @@ public class ServerUDP {
 
     }
 
+    public void sendToAppClaim(String ClaimMessage) {
+        try {
+            String ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "false";
+            if (ClaimMessage.equals("ABCDE123")) {
+                ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
+            }
+
+            DatagramPacket ClaimPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
+            DatagramPacket ClaimAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            sendSocket.send(ClaimPacket);
+            socket.receive(ClaimAck);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+
+    }
+
     public void sendToAppOcccupancy() {
         try {
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "true" + DATA_SPLIT_REGEX;
@@ -165,7 +182,6 @@ public class ServerUDP {
         DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, ParkingControllerAddress, 2000);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            System.out.println("Sending parking heartbeat");
             sendSocket.send(heartBeat);
             socket.receive(heartAck);
 
@@ -179,7 +195,6 @@ public class ServerUDP {
         DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE_APP, HEARTBEAT_MESSAGE_APP.length, AppAddress, 2000);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
-            System.out.println("Sending app heartbeat");
             sendSocket.send(heartBeat);
             socket.receive(heartAck);
 
@@ -226,9 +241,9 @@ public class ServerUDP {
                     } else if (split1String[0].equals(LOGIN_COMMAND)) {
                         udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
-                    }else{
-                        System.out.println("SHITS FUCKED");
-                    }
+                    }else if (split1String[0].equals(CLAIM_COMMAND)){
+                    udp.sendToAppClaim(split1String[1]);
+                }
                 }
                 run--;
                 Thread.sleep(500);

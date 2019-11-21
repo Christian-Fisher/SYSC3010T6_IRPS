@@ -27,10 +27,12 @@ public class DistributedUnitTest {
     Stack<String> parkingControllerQueue, appQueue;
 
     public static void main(String[] args) {
-        DistributedUnitTest test = new DistributedUnitTest();
+        DistributedUnitTest test = new DistributedUnitTest();   //Test
         test.setup();
+
         test.testPinVerification();
         test.testIR();
+        test.testClaims();
         test.testLoginVerification();
         test.testLotOccupancy();
         while (true) {
@@ -47,6 +49,7 @@ public class DistributedUnitTest {
             AppAddress = InetAddress.getByName("localhost");    //Defines the address of the application
             ServerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
+            socket.setSoTimeout(2000);
             sendSocket = new DatagramSocket();
         } catch (SocketException | UnknownHostException e) {
             System.out.println("socket bad");
@@ -69,12 +72,12 @@ public class DistributedUnitTest {
                     String heartbeatRespond = parkingControllerQueue.pop();
                     DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
                     sendSocket.send(heartbeatAck);
-                    if (heartbeatRespond.split(":")[0].equals("Arduino")) {
+                    if (heartbeatRespond.split(":")[0].equals("ARD")) {
 
                         DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(PinVerificationPacket);
                         System.out.println(new String(PinVerificationPacket.getData()).trim());
-                        sendSocket.send(new DatagramPacket("ArduinoACK".getBytes(), "ArduinoACK".getBytes().length, ServerAddress, 1000));
+                        sendSocket.send(new DatagramPacket("ArduinoACK".getBytes(), "ARDuinoACK".getBytes().length, ServerAddress, 1000));
 
                     } else if (heartbeatRespond.split(":")[0].equals("IR")) {
                         DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
@@ -104,6 +107,11 @@ public class DistributedUnitTest {
                         socket.receive(lotOccupancyPacket);
                         System.out.println(new String(lotOccupancyPacket.getData()).trim());
                         sendSocket.send(new DatagramPacket("OCCACK".getBytes(), "OCCACK".getBytes().length, ServerAddress, 1000));
+                    } else if (heartbeatRespond.split(":")[0].equals("CLA")) {
+                        DatagramPacket ClaimPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        socket.receive(ClaimPacket);
+                        System.out.println(new String(ClaimPacket.getData()).trim());
+                        sendSocket.send(new DatagramPacket("CLAACK".getBytes(), "CLAACK".getBytes().length, ServerAddress, 1000));
                     }
                 }
             }
@@ -118,7 +126,7 @@ public class DistributedUnitTest {
     }
 
     public void testPinVerification() {
-        parkingControllerQueue.add("Arduino:1234");
+        parkingControllerQueue.add("ARD:1234");
     }
 
     public void testToggleLEDCorrect() {
@@ -131,6 +139,14 @@ public class DistributedUnitTest {
 
     public void testLotOccupancy() {
         appQueue.add("OCC:");
+    }
+
+    public void testClaims() {
+        appQueue.add("CLA:ABCDE123");
+    }
+
+    public void testHeartbeat() {
+        receive();
     }
 
 }
