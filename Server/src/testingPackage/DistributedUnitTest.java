@@ -45,6 +45,7 @@ public class DistributedUnitTest {
             test.HB=true;
         } catch (IOException e) {
             System.out.println("Heartbeat test failed");
+            return;
         }
         test.runAlLTests();
         while (true) {
@@ -67,7 +68,7 @@ public class DistributedUnitTest {
             appQueue = new Stack<>();
             ServerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
-            socket.setSoTimeout(5000);
+            socket.setSoTimeout(10000);
             sendSocket = new DatagramSocket();
 
         } catch (SocketException | UnknownHostException e) {
@@ -95,14 +96,14 @@ public class DistributedUnitTest {
                     socket.receive(PinVerificationPacket);
                     sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(PinVerificationPacket.getData()).trim().equals("ARD:true")) {
-                        System.out.println("Arduino Test Passed");
+                        System.out.println("Passed: PIN Verification test");
                         PIN = true;
                     }
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(IR_COMMAND)) {
                     DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                     socket.receive(IRPacket);
                     if (new String(IRPacket.getData()).trim().equals("IRACK")) {
-                        System.out.println("IR Test Passed");
+                        System.out.println("Passed: IR test");
                         IR=true;
                     }
 
@@ -111,7 +112,7 @@ public class DistributedUnitTest {
                     socket.receive(LEDPacket);
                     sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(LEDPacket.getData()).trim().equals("LED:A2,true")) {
-                        System.out.println("LED Test Passed");
+                        System.out.println("Passed: LED Test");
                         LED=Boolean.TRUE;
                     }
                 }
@@ -130,7 +131,7 @@ public class DistributedUnitTest {
                     socket.receive(login);
                     sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(login.getData()).trim().equals("LOG:true")) {
-                        System.out.println("Login Test Passed");
+                        System.out.println("Passed: Login Verification Test");
                         LOG = true;
                     }
 
@@ -139,7 +140,7 @@ public class DistributedUnitTest {
                     socket.receive(lotOccupancyPacket);
                     sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(lotOccupancyPacket.getData()).trim().equals("OCC:true,false,false,false,false,false,false,false,false")) {
-                        System.out.println("Lot Occupancy Test Passed");
+                        System.out.println("Passed: Lot Occupancy test");
                         OCC = true;
                     }
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(CLAIM_COMMAND)) {
@@ -147,7 +148,7 @@ public class DistributedUnitTest {
                     socket.receive(ClaimPacket);
                     sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(ClaimPacket.getData()).trim().equals("CLA:true")) {
-                        System.out.println("Claim Verification Test Passed");
+                        System.out.println("Passed: Claim Verification Test");
                         CLAIM = true;
                     }
                 }
