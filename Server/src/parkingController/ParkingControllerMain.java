@@ -19,10 +19,8 @@ public class ParkingControllerMain {
     private final static String LED_COMMAND = "LED";
     private final static String ARDUINO_COMMAND = "ARD";
     private final static String NOTHING_TO_REPORT = "NA";
-    private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String IR_COMMAND = "IR";
-    private final static String LOGIN_COMMAND = "LOG";
-    private final static String CLAIM_COMMAND = "CLA";
+
 
     private final static int PACKETSIZE = 100;
     DatagramSocket socket, sendSocket;
@@ -37,7 +35,7 @@ public class ParkingControllerMain {
         while (true) {
             try {
                 mainUDP.receive();
-
+                
             } catch (IOException e) {
 
             }

@@ -26,7 +26,7 @@ public class ServerUDP {
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;
-
+    int count =0;
     public ServerUDP() {
         try {
 
