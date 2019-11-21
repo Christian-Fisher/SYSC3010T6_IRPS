@@ -41,8 +41,8 @@ public class DistributedUnitTest {
         test.setup();
         try {
             test.testHeartbeat();
-            System.out.println("Heartbeat Test Passed");
-            test.HB=true;
+            System.out.println("Heartbeat Test passed");
+            test.HB = true;
         } catch (IOException e) {
             System.out.println("Heartbeat test failed");
             return;
@@ -104,7 +104,7 @@ public class DistributedUnitTest {
                     socket.receive(IRPacket);
                     if (new String(IRPacket.getData()).trim().equals("IRACK")) {
                         System.out.println("Passed: IR test");
-                        IR=true;
+                        IR = true;
                     }
 
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)) {
@@ -113,7 +113,7 @@ public class DistributedUnitTest {
                     sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                     if (new String(LEDPacket.getData()).trim().equals("LED:A2,true")) {
                         System.out.println("Passed: LED Test");
-                        LED=Boolean.TRUE;
+                        LED = Boolean.TRUE;
                     }
                 }
             }
