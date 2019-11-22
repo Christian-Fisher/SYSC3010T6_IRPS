@@ -1,5 +1,6 @@
 
 import java.net.*;
+import server.ServerUDP;
 
 public class DistUnitTestDummySystem {
 
@@ -22,6 +23,25 @@ public class DistUnitTestDummySystem {
             DatagramSocket socket = new DatagramSocket(port);
 
             for (;;) {
+                
+                
+                try {
+            ServerUDP udp = new ServerUDP();
+            udp.sendToLED("A2", true);
+
+                    DatagramPacket packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+            socket.receive(packet);
+            String MESSAGE = new String(packet.getData()).trim();
+            System.out.println(MESSAGE);
+            byte[] ackArray = "LEDack".getBytes();
+            DatagramPacket ack = new DatagramPacket(ackArray, ackArray.length, packet.getAddress(), 1002);
+            socket.send(ack);
+        } catch (Exception e) {
+            System.err.println("TEst" + e);
+        }
+                
+                
+                
                 System.out.println("Receiving on port " + port);
                 DatagramPacket packet = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                 socket.receive(packet);

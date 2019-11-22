@@ -26,7 +26,7 @@ public class ServerUDP {
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;
-
+    int count =0;
     public ServerUDP() {
         try {
 
@@ -71,11 +71,6 @@ public class ServerUDP {
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
             String messAck = new String(ack.getData()).trim(); // Convertt the response to a usable format.
-            if ("LEDACK".equals(messAck)) { // If the toggling was successful, the message will read "LEDack"
-                System.out.println("LED sucessfully Accessed");
-            } else {
-                System.out.println("LED Access FAILED"); // The message was sucessfully sent, but the toggle failed.
-            }
         } catch (Exception e) {
             System.err.println(e); // The message did not get sent properly, and the message should be
             // retransmitted.
@@ -214,6 +209,7 @@ public class ServerUDP {
         while (true) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
+
                 if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
@@ -225,7 +221,7 @@ public class ServerUDP {
                     } else if (split1String[0].equals(ARDUINO_COMMAND)) {
                         udp.sendToArduino(split1String[1].equals("1234"));
 
-                    }else if(split1String[0].equals(LED_COMMAND)){
+                    } else if (split1String[0].equals(LED_COMMAND)) {
                         udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
@@ -244,7 +240,7 @@ public class ServerUDP {
                         udp.sendToAppClaim(split1String[1]);
                     }
                 }
-                Thread.sleep(500);
+                Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
             }
