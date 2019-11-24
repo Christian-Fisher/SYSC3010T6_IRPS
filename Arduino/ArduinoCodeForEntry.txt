@@ -1,14 +1,46 @@
+ #include <Wire.h>
 // Include the Servo Motor library
  #include <Servo.h>
+//Iclude the Keypad library
+ #include <Keypad.h>
+//Iclude the LCD library
+ #include <LiquidCrystal_I2C.h>
 
+ #define PIN_CodeLength 4;
 
  Servo servoMotor;
  int IRsensor1=0;
  int IRsensor2=0;
- int ledPin=13;
+ int ledPin=13; // same as mentioned below
+ int signalPin = 12;// need to edit based on the connection for pin code
  float sensorRightValue;
  float sensorLeftValue;
  boolean range;
+
+ //Keypad
+
+ char pinReceive[PIN_CodeLength];
+ char pinSet[PIN_CodeLength] = "367A";
+ byte pinReceive_count = 0;
+ byte pinSet_count = 0;
+ bool checkPin; //checks for correct pin
+ char entryKey; // user 
+ const byte ROWS = 4;
+ const byte COLUMNS = 4;
+
+char keysPad[ROWS][COLUMNS] = {
+    {'1','2','3','A'},
+    {'4','5','6','B'},
+    {'7','8','9','C'},
+    {'*','0','#','D'}
+};
+
+byte pins1[ROWS]={9,8,7,6};
+byte pins2[COLUMNS]={5,4,3,2};
+
+Keypad pinKeys = Keypad(makeKeymap(keysPad), pins1, pins2, ROWS, COLUMNS);
+
+LiquidCrystal_I2C LCD(0x21,16,2);
 
  void setup(){
     Serial.begin(9600);        //Serial connection initial setup at 9600 bits of data per second
@@ -17,12 +49,20 @@
     pinMode(13,OUTPUT);        //setting the pin 13 in the arduino board as output pin
     servoMotor.attach(9);      // attaching the servo motor function to pin 9
     servoMotor.write(0);       // intial set up of the position of the servo motor which is now at 0 degrees
+
+    //LCD setup
+    LCD.backlight();
+    LCD.init();
+    pinMode(signalPin, OUTPUT);
  }
  
  void loop(){
       sensorRightValue=analogRead(IRsensor1); //Can also use digital read 
       sensorLeftValue=analogRead(IRsensor2); 
       range = distance(sensorRightValue,sensorLeftValue);
+
+      //LCD
+      char entryKey = pinKeys.getKey();
 
       Serial.print("IR sensor 1 = ");
       Serial.print(sensorRightValue);
