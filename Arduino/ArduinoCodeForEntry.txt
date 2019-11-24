@@ -62,12 +62,47 @@ LiquidCrystal_I2C LCD(0x21,16,2);
       range = distance(sensorRightValue,sensorLeftValue);
 
       //LCD
+      LCD.setCursor(0,0);
+      LCD.print("Enter PIN code");
       char entryKey = pinKeys.getKey();
 
       Serial.print("IR sensor 1 = ");
       Serial.print(sensorRightValue);
       Serial.print(", IR sensor 2");
       Serial.println();
+
+      void entry(){
+            char entryKey = pinKeys.getKey();
+            if(entryKey){
+                pinReceive[pinReceive_count] = entryKey;
+                LCD.setCursor(pinReceive_count,1);
+                LCD.print(pinReceive[pinReceive_count]);
+                pinReceive_count++;
+            }
+
+            if(pinReceive_count == PIN_CodeLength-1){
+                LCD.clear();
+            }
+
+            if(!strcmp(pinReceive,pinSet)){
+                LCD.print("correct pin entry");
+                digitalWrite(signalPin, HIGH);
+                delay(5000);
+                digitalWrite(signalPin, LOW);
+            } else {
+                LCD.print("Incorect");
+                delay(2000);
+            }
+            LCD.clear();
+            clearData();
+      }
+
+      void clearData(){
+          while(pinReceive_count != 0){
+              pinReceive[pinReceive_count--] = 0;
+          }
+          return;
+      }
 
       boolean distance(float sensorRightValue, float sensorLeftValue){
          if(sensorRightValue>=400 && sensorRightValue<=700 || sensorLeftValue>=400 && sensorLeftValue<=700){ //can change the range depending on the situation
