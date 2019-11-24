@@ -9,6 +9,7 @@ public class junitTesting {
 	public String []licenseplate= {"abcd123", "abcd111", "abcd222"};
 	public String []availableSpots={"a1","a2", "a3"};
 	
+	
 	public boolean testLicensePlate(String LicensePlate ) {  // i changed this to boolean 
 		
 		String a = LicensePlate;
@@ -43,43 +44,42 @@ public class junitTesting {
 			}
 		}
 		
-		//Character.isDigit(string.charAt(index)) (JavaDoc) will return true if it's a digit
-		//Character.isLetter(string.charAt(index))
+		
 		return true ;
 	}
 	
-public boolean testUsernameFormat(String Username ) {
-		
-		
-		
-		
-		//The user can use characters: - ‘A, a,1, %@, +, -,*,/’
-		
-		
-		
-		String a = Username;
-		
-		for (int i=0; i < a.length(  ); i++) {
-		
-			  Character ch =  a.charAt(i);
-			  
-			if (! ( ch == '%' ||    ch =='@' ||    ch=='+' ||  ch=='*' ||  ch== '/' || Character.isDigit(ch) ||  Character.isAlphabetic(ch)     )) {
+	public boolean testUsernameFormat(String Username ) {
+			
+			
+			
+			
+			//The user can use characters: - ‘A, a,1, %@, +, -,*,/’
+			
+			
+			
+			String a = Username;
+			
+			for (int i=0; i < a.length(  ); i++) {
+			
+				  Character ch =  a.charAt(i);
+				  
+				if (! ( ch == '%' ||    ch =='@' ||    ch=='+' ||  ch=='*' ||  ch== '/' || Character.isDigit(ch) ||  Character.isAlphabetic(ch)     )) {
+					
+					System.out.println("wrong formate surename");
+					
+					return false; 
+				}
 				
-				System.out.println("wrong formate surename");
-				
-				return false; 
+	
 			}
 			
-
+			
+			
+			return true;
+			
+			
+			
 		}
-		
-		
-		
-		return true;
-		
-		
-		
-	}
 
 
 	public boolean testPINformat(String PIN) {
@@ -151,7 +151,7 @@ public boolean testUsernameFormat(String Username ) {
 				return true ;
 				}
 		
-		public boolean testInvalidPin(String PIN ) {
+		public boolean Pinexists(String PIN ) {
 			
 			
 			
@@ -159,31 +159,67 @@ public boolean testUsernameFormat(String Username ) {
 			 for (int i=0 ; i < PINin.length ; i++) {
 			if(    PINin[i].equals(PIN)   ) {
 				
-				return false;
+				return true;
 			}
 			
 			 }
-			return true;
+			return false;
 		}
 		
-		public boolean testvalidPin(String PIN ) {  // to do 
-			
-			
-			
-			 String [] PINin = { "1234", "1114", "5555"} ;
-			 
-			 for (int i=0 ; i < PINin.length ; i++) {
-				 
-				if(!(  PINin[i].equals(PIN) )   ) {
+	public String ClaimedLicensePlate(String plate) {
+		
+		 String []licenseplate= {"abcd123", "abcd111", "abcd222"};
+		
+		 for (int i=0 ; i < licenseplate.length ; i++) {
+				if(    licenseplate[i].equals(plate)   ) {
 					
-					System.out.println("here they are not equal");
-					
-					return false;
+					return "registered";
 				}
+				
+		
+		
+	}
+		 return "not registered "; 
+		 
+	}
+	
+	public boolean testAvailableSpots( String spot) {
+		
+		 String []availableSpots={"a1","a2", "a3"};
+		
+		 for (int i=0 ; i < availableSpots.length ; i++) {
+			 
+				if(  (  availableSpots[i].equals(spot)  ) ) {
 			
 			
-			 }
 			return true;
 		}
 		
+		
+		
+	}
+		 return false ;
+  }
+	
+	public boolean testinAvailableSpots( String spot) {
+		
+		 String []availableSpots={"a1","a2", "a3"};
+		
+		 for (int i=0 ; i < availableSpots.length ; i++) {
+			 
+				if(  (  availableSpots[i].equals(spot)  ) ) {
+			
+			
+			return false;
+		}
+		
+		
+		
+	}
+		 return true ;
+ }
+	
+	
+	
+	
 }
