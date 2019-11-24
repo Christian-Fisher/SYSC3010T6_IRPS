@@ -28,5 +28,11 @@
       Serial.print(", IR sensor 2");
       Serial.println();
 
-      boolean distance(float sensorRightValue, float sensorLeftValue)
+      boolean distance(float sensorRightValue, float sensorLeftValue){
+         if(sensorRightValue>=400 && sensorRightValue<=700 || sensorLeftValue>=400 && sensorLeftValue<=700){ //can change the range depending on the situation
+            return true;
+         } else return false;
+      }
+
+      void open()
  }
