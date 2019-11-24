@@ -19,8 +19,8 @@
  }
  
  void loop(){
-      sensorRightValue=analogREAD(IRsensor1); //Can also use digital read 
-      sensorLeftValue=analogREAD(IRsensor2); 
+      sensorRightValue=analogRead(IRsensor1); //Can also use digital read 
+      sensorLeftValue=analogRead(IRsensor2); 
       range = distance(sensorRightValue,sensorLeftValue);
 
       Serial.print("IR sensor 1 = ");
@@ -50,5 +50,12 @@
             delay(10);
          }
          delay(100);
+      }
+
+      if(range){
+         open();
+         sensorRightValue = analogRead(IRsensor1);
+         sensorLeftValue = analogRead(IRsensor2);
+         range = distance(sensorRightValue, sensorLeftValue)
       }
  }
