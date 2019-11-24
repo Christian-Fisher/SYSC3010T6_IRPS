@@ -220,6 +220,65 @@ public class junitTesting {
  }
 	
 	
+	public boolean ValidPassword(String user ,String password) {   // to be done 
+		
+		// compare  the pass of  user to pass from database  
+		//if( the user has this password           ){    we return true  
 	
+		return true;
+		
+		//else return false ;
+	}
+	
+	public boolean InvalidPassword(String user ,String password) {   // to be done 
+			
+			// compare  the pass of  user to pass from database  
+			//if( the user has this password           ){    we return true  
+		
+			return false;
+			
+			//else return true ;
+		}
+	
+	
+		public boolean testDatabaseEmpty() {   // to be done 
+			
+			//check the rows and the cloms or check for null if yes return true otherwise return false
+			
+			return true;
+		}
+		
+	public boolean testInvalidPin(String user ,String pin) {   // to be done 
+				
+				// compare  the pin of  user to pin from database  
+				//if( the user has this pin           ){    we return false  
+			
+				return false;
+				
+				//else return true ;
+			}
+	public boolean ValidPin(String user ,String pin) {   // to be done 
+			
+			// compare  the pin of  user to pin from database  
+			//if( the user has this pin           ){    we return true  
+		
+			return true;
+			
+			//else return false ;
+		}
+	
+	public boolean testBooking( String Spot , int time  ) { //check how we are going to code the time   to be done 
+		
+		
+		
+		return true ;
+	}
+	
+	public boolean testOverTime() {
+		
+		
+	return true;	
+		
+	}
 	
 }
