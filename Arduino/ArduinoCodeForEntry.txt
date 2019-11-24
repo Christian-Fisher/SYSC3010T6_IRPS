@@ -1,3 +1,4 @@
+ #include <Wire.h>
 // Include the Servo Motor library
  #include <Servo.h>
 //Iclude the Keypad library
@@ -5,15 +6,25 @@
 //Iclude the LCD library
  #include <LiquidCrystal_I2C.h>
 
+ #define PIN_CodeLength 4;
+
  Servo servoMotor;
  int IRsensor1=0;
  int IRsensor2=0;
- int ledPin=13;
+ int ledPin=13; // same as mentioned below
+ int signalPin = 12;// need to edit based on the connection for pin code
  float sensorRightValue;
  float sensorLeftValue;
  boolean range;
 
  //Keypad
+
+ char pinReceive[PIN_CodeLength];
+ char pinSet[PIN_CodeLength] = "367A";
+ byte pinReceive_count = 0;
+ byte pinSet_count = 0;
+ bool checkPin; //checks for correct pin
+ char entryKey; // user 
  const byte ROWS = 4;
  const byte COLUMNS = 4;
 
@@ -42,7 +53,7 @@ LiquidCrystal_I2C LCD(0x21,16,2);
     //LCD setup
     LCD.backlight();
     LCD.init();
-    pinMode()
+    pinMode(signalPin, OUTPUT);
  }
  
  void loop(){
