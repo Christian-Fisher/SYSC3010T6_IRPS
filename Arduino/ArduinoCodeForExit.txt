@@ -1,0 +1,20 @@
+// Include the Servo Motor library
+ #include <Servo.h>
+
+ Servo servoMotor;
+ int IRsensor1=0;
+ int IRsensor2=0;
+ int ledPin=13;
+ float sensorRightValue;
+ float sensorLeftValue;
+ boolean range;
+
+ void setup(){
+    Serial.begin(9600);        //Serial connection initial setup
+    pinMode(IRsensor1,INPUT);  //setting the first IR sensor as input
+    pinMode(IRsensor2,INPUT);  //setting the second IR sensor as input
+    pinMode(13,OUTPUT);        //setting the pin 13 in the arduino board as output pin
+    servoMotor.attach(9);      // attaching the servo motor function to pin 9
+    servoMotor.write(0);       // intial set up of the position of the servo motor which is now at 0 degrees
+ }
+
