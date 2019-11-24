@@ -34,5 +34,14 @@
          } else return false;
       }
 
-      void open()
+      void open(){
+         int rotate=0;
+         for(rotate = 0;rotate <= 90;rotate += 1){   //rotating the motor to 90 degrees signifies the open gate
+            servoMotor.write(rotate);
+            delay(10);
+         }
+         delay(100);
+      }
+
+      
  }
