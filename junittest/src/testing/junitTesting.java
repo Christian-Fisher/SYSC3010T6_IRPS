@@ -269,16 +269,40 @@ public class junitTesting {
 	
 	public boolean testBooking( String Spot , int time  ) { //check how we are going to code the time   to be done 
 		
-		
+		// wait for 10 mins then check with the database if the spot is available or not 
+		// we can call the avilable spots methods 
 		
 		return true ;
 	}
 	
-	public boolean testOverTime() {
+	public boolean testOverTimeOut() {
 		
 		
 	return true;	
 		
 	}
+	public boolean testLessTimeOut() {
+		
+		
+		return true;	
+			
+		}
+		
+	public boolean testTimeOut() {
+			
+			
+			return true;	
+				
+			}
+	public String testSystemStatue() {
+		
+		
+		return "full";
+	} 
 	
+	public String historyStatue() {
+			
+			
+			return "full";
+		} 
 }
