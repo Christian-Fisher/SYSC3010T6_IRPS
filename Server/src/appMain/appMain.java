@@ -96,6 +96,7 @@ public class appMain {
         } else if (new String(heartbeat.getData()).trim().equals(LOGIN_COMMAND)) {
             String loginRequest[] = new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX);
             appQueue.add(loginRequest[1]);
+            System.out.println("Succesfully added to queue");
             sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").length(), local, 3000));
         }
 
