@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         appMainThread thread = new appMainThread();
-        thread.run();
+        thread.start();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
