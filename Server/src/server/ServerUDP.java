@@ -21,8 +21,9 @@ public class ServerUDP {
     private final static String LED_COMMAND = "LED";
     private final static String ARDUINO_COMMAND = "ARD";
     private final static String NOTHING_TO_REPORT = "NA";
+        private final static String IR_COMMAND = "IR";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
-    private final static String IR_COMMAND = "IR";
+
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;

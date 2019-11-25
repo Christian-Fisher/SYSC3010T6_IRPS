@@ -7,7 +7,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  *
@@ -26,22 +27,25 @@ public class ParkingControllerMain {
     DatagramSocket socket, sendSocket;
     DatagramPacket packet;
     InetAddress ServerAddress;
-    Stack<String> parkingControllerQueue, appQueue;
+    Queue<String> parkingControllerQueue;
 
     public static void main(String[] args) {
         ParkingControllerMain mainUDP = new ParkingControllerMain();   //Test
         mainUDP.setup();
 
         while (true) {
-            mainUDP.receive();
-        }
+            try {
+                mainUDP.receive();
+            } catch (IOException e) {
+                System.err.println("IO Exception on Parking Controller");
+            }
 
+        }
     }
 
     public void setup() {
         try {
-            parkingControllerQueue = new Stack<>();
-            appQueue = new Stack<>();
+            parkingControllerQueue = new LinkedList<>();
             ServerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
             socket.setSoTimeout(10000);
@@ -53,7 +57,7 @@ public class ParkingControllerMain {
 
     }
 
-    public void receive() {
+    public void receive() throws IOException {
 
         DatagramPacket heartbeat = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
         try {
@@ -65,55 +69,42 @@ public class ParkingControllerMain {
 
             if (parkingControllerQueue.isEmpty()) {
                 DatagramPacket heartbeatAck = new DatagramPacket(NOTHING_TO_REPORT.getBytes(), NOTHING_TO_REPORT.getBytes().length, ServerAddress, 1000);
-                try {
-                    sendSocket.send(heartbeatAck);
-                } catch (Exception e) {
-
-                }
+                sendSocket.send(heartbeatAck);
             } else {
                 String heartbeatRespond = parkingControllerQueue.peek();
                 DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
-                try {
-                    sendSocket.send(heartbeatAck);
-                } catch (Exception e) {
 
-                }
+                sendSocket.send(heartbeatAck);
+
                 if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(ARDUINO_COMMAND)) {
 
                     DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                     try {
                         socket.receive(PinVerificationPacket);
                         sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
-                    } catch (SocketTimeoutException e) {
+                        parkingControllerQueue.remove();
 
-                    } catch (IOException e) {
-                        System.out.println("BAD PAIN" + e);
+                    } catch (SocketTimeoutException e) {
+                        socket.send(heartbeatAck);
                     }
-                    parkingControllerQueue.pop();
 
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(IR_COMMAND)) {
                     try {
                         DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(IRPacket);
-
+                        parkingControllerQueue.remove();
                     } catch (SocketTimeoutException e) {
-
-                    } catch (IOException e) {
-
+                        socket.send(heartbeatAck);
                     }
-                    parkingControllerQueue.pop();
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)) {
                     DatagramPacket LEDPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                     try {
                         socket.receive(LEDPacket);
                         sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                        parkingControllerQueue.remove();
                     } catch (SocketTimeoutException e) {
-
-                    } catch (IOException e) {
-                        System.out.println("BAD LED" + e);
-
+                        socket.send(heartbeatAck);
                     }
-                    parkingControllerQueue.pop();
                 }
             }
         }
