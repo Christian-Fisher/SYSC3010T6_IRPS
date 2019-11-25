@@ -53,25 +53,36 @@ public class MainActivity extends AppCompatActivity {
         mTextUsername = (EditText) findViewById(R.id.edittext_username);  // adding the id to the text space so we can use it in our methods
         mTextpassword = (EditText) findViewById(R.id.edittext_password);// adding the id to the text space so we can use it in our methods
         mButtonLogin = (Button)findViewById(R.id.button_login);   // adding the id to the button so we can use it in our methods
-        mButtonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String user = mTextUsername.getText().toString().trim();       // taking user input and making it to string and storing it
-                String pwd = mTextpassword.getText().toString().trim();
+       // mButtonLogin.setOnClickListener(new View.OnClickListener() {
+           // @Override
+           // public void onClick(View view) {
+           //     String user = mTextUsername.getText().toString().trim();       // taking user input and making it to string and storing it
+             //   String pwd = mTextpassword.getText().toString().trim();
                                                                                  // this shloud be as UDP message
                // Boolean res = db.checkUser(user, pwd);                          //checking it with the database if the user name and code are right
                // if(res == true)
               //  {
-                    Intent HomePage = new Intent(MainActivity.this,book.class); // if the log in information is right we proceed to the booking page
-                  //  startActivity(HomePage);
+                 //   Intent HomePage = new Intent(MainActivity.this,book.class); // if the log in information is right we proceed to the booking page
+                 //   startActivity(HomePage);
                // }
                // else
                // {
                     //Toast.makeText(MainActivity.this,"Login Error",Toast.LENGTH_SHORT).show(); // if not give the user an error msg
               //  }
-            }
-       }
-       );
+         //   }
+     // }
+      // );
+
+
+
+
+              mButtonLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent LoginIntent = new Intent(MainActivity.this,book.class);
+                    startActivity(LoginIntent);
+                }
+            });
     }
 
 
