@@ -78,9 +78,12 @@ public class MainActivity extends AppCompatActivity {
         mButtonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent LoginIntent = new Intent(MainActivity.this, book.class);
-                startActivity(LoginIntent);
-
+                if (verifyLogin(mTextUsername.getText().toString().trim(),mTextpassword.getText().toString().trim()) == true) {
+                    Intent LoginIntent = new Intent(MainActivity.this, book.class);
+                    startActivity(LoginIntent);
+                } else {
+                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
         });
     }
