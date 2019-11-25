@@ -3,8 +3,7 @@
  #include <Servo.h>
 //Iclude the Keypad library
  #include <Keypad.h>
-//Iclude the LCD library
- #include <LiquidCrystal_I2C.h>
+
 
  #define PIN_CodeLength 4;
 
@@ -17,92 +16,62 @@
  float sensorLeftValue;
  boolean range;
 
- //Keypad
+ //Buzzer+Keypad
+ int Buzzer_pin=14; 
+ const byte ROWS = 4; //four rows
+ const byte COLS = 4; //four columns
+ char keys[ROWS][COLS] = {
+ 
+  {'1','2','3','A'},
+ 
+  {'4','5','6','B'},
+ 
+  {'7','8','9','C'},
+ 
+  {'*','0','#','D'}   
+ 
+}
+ byte rowPins[ROWS] = {13, 12, 11, 10}; //connect to the row pinouts of the keypad
+ byte colPins[COLS] = {9, 8, 7, 6}; //connect to the column pinouts of the keypad
+ Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
- char pinReceive[PIN_CodeLength];
- char pinSet[PIN_CodeLength] = "367A";
- byte pinReceive_count = 0;
- byte pinSet_count = 0;
- bool checkPin; //checks for correct pin
- char entryKey; // user 
- const byte ROWS = 4;
- const byte COLUMNS = 4;
-
-char keysPad[ROWS][COLUMNS] = {
-    {'1','2','3','A'},
-    {'4','5','6','B'},
-    {'7','8','9','C'},
-    {'*','0','#','D'}
-};
-
-byte pins1[ROWS]={9,8,7,6};
-byte pins2[COLUMNS]={5,4,3,2};
-
-Keypad pinKeys = Keypad(makeKeymap(keysPad), pins1, pins2, ROWS, COLUMNS);
-
-LiquidCrystal_I2C LCD(0x21,16,2);
-
+ 
  void setup(){
     Serial.begin(9600);        //Serial connection initial setup at 9600 bits of data per second
     pinMode(IRsensor1,INPUT);  //setting the first IR sensor as input
     pinMode(IRsensor2,INPUT);  //setting the second IR sensor as input
     pinMode(13,OUTPUT);        //setting the pin 13 in the arduino board as output pin
+    pinMode(buzz_pin, OUTPUT); //buzzer pin mode set to ON
     servoMotor.attach(9);      // attaching the servo motor function to pin 9
     servoMotor.write(0);       // intial set up of the position of the servo motor which is now at 0 degrees
 
-    //LCD setup
-    LCD.backlight();
-    LCD.init();
-    pinMode(signalPin, OUTPUT);
  }
  
  void loop(){
       sensorRightValue=analogRead(IRsensor1); //Can also use digital read 
       sensorLeftValue=analogRead(IRsensor2); 
       range = distance(sensorRightValue,sensorLeftValue);
-
-      //LCD
-      LCD.setCursor(0,0);
-      LCD.print("Enter PIN code");
-      char entryKey = pinKeys.getKey();
+      char key = keypad.getKey();  //Variable to store pressed key
+ 
+ 
+  if (key){
+    Serial.println(key); //Prints the key in serial monitor
+    delay(1000);
+    }
+ 
+    if (key == 5){
+    Serial.println(key); //Prints the key in serial monitor
+    digitalWrite (buzz_pin,HIGH);// Turn ON Buzzer
+    Serial.println(Buzzer ON);
+    delay(1000);
+    digitalWrite (buzz_pin,LOW); //Turn OFF Buzzer
+    Serial.println(Buzzer OFF);
 
       Serial.print("IR sensor 1 = ");
       Serial.print(sensorRightValue);
       Serial.print(", IR sensor 2");
       Serial.println();
 
-      void entry(){
-            char entryKey = pinKeys.getKey();
-            if(entryKey){
-                pinReceive[pinReceive_count] = entryKey;
-                LCD.setCursor(pinReceive_count,1);
-                LCD.print(pinReceive[pinReceive_count]);
-                pinReceive_count++;
-            }
-
-            if(pinReceive_count == PIN_CodeLength-1){
-                LCD.clear();
-            }
-
-            if(!strcmp(pinReceive,pinSet)){
-                LCD.print("correct pin entry");
-                digitalWrite(signalPin, HIGH);
-                delay(5000);
-                digitalWrite(signalPin, LOW);
-            } else {
-                LCD.print("Incorect");
-                delay(2000);
-            }
-            LCD.clear();
-            clearData();
-      }
-
-      void clearData(){
-          while(pinReceive_count != 0){
-              pinReceive[pinReceive_count--] = 0;
-          }
-          return;
-      }
 
       boolean distance(float sensorRightValue, float sensorLeftValue){
          if(sensorRightValue>=400 && sensorRightValue<=700 || sensorLeftValue>=400 && sensorLeftValue<=700){ //can change the range depending on the situation
