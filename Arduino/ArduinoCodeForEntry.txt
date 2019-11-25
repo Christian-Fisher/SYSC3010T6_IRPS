@@ -129,6 +129,7 @@ LiquidCrystal_I2C LCD(0x21,16,2);
       }
 
       if(range){
+         entry();
          open();
          delay(1000);
          sensorRightValue = analogRead(IRsensor1);
