@@ -51,13 +51,29 @@ public class book<date> extends AppCompatActivity {
         mTextavaiablespot = (TextView)findViewById(R.id.textview_Availablespots);
 
         // get all the available spots from the database
+        // Button buttons[] = null;
+
+        // for (int i=0 , i< array.legth , i++){
+        // if (array[i] == true ) {
+        //   buttons[i]  == (Button)findViewById(R.id.button[i]);
+        //
+        // }
+        //
+        //
+        //
+        // }
+
+        // outout all buttons and make them on click
+
+
+
 
         mButtonbookspot.setOnClickListener(new View.OnClickListener() {
 
             // taking user input and making it to string and storing it
             String spotNumber = mTextspotnumber.getText().toString().trim();
 
-            Date currentDate = new Date();
+
 
             // send the date to the database
 

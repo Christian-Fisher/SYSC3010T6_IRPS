@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         appMainThread thread = new appMainThread();
-        thread.start();
+        thread.run();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -51,55 +51,36 @@ public class MainActivity extends AppCompatActivity {
 
         fab.setOnClickListener(
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View view
-            ) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        }
+                    @Override
+                    public void onClick(View view
+                    ) {
+                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                }
         );
 
         mTextUsername = (EditText) findViewById(R.id.edittext_username);  // adding the id to the text space so we can use it in our methods
         mTextpassword = (EditText) findViewById(R.id.edittext_password);// adding the id to the text space so we can use it in our methods
         mButtonLogin = (Button) findViewById(R.id.button_login);   // adding the id to the button so we can use it in our methods
-        // mButtonLogin.setOnClickListener(new View.OnClickListener() {
-        // @Override
-        // public void onClick(View view) {
-        //     String user = mTextUsername.getText().toString().trim();       // taking user input and making it to string and storing it
-        //   String pwd = mTextpassword.getText().toString().trim();
-        // this shloud be as UDP message
-        // Boolean res = db.checkUser(user, pwd);                          //checking it with the database if the user name and code are right
-        // if(res == true)
-        //  {
-        //   Intent HomePage = new Intent(MainActivity.this,book.class); // if the log in information is right we proceed to the booking page
-        //   startActivity(HomePage);
-        // }
-        // else
-        // {
-        //Toast.makeText(MainActivity.this,"Login Error",Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-        //  }
-        //   }
-        // }
-        // );
 
         mButtonLogin.setOnClickListener(
                 new View.OnClickListener() {
-            @Override
-            public void onClick(View view
-            ) {
-                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim()) == true) {
-                    Intent LoginIntent = new Intent(MainActivity.this, book.class);
-                    startActivity(LoginIntent);
-                } else {
-                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                    @Override
+                    public void onClick(View view
+                    ) {
+                        if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim()) == true) {
+                            Intent LoginIntent = new Intent(MainActivity.this, book.class);
+                            startActivity(LoginIntent);
+                        } else {
+                            Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                        }
+                    }
                 }
-            }
-        }
         );
     }
 
-    class appMainThread extends Thread {
+    class appMainThread implements Runnable {
 
         private final static String COMMAND_SPLIT_REGEX = ":";
         private final static String DATA_SPLIT_REGEX = ",";
