@@ -17,18 +17,27 @@ public class book<date> extends AppCompatActivity {
 
 
     EditText mTextspotnumber;    // variables for buttons and text spaces
-    Button mButtonbookspot;
+
     TextView mTextavaiablespot;
+
     Button mButtonsubmitclaim;
-
-
+    Button A1;
+    Button A2;
+    Button A3;
+    Button B1;
+    Button B2;
+    Button B3;
+    Button C1;
+    Button C2;
+    Button C3;
+    boolean []flags;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
 
 
-       // mTextspotnumber take the input of the user and send t to the database tobook it
+
 
         mButtonsubmitclaim = (Button)findViewById(R.id.button_submitclaim);
         mButtonsubmitclaim.setOnClickListener(new View.OnClickListener() {
@@ -40,36 +49,203 @@ public class book<date> extends AppCompatActivity {
         });
 
 
-        mTextspotnumber  = (EditText) findViewById(R.id.edittext_spotnumber);  // linking the text spaces and buttons to their IDs
-
 
 
          // we should  have the input of the user and send it to database with the time
 
-        mButtonbookspot = (Button)findViewById(R.id.button_bookspot);
+         //get the avilable spots
+
 
         mTextavaiablespot = (TextView)findViewById(R.id.textview_Availablespots);
 
-        // get all the available spots from the database
 
-        mButtonbookspot.setOnClickListener(new View.OnClickListener() {
+        A1.setOnClickListener(new View.OnClickListener() {
 
-            // taking user input and making it to string and storing it
-            String spotNumber = mTextspotnumber.getText().toString().trim();
-
-            Date currentDate = new Date();
-
-            // send the date to the database
-
-            // we want to save time and send it to the database
-            @Override
             public void onClick(View view) {
 
                 Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
                 // after booking we go to another page with telss the user's booking is successfuly  done
                 startActivity(finalpageIntent);
             }
-        });
+
+           // if(avilablespots[0]= "true"){}
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+        } );
+
+        A2.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+
+
+
+        } );
+
+
+
+       // if (avilable spots [1]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+       // }
+
+        A3.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+
+        // if (avilable spots [2]= "true"){
+
+                    //A2.setVisibility(View.VISIBLE);
+
+                    // }
+
+
+        } );
+
+
+        B1.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+            // if (avilable spots [3]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+
+        } );
+
+
+
+        B2.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+            // if (avilable spots [4]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+
+        } );
+
+
+        B3.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+            // if (avilable spots [5]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+
+        } );
+
+
+
+        C1.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+
+            // if (avilable spots [6]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+        } );
+
+        C2.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+
+            // if (avilable spots [7]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+
+        } );
+
+
+        C3.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+
+                Intent finalpageIntent= new Intent(book.this,finalpage.class);
+
+                // after booking we go to another page with telss the user's booking is successfuly  done
+                startActivity(finalpageIntent);
+            }
+
+
+            // if (avilable spots [8]= "true"){
+
+            //A2.setVisibility(View.VISIBLE);
+
+            // }
+
+        } );
+
+
+
+
+
+
+
 
     }
 
