@@ -5,6 +5,9 @@ public class Main {
 		DBconnect connect = new DBconnect();
 		connect.getData();
 		connect.checkInputs();
+		connect.validPinLength();
+		connect.validLicensePlate();
+		connect.validPinCharacter();
 		
 	}
 
