@@ -2,27 +2,23 @@ package com.example.myapplication2;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.os.StrictMode;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-import java.net.*;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Stack;
+import java.net.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     EditText mTextpassword;   // password or code
     Button mButtonLogin;      // button that takes the user to the other page to book if the login information were right
     InetAddress local;
+    DatagramSocket sendSocket, socket;
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
@@ -38,7 +35,22 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+
         UDPThread udpThread = new UDPThread();
+        try {
+            socket = new DatagramSocket(3000);
+            socket.setSoTimeout(1000);
+            sendSocket = new DatagramSocket();
+            local = InetAddress.getByName("localhost");
+
+        }catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         udpThread.start();
         super.onCreate(savedInstanceState);
 
@@ -63,37 +75,19 @@ public class MainActivity extends AppCompatActivity {
         mTextUsername = (EditText) findViewById(R.id.edittext_username);  // adding the id to the text space so we can use it in our methods
         mTextpassword = (EditText) findViewById(R.id.edittext_password);// adding the id to the text space so we can use it in our methods
         mButtonLogin = (Button) findViewById(R.id.button_login);   // adding the id to the button so we can use it in our methods
-        // mButtonLogin.setOnClickListener(new View.OnClickListener() {
-        // @Override
-        // public void onClick(View view) {
-        //     String user = mTextUsername.getText().toString().trim();       // taking user input and making it to string and storing it
-        //   String pwd = mTextpassword.getText().toString().trim();
-        // this shloud be as UDP message
-        // Boolean res = db.checkUser(user, pwd);                          //checking it with the database if the user name and code are right
-        // if(res == true)
-        //  {
-        //   Intent HomePage = new Intent(MainActivity.this,book.class); // if the log in information is right we proceed to the booking page
-        //   startActivity(HomePage);
-        // }
-        // else
-        // {
-        //Toast.makeText(MainActivity.this,"Login Error",Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-        //  }
-        //   }
-        // }
-        // );
 
         mButtonLogin.setOnClickListener(
                 new View.OnClickListener() {
             @Override
-            public void onClick(View view
-            ) {
-                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim()) == true) {
+            public void onClick(View view) {
+//                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim())) {
+                    Log.i("Main", "Good login");
                     Intent LoginIntent = new Intent(MainActivity.this, book.class);
                     startActivity(LoginIntent);
-                } else {
-                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-                }
+//                } else {
+//                    Log.i("Main", "Bad login");
+//                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+//                }
             }
         }
         );
@@ -102,25 +96,23 @@ public class MainActivity extends AppCompatActivity {
     
 
     public boolean verifyLogin(String username, String password) {
-        try {
-            DatagramSocket socket = new DatagramSocket(3000);
-            socket.setSoTimeout(10000);
-            DatagramSocket sendSocket = new DatagramSocket();
+        DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
 
-            local = InetAddress.getByName("localhost");
+        try {
             String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
             DatagramPacket loginPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
-            DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
 
             sendSocket.send(loginPacket);
             socket.receive(loginAck);
+            System.out.println(new String(loginAck.getData()).trim());
 
         } catch (SocketTimeoutException ex) {
             System.err.println("Bad things happening");
         } catch (IOException e) {
             System.err.println(e + "heartbeat app failed");
         }
-        return false;
+        return (new String(loginAck.getData()).trim().equals("LOGACK"));
+
     }
 
     @Override
