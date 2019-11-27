@@ -55,11 +55,56 @@ public class DBconnect {
 		}
 	}
 	
-	public void validLicensePlate() {
-		
-	}
 	
 	public void validPinLength() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String PIN = set.getString("PIN");
+				int length;
+				length = PIN.length();
+				if(length == 4) {
+					System.out.println("Valid PIN length");
+				} else {
+					System.out.println("Invalid length, Please try again");
+				}
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	public void validLicensePlate() {
+		try {
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	boolean valid;
+	public void validPinCharacter() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String PIN = set.getString("PIN");
+				for(int i=0;i<PIN.length();i++) {
+					char a = PIN.charAt(i);
+					if(a == '/' ||a == '@' ||a == '%' ||a == '&' ||a == '$') {
+						valid = false;
+						System.out.println("Invalid Pin. Please enter a valid four digit PIN");
+					} else {
+						valid = true;
+						System.out.println("Valid four digit PIN");
+					}
+				}
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
 		
 	}
 
