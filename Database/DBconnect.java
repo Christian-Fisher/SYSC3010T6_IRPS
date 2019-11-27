@@ -75,8 +75,24 @@ public class DBconnect {
 			System.out.println(ex);
 		}
 	}
+	boolean validPlate;
 	public void validLicensePlate() {
 		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String License_Plate = set.getString("License Plate");
+				for(int i=0;i<License_Plate.length();i++) {
+					char b = License_Plate.charAt(i);
+					if(b == '/' ||b == '@' ||b == '%' ||b == '&' ||b == '$') {
+						valid = false;
+						System.out.println("Invalid Plate. Please enter a valid License Plate");
+					} else {
+						valid = true;
+					}
+				}
+				System.out.println("Valid License Plate");
+			}
 			
 		}catch(Exception ex) {
 			System.out.println(ex);
@@ -97,9 +113,9 @@ public class DBconnect {
 						System.out.println("Invalid Pin. Please enter a valid four digit PIN");
 					} else {
 						valid = true;
-						System.out.println("Valid four digit PIN");
 					}
 				}
+				System.out.println("Valid four digit PIN");
 			}
 			
 		}catch(Exception ex) {
