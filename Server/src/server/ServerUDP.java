@@ -123,14 +123,13 @@ public class ServerUDP {
     }
 
     public void sendToAppLogin(String loginMessage[]) {
-        String data = "LOG:";
         try {
             if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
-                DatagramPacket loginRequest = new DatagramPacket((data + "true").getBytes(), (data + "true").getBytes().length, AppAddress, 2000);
+                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "true").getBytes(), (LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "true").getBytes().length, AppAddress, 2000);
                 System.out.println("TRUERE");
                 sendSocket.send(loginRequest);
             } else {
-                DatagramPacket loginRequest = new DatagramPacket((data + "false").getBytes(), (data + "false").getBytes().length, AppAddress, 2000);
+                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "false").getBytes(), (LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "false").getBytes().length, AppAddress, 2000);
                 sendSocket.send(loginRequest);
                 System.out.println("FALSE");
             }
