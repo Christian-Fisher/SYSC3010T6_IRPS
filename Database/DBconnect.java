@@ -99,6 +99,27 @@ public class DBconnect {
 		}
 	}
 	
+	
+	public void validLicensePlateLength() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String License_Plate = set.getString("License Plate");
+				int licensePlateLength;
+				licensePlateLength = License_Plate.length();
+				if(licensePlateLength == 6) {
+					System.out.println("Valid License Plate length");
+				} else {
+					System.out.println("Invalid License Plate length");
+				}
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
 	boolean valid;
 	public void validPinCharacter() {
 		try {
@@ -121,7 +142,6 @@ public class DBconnect {
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
-		
 	}
 
 }

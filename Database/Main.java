@@ -8,6 +8,7 @@ public class Main {
 		connect.validPinLength();
 		connect.validLicensePlate();
 		connect.validPinCharacter();
+		connect.validLicensePlateLength();
 		
 	}
 
