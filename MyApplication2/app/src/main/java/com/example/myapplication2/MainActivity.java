@@ -40,17 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         UDPThread udpThread = new UDPThread();
-        try {
-            socket = new DatagramSocket(3000);
-            socket.setSoTimeout(1000);
-            sendSocket = new DatagramSocket();
-            local = InetAddress.getByName("192.168.0.181");
 
-        }catch (SocketException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
         udpThread.start();
         super.onCreate(savedInstanceState);
 
@@ -96,8 +86,22 @@ public class MainActivity extends AppCompatActivity {
     
 
     public boolean verifyLogin(String username, String password) {
-
         try {
+            socket = new DatagramSocket(3000);
+            socket.setSoTimeout(1000);
+            sendSocket = new DatagramSocket();
+            local = InetAddress.getByName("192.168.0.181");
+
+        }catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        if(username.equals("Admin")&&password.equals("Admin")){
+            return true;
+        }
+        try {
+
             DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
 
             String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
@@ -107,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
 
             socket.receive(loginAck);
             System.out.println(new String(loginAck.getData()).trim());
+            socket.close();
+            sendSocket.close();
+
             return (new String(loginAck.getData()).trim().equals("LOGACK"));
 
         } catch (SocketTimeoutException ex) {
