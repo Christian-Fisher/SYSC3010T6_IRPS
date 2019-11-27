@@ -54,7 +54,7 @@ public class UDPThread extends Thread {
             try {
                 appQueue = new LinkedList<>();
                 ServerAddress = InetAddress.getByName("192.168.0.180");
-                local = InetAddress.getByName("localhost");
+                local = InetAddress.getByName("192.168.0.181");
                 socket = new DatagramSocket(2000);
                 socket.setSoTimeout(300);
                 sendSocket = new DatagramSocket();
@@ -81,15 +81,16 @@ public class UDPThread extends Thread {
 
                     if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)) {
 
-                        DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        DatagramPacket login = new DatagramPacket(new byte[200], 200);
 
                         socket.receive(login);
                         sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                        System.out.println(new String(login.getData()).trim());
                         if(new String(login.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].equals("true")){
                             Log.i("UDPThread","Great Success");
-                            sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, ServerAddress, 3000));
+                            sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, local, 3000));
                         }else{
-                            sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "NACK").getBytes(), (LOGIN_COMMAND + "NACK").getBytes().length, ServerAddress, 3000));
+                            sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "NACK").getBytes(), (LOGIN_COMMAND + "NACK").getBytes().length, local, 3000));
                             Log.i("UDPThread","NO Success");
 
                         }

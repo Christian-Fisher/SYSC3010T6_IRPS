@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             socket = new DatagramSocket(3000);
             socket.setSoTimeout(1000);
             sendSocket = new DatagramSocket();
-            local = InetAddress.getByName("localhost");
+            local = InetAddress.getByName("192.168.0.181");
 
         }catch (SocketException e) {
             e.printStackTrace();
@@ -80,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
                 new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim())) {
+                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim())) {
                     Log.i("Main", "Good login");
                     Intent LoginIntent = new Intent(MainActivity.this, book.class);
                     startActivity(LoginIntent);
-//                } else {
-//                    Log.i("Main", "Bad login");
-//                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-//                }
+                } else {
+                    Log.i("Main", "Bad login");
+                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
         }
         );
@@ -96,23 +96,25 @@ public class MainActivity extends AppCompatActivity {
     
 
     public boolean verifyLogin(String username, String password) {
-        DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
 
         try {
+            DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
+
             String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
             DatagramPacket loginPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
 
             sendSocket.send(loginPacket);
+
             socket.receive(loginAck);
             System.out.println(new String(loginAck.getData()).trim());
+            return (new String(loginAck.getData()).trim().equals("LOGACK"));
 
         } catch (SocketTimeoutException ex) {
-            System.err.println("Bad things happening");
+            Toast.makeText(MainActivity.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         } catch (IOException e) {
-            System.err.println(e + "heartbeat app failed");
+            Toast.makeText(MainActivity.this, "IO Bad wtf", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }
-        return (new String(loginAck.getData()).trim().equals("LOGACK"));
-
+    return false;
     }
 
     @Override
