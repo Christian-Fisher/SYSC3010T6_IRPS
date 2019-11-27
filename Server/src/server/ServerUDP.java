@@ -26,15 +26,16 @@ public class ServerUDP {
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;
-    int count =0;
+    int count = 0;
+
     public ServerUDP() {
         try {
 
             socket = new DatagramSocket(1000); // Creates new socket for any outgoing packets
             sendSocket = new DatagramSocket();
-
+            socket.setSoTimeout(2000);
             ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
-            AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
+            AppAddress = InetAddress.getByName("192.168.0.181"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
@@ -125,10 +126,12 @@ public class ServerUDP {
         try {
             if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
                 DatagramPacket loginRequest = new DatagramPacket((data + "true").getBytes(), (data + "true").getBytes().length, AppAddress, 2000);
+                System.out.println("TRUERE");
                 sendSocket.send(loginRequest);
             } else {
                 DatagramPacket loginRequest = new DatagramPacket((data + "false").getBytes(), (data + "false").getBytes().length, AppAddress, 2000);
                 sendSocket.send(loginRequest);
+                System.out.println("FALSE");
             }
             DatagramPacket LoginAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             socket.receive(LoginAck);
@@ -208,23 +211,23 @@ public class ServerUDP {
          */
         while (true) {
             try {
-                String heartbeatParkingResponse = udp.heartbeatParking();
-
-                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
-
-                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
-                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-
-                    if (split1String[0].equals(IR_COMMAND)) {
-                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
-
-                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-                        udp.sendToArduino(split1String[1].equals("1234"));
-
-                    } else if (split1String[0].equals(LED_COMMAND)) {
-                        udp.sendToLED("A2", Boolean.TRUE);
-                    }
-                }
+//                String heartbeatParkingResponse = udp.heartbeatParking();
+//
+//                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
+//
+//                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
+//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+//
+//                    if (split1String[0].equals(IR_COMMAND)) {
+//                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
+//
+//                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
+//                        udp.sendToArduino(split1String[1].equals("1234"));
+//
+//                    } else if (split1String[0].equals(LED_COMMAND)) {
+//                        udp.sendToLED("A2", Boolean.TRUE);
+//                    }
+//                }
                 String heartbeatAppResponse = udp.heartbeatApp();
                 if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
                     String message = new String(heartbeatAppResponse.getBytes()).trim();
