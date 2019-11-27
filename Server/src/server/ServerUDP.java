@@ -21,9 +21,9 @@ public class ServerUDP {
     private final static String LED_COMMAND = "LED";
     private final static String ARDUINO_COMMAND = "ARD";
     private final static String NOTHING_TO_REPORT = "NA";
-        private final static String IR_COMMAND = "IR";
+    private final static String IR_COMMAND = "IR";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
-
+    private final static String BOOKING_COMMAND = "BOO";
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
     private final static int LOT_SIZE = 9;
@@ -111,7 +111,7 @@ public class ServerUDP {
     }
 
     public void sendToIR(String IRMessage[]) {
-        String data = "IRACK";
+        String data = IR_COMMAND+"ACK";
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2000);
             sendSocket.send(LoginAck);
@@ -125,11 +125,11 @@ public class ServerUDP {
     public void sendToAppLogin(String loginMessage[]) {
         try {
             if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
-                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "true").getBytes(), (LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "true").getBytes().length, AppAddress, 2000);
+                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "true").getBytes(), (LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "true").getBytes().length, AppAddress, 2000);
                 System.out.println("TRUERE");
                 sendSocket.send(loginRequest);
             } else {
-                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "false").getBytes(), (LOGIN_COMMAND+COMMAND_SPLIT_REGEX + "false").getBytes().length, AppAddress, 2000);
+                DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "false").getBytes(), (LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "false").getBytes().length, AppAddress, 2000);
                 sendSocket.send(loginRequest);
                 System.out.println("FALSE");
             }
@@ -151,8 +151,25 @@ public class ServerUDP {
 
             DatagramPacket ClaimPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
             DatagramPacket ClaimAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            System.out.println(ClaimResponse);
             sendSocket.send(ClaimPacket);
             socket.receive(ClaimAck);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+
+    }
+    public void sendToBooking(String spotToBook) {
+        try {
+            String ClaimResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
+            if (spotToBook.equals("A2")) {
+                ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
+            }
+
+            DatagramPacket bookPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
+            DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
+            sendSocket.send(bookPacket);
+            socket.receive(bookAck);
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -241,6 +258,8 @@ public class ServerUDP {
 
                     } else if (split1String[0].equals(CLAIM_COMMAND)) {
                         udp.sendToAppClaim(split1String[1]);
+                    }else if(split1String[0].equals(BOOKING_COMMAND)){
+                        udp.sendToBooking(split1String[1]);
                     }
                 }
                 Thread.sleep(250);
