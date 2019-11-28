@@ -25,14 +25,12 @@ public class MainActivity extends AppCompatActivity {
     EditText mTextUsername;    // this is the space were the user write his user name or student number
     EditText mTextpassword;   // password or code
     Button mButtonLogin;      // button that takes the user to the other page to book if the login information were right
-    InetAddress local;
-    DatagramSocket sendSocket, socket;
-    private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
+
     private final static String LOGIN_COMMAND = "LOG";
-    private final static String CLAIM_COMMAND = "CLA";
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
-
+    InetAddress local;
+    DatagramSocket sendSocket, socket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             return (new String(loginAck.getData()).trim().equals("LOGACK"));
 
         } catch (SocketTimeoutException ex) {
-            Toast.makeText(MainActivity.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+            Toast.makeText(MainActivity.this, "Socket timed pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         } catch (IOException e) {
             Toast.makeText(MainActivity.this, "IO Bad wtf", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }

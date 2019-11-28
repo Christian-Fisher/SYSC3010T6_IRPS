@@ -7,11 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -27,10 +23,6 @@ import java.net.UnknownHostException;
 
 public class book extends AppCompatActivity {
 
-
-
-    EditText mTextspotnumber;    // variables for buttons and text spaces
-
     TextView mTextavaiablespot;
 
     Button mButtonsubmitclaim;
@@ -40,8 +32,6 @@ public class book extends AppCompatActivity {
 
 
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
-    private final static String LOGIN_COMMAND = "LOG";
-    private final static String CLAIM_COMMAND = "CLA";
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
     private final static String BOOKING_COMMAND = "BOO";
@@ -103,7 +93,7 @@ public class book extends AppCompatActivity {
 
         mTextavaiablespot = (TextView)findViewById(R.id.textview_Availablespots);
 
-      
+
 
 
         lot[0].setOnClickListener(new View.OnClickListener() {

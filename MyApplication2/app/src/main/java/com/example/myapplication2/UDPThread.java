@@ -2,7 +2,6 @@ package com.example.myapplication2;
 
 
 import android.util.Log;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -15,7 +14,6 @@ import java.util.Queue;
 public class UDPThread extends Thread {
     private final static String COMMAND_SPLIT_REGEX = ":";
     private final static String DATA_SPLIT_REGEX = ",";
-    private final static String LED_COMMAND = "LED";
     private final static String NOTHING_TO_REPORT = "NA";
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String LOGIN_COMMAND = "LOG";
