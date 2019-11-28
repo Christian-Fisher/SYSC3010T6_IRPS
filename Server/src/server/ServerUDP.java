@@ -162,10 +162,10 @@ public class ServerUDP {
     public void sendToBooking(String spotToBook) {
         try {
             String ClaimResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
-            if (spotToBook.equals("A2")) {
+            if (spotToBook.equals("0")||spotToBook.equals("1")) {
                 ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
+                System.out.println("Spot booked (A!)");
             }
-
             DatagramPacket bookPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
             DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(bookPacket);
@@ -178,10 +178,11 @@ public class ServerUDP {
 
     public void sendToAppOcccupancy() {
         try {
-            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "true";
+            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "false";
             for (int x = 1; x < LOT_SIZE; x++) {
                 occupancyMessage += DATA_SPLIT_REGEX + false;
             }
+            System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
             DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(OccupancyUpdate);
