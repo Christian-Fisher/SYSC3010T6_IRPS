@@ -93,9 +93,19 @@ public class UDPThread extends Thread {
 
 
                     } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+
                         DatagramPacket lotOccupancyPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+                        DatagramPacket occAck = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
+
                         socket.receive(lotOccupancyPacket);
                         sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+
+
+                        sendSocket.send(new DatagramPacket(lotOccupancyPacket.getData(), lotOccupancyPacket.getData().length, local, 3001));
+                        socket.receive(occAck);
+
+
+                        appQueue.remove();
 
                     } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(CLAIM_COMMAND)) {
 
@@ -103,21 +113,21 @@ public class UDPThread extends Thread {
                         socket.receive(claimPacket);
                         sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                         if (new String(claimPacket.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].equals("true")) {
-                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, local, 3000));
+                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, local, 3002));
                         } else {
-                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "NACK").getBytes(), (CLAIM_COMMAND + "NACK").getBytes().length, local, 3000));
+                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "NACK").getBytes(), (CLAIM_COMMAND + "NACK").getBytes().length, local, 3002));
 
                         }
                         appQueue.remove();
                     }else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(BOOKING_COMMAND)){
-                        DatagramPacket bookPacket = new DatagramPacket(new byte[100], 100);
+                        DatagramPacket bookPacket = new DatagramPacket(new byte[200], 200);
                         socket.receive(bookPacket);
                         sendSocket.send(new DatagramPacket((BOOKING_COMMAND + "ACK").getBytes(), (BOOKING_COMMAND+ "ACK").getBytes().length, ServerAddress, 1000));
                         if (new String(bookPacket.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].equals("true")) {
                             Log.i("UDPThread BOOK", "Great Success");
-                            sendSocket.send(new DatagramPacket((BOOKING_COMMAND + "ACK").getBytes(), (BOOKING_COMMAND + "ACK").getBytes().length, local, 3000));
+                            sendSocket.send(new DatagramPacket((BOOKING_COMMAND + "ACK").getBytes(), (BOOKING_COMMAND + "ACK").getBytes().length, local, 3001));
                         } else {
-                            sendSocket.send(new DatagramPacket((BOOKING_COMMAND + "NACK").getBytes(), (BOOKING_COMMAND + "NACK").getBytes().length, local, 3000));
+                            sendSocket.send(new DatagramPacket((BOOKING_COMMAND + "NACK").getBytes(), (BOOKING_COMMAND + "NACK").getBytes().length, local, 3001));
                             Log.i("UDPThread BOOK", "NO Success");
 
                         }

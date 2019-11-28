@@ -111,8 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
             socket.receive(loginAck);
             System.out.println(new String(loginAck.getData()).trim());
-            socket.close();
-            sendSocket.close();
+
 
             return (new String(loginAck.getData()).trim().equals("LOGACK"));
 

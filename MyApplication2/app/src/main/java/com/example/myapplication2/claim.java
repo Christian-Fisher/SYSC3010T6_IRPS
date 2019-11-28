@@ -56,7 +56,10 @@ public class claim extends AppCompatActivity {
                        public void onClick(View view) {
 
                           String plateNumber = mTextlicencesnumber.getText().toString().trim();
+                          if(plateNumber.equals("")){
+                              Toast.makeText(claim.this, "Invalid Licence Plate", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
 
+                          }else
                           if(verifyClaim(plateNumber)) {
                               Intent LoginIntent = new Intent(claim.this, finalpage.class);
                               startActivity(LoginIntent);
@@ -77,7 +80,7 @@ public class claim extends AppCompatActivity {
     }
     public boolean verifyClaim(String license) {
         try {
-            socket = new DatagramSocket(3000);
+            socket = new DatagramSocket(3002);
             socket.setSoTimeout(1000);
             sendSocket = new DatagramSocket();
             local = InetAddress.getByName("192.168.0.181");
