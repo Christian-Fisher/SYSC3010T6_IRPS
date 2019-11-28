@@ -1,18 +1,31 @@
 package com.example.myapplication2;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import java.util.Date;
+import android.widget.Toast;
 
-import java.util.Calendar;
-public class book<date> extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+
+
+
+
+
+
+public class book extends AppCompatActivity {
 
 
 
@@ -21,33 +34,57 @@ public class book<date> extends AppCompatActivity {
     TextView mTextavaiablespot;
 
     Button mButtonsubmitclaim;
-    Button A1;
-    Button A2;
-    Button A3;
-    Button B1;
-    Button B2;
-    Button B3;
-    Button C1;
-    Button C2;
-    Button C3;
-    boolean []flags;
+    Button lot[] = new Button[9];
+    boolean []flags = new boolean[9];
+
+
+
+    private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
+    private final static String LOGIN_COMMAND = "LOG";
+    private final static String CLAIM_COMMAND = "CLA";
+    private final static String COMMAND_SPLIT_REGEX = ":";
+    private final static String DATA_SPLIT_REGEX = ",";
+    private final static String BOOKING_COMMAND = "BOO";
+    InetAddress local;
+    DatagramSocket sendSocket, socket;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book);
+        try {
+            socket = new DatagramSocket(3001);
+            socket.setSoTimeout(1000);
+            sendSocket = new DatagramSocket();
+            local = InetAddress.getByName("192.168.0.181");
 
-        A1= (Button)findViewById(R.id.A1);
-        A2 = (Button)findViewById(R.id.A2);
-        A3= (Button)findViewById(R.id.A3);
-        B1=(Button)findViewById(R.id.B1);
-        B1=(Button)findViewById(R.id.B2);
-        B1=(Button)findViewById(R.id.B3);
-        C1=(Button)findViewById(R.id.C1);
-        C2=(Button)findViewById(R.id.C2);
-        C3=(Button)findViewById(R.id.C3);
+        }catch (SocketException e) {
+            System.out.println(e + "Oh boy");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+
+
+        lot[0]=(Button)findViewById(R.id.A1);
+        lot[1]=(Button)findViewById(R.id.A2);
+        lot[2]=(Button)findViewById(R.id.A3);
+        lot[3]=(Button)findViewById(R.id.B1);
+        lot[4]=(Button)findViewById(R.id.B2);
+        lot[5]=(Button)findViewById(R.id.B3);
+        lot[6]=(Button)findViewById(R.id.C1);
+        lot[7]=(Button)findViewById(R.id.C2);
+        lot[8]=(Button)findViewById(R.id.C3);
+        getOccupancy();
 
 
         mButtonsubmitclaim = (Button)findViewById(R.id.button_submitclaim);
+
+
+
+
+
         mButtonsubmitclaim.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -66,15 +103,19 @@ public class book<date> extends AppCompatActivity {
 
         mTextavaiablespot = (TextView)findViewById(R.id.textview_Availablespots);
 
+      
 
-        A1.setOnClickListener(new View.OnClickListener() {
+
+        lot[0].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-
+                if (bookSpot("0")){
                 Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
                 // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
            // if(avilablespots[0]= "true"){}
@@ -86,14 +127,16 @@ public class book<date> extends AppCompatActivity {
 
         } );
 
-        A2.setOnClickListener(new View.OnClickListener() {
+        lot[1].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("1")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
 
@@ -108,14 +151,16 @@ public class book<date> extends AppCompatActivity {
 
        // }
 
-        A3.setOnClickListener(new View.OnClickListener() {
+        lot[2].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("2")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
         // if (avilable spots [2]= "true"){
@@ -127,15 +172,17 @@ public class book<date> extends AppCompatActivity {
 
         } );
 
-
-        B1.setOnClickListener(new View.OnClickListener() {
+        lot[3].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("3")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
             // if (avilable spots [3]= "true"){
 
@@ -149,14 +196,17 @@ public class book<date> extends AppCompatActivity {
 
 
 
-        B2.setOnClickListener(new View.OnClickListener() {
+        lot[4].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("4")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
             // if (avilable spots [4]= "true"){
 
@@ -169,14 +219,17 @@ public class book<date> extends AppCompatActivity {
         } );
 
 
-        B3.setOnClickListener(new View.OnClickListener() {
+        lot[5].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("5")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
             // if (avilable spots [5]= "true"){
 
@@ -190,14 +243,17 @@ public class book<date> extends AppCompatActivity {
 
 
 
-        C1.setOnClickListener(new View.OnClickListener() {
+        lot[6].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("6")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
             // if (avilable spots [6]= "true"){
@@ -209,14 +265,17 @@ public class book<date> extends AppCompatActivity {
 
         } );
 
-        C2.setOnClickListener(new View.OnClickListener() {
+        lot[7].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("7")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
             // if (avilable spots [7]= "true"){
@@ -229,14 +288,17 @@ public class book<date> extends AppCompatActivity {
         } );
 
 
-        C3.setOnClickListener(new View.OnClickListener() {
+        lot[8].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
 
-                Intent finalpageIntent= new Intent(book.this,finalpage.class);
-
-                // after booking we go to another page with telss the user's booking is successfuly  done
-                startActivity(finalpageIntent);
+                if (bookSpot("8")){
+                    Intent finalpageIntent= new Intent(book.this,finalpage.class);
+                    // after booking we go to another page with telss the user's booking is successfuly  done
+                    startActivity(finalpageIntent);}
+                else{
+                    Toast.makeText(book.this, "Booking Failed", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                }
             }
 
 
@@ -247,15 +309,84 @@ public class book<date> extends AppCompatActivity {
             // }
 
         } );
+    }
+
+    public boolean bookSpot(String spot){
+
+        try {
+            socket = new DatagramSocket(3001);
+            socket.setSoTimeout(1000);
+            sendSocket = new DatagramSocket();
+            local = InetAddress.getByName("192.168.0.181");
+
+        }catch (SocketException e) {
+            System.out.println(e + "Oh boy");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            DatagramPacket bookAck = new DatagramPacket(new byte[100], 100);
+
+            String dataToSend = BOOKING_COMMAND+ COMMAND_SPLIT_REGEX + spot;
+            DatagramPacket bookPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
+
+            sendSocket.send(bookPacket);
+
+            socket.receive(bookAck);
+            System.out.println(new String(bookAck.getData()).trim());
+            return (new String(bookAck.getData()).trim().equals(BOOKING_COMMAND+"ACK"));
+
+        } catch (SocketTimeoutException ex) {
+            Toast.makeText(book.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+        } catch (IOException e) {
+            Toast.makeText(book.this, e.getMessage(), Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+        }
+        return false;
+    }
+
+    public void getOccupancy(){
 
 
 
+            try {
+                DatagramPacket occAck = new DatagramPacket(new byte[100], 100);
 
+                String dataToSend = OCCUPANCY_UPDATE_COMMAND+ COMMAND_SPLIT_REGEX ;
+                DatagramPacket occPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
 
+                sendSocket.send(occPacket);
 
+                socket.receive(occAck);
+                String receivedData[] = new String(occAck.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX);
+                sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, local, 2000));
+                for(int i =0; i<flags.length; i++){
+                    if(receivedData[i].equals("true")){
+                        flags[i]=true;
+                    }else{
+                        flags[i]=false;
+                    }
+                }
+                for(int x = 0; x<flags.length; x++){
+                    if(!flags[x]) {
+                        lot[x].setVisibility(View.VISIBLE);
+                    }else{
+                        lot[x].setVisibility(View.INVISIBLE);
+                    }
+                }
 
+            } catch (SocketTimeoutException ex) {
+                Toast.makeText(book.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+            } catch (IOException e) {
+                Toast.makeText(book.this, e.getMessage(), Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+            }
+        }
+
+    @Override
+    public void onBackPressed(){
 
     }
+
 
 
 

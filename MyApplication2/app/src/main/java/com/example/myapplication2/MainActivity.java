@@ -2,27 +2,23 @@ package com.example.myapplication2;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.os.StrictMode;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-import java.net.*;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Stack;
+import java.net.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     EditText mTextpassword;   // password or code
     Button mButtonLogin;      // button that takes the user to the other page to book if the login information were right
     InetAddress local;
+    DatagramSocket sendSocket, socket;
     private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
     private final static String LOGIN_COMMAND = "LOG";
     private final static String CLAIM_COMMAND = "CLA";
@@ -38,8 +35,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        appMainThread thread = new appMainThread();
-        thread.run();
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+
+        UDPThread udpThread = new UDPThread();
+
+        udpThread.start();
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -51,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
 
         fab.setOnClickListener(
                 new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view
-                    ) {
-                        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                }
+            @Override
+            public void onClick(View view
+            ) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        }
         );
 
         mTextUsername = (EditText) findViewById(R.id.edittext_username);  // adding the id to the text space so we can use it in our methods
@@ -66,128 +68,59 @@ public class MainActivity extends AppCompatActivity {
 
         mButtonLogin.setOnClickListener(
                 new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view
-                    ) {
-                        if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim()) == true) {
-                            Intent LoginIntent = new Intent(MainActivity.this, book.class);
-                            startActivity(LoginIntent);
-                        } else {
-                            Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-                        }
-                    }
+            @Override
+            public void onClick(View view) {
+                if (verifyLogin(mTextUsername.getText().toString().trim(), mTextpassword.getText().toString().trim())) {
+                    Log.i("Main", "Good login");
+                    Intent LoginIntent = new Intent(MainActivity.this, book.class);
+                    startActivity(LoginIntent);
+                } else {
+                    Log.i("Main", "Bad login");
+                    Toast.makeText(MainActivity.this, "Login Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
                 }
+            }
+        }
         );
     }
 
-    class appMainThread implements Runnable {
-
-        private final static String COMMAND_SPLIT_REGEX = ":";
-        private final static String DATA_SPLIT_REGEX = ",";
-        private final static String LED_COMMAND = "LED";
-        private final static String NOTHING_TO_REPORT = "NA";
-        private final static String OCCUPANCY_UPDATE_COMMAND = "OCC";
-        private final static String LOGIN_COMMAND = "LOG";
-        private final static String CLAIM_COMMAND = "CLA";
-
-        private final static int PACKETSIZE = 100;
-        DatagramSocket socket, sendSocket;
-        DatagramPacket packet;
-        InetAddress ServerAddress, local;
-        Stack<String> appQueue;
-
-        @Override
-        public void run() {
-            //Test
-            setup();
-
-            while (true) {
-                try {
-                    receive();
-
-                } catch (IOException e) {
-
-                }
-            }
-
-        }
-
-        public void setup() {
-            try {
-                appQueue = new Stack<>();
-                ServerAddress = InetAddress.getByName("localhost");
-                local = InetAddress.getByName("localhost");
-                socket = new DatagramSocket(2000);
-                socket.setSoTimeout(10000);
-                sendSocket = new DatagramSocket();
-
-            } catch (SocketException | UnknownHostException e) {
-                System.out.println("socket bad");
-            }
-
-        }
-
-        public void receive() throws IOException {
-
-            DatagramPacket heartbeat = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-            socket.receive(heartbeat);
-            if (new String(heartbeat.getData()).trim().equals("HBAPP")) {
-                if (appQueue.isEmpty()) {
-                    DatagramPacket heartbeatAck = new DatagramPacket(NOTHING_TO_REPORT.getBytes(), NOTHING_TO_REPORT.getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
-                } else {
-                    String heartbeatRespond = appQueue.peek();
-                    DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
-                    sendSocket.send(heartbeatAck);
-
-                    if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)) {
-                        DatagramPacket login = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(login);
-                        sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
-
-                    } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        DatagramPacket lotOccupancyPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(lotOccupancyPacket);
-                        sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
-
-                    } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(CLAIM_COMMAND)) {
-                        DatagramPacket ClaimPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                        socket.receive(ClaimPacket);
-                        sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
-
-                    }
-                }
-            } else if (new String(heartbeat.getData()).trim().equals(LOGIN_COMMAND)) {
-                String loginRequest[] = new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX);
-                appQueue.add(loginRequest[1]);
-                System.out.println("Succesfully added to queue");
-                sendSocket.send(new DatagramPacket((LOGIN_COMMAND + "ACK").getBytes(), (LOGIN_COMMAND + "ACK").length(), local, 3000));
-            }
-
-        }
-
-    }
+    
 
     public boolean verifyLogin(String username, String password) {
         try {
-            DatagramSocket socket = new DatagramSocket(3000);
-            socket.setSoTimeout(10000);
-            DatagramSocket sendSocket = new DatagramSocket();
+            socket = new DatagramSocket(3000);
+            socket.setSoTimeout(1000);
+            sendSocket = new DatagramSocket();
+            local = InetAddress.getByName("192.168.0.181");
 
-            local = InetAddress.getByName("localhost");
-            String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
-            DatagramPacket loginPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
+        }catch (SocketException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        if(username.equals("Admin")&&password.equals("Admin")){
+            return true;
+        }
+        try {
+
             DatagramPacket loginAck = new DatagramPacket(new byte[100], 100);
 
+            String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
+            DatagramPacket loginPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
+
             sendSocket.send(loginPacket);
+
             socket.receive(loginAck);
+            System.out.println(new String(loginAck.getData()).trim());
+
+
+            return (new String(loginAck.getData()).trim().equals("LOGACK"));
 
         } catch (SocketTimeoutException ex) {
-            System.err.println("Bad things happening");
+            Toast.makeText(MainActivity.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         } catch (IOException e) {
-            System.err.println(e + "heartbeat app failed");
+            Toast.makeText(MainActivity.this, "IO Bad wtf", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }
-        return false;
+    return false;
     }
 
     @Override

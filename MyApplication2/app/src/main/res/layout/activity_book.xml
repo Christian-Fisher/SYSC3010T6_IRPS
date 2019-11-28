@@ -39,8 +39,7 @@
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:text="A1"
-            android:visibility="invisible"
-            />
+            android:visibility="invisible" />
         <Button
             android:id="@+id/A2"
             android:layout_width="60dp"
@@ -87,8 +86,6 @@
         android:layout_marginTop="10dp">
 
 
-
-
         <Button
             android:id="@+id/B3"
             android:layout_width="60dp"
@@ -127,18 +124,10 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="400dp"
-        android:layout_height="200dp"
-        app:srcCompat="@drawable/design2"
+        android:layout_width="192dp"
+        android:layout_height="151dp"
         android:layout_marginTop="50dp"
-        />
-
-
-
-
-
-
-
+        app:srcCompat="@drawable/design2" />
 
     <Button
         android:id="@+id/button_submitclaim"
@@ -148,7 +137,6 @@
         android:text="Submit a claim"
 
         />
-
 
 
 </LinearLayout>
