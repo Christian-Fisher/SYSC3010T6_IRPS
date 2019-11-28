@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/textview_Availablespots"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="35dp"
             android:textStyle="bold"
             android:text="@string/available_spots"
 
@@ -129,16 +129,9 @@
     <ImageView
         android:layout_width="400dp"
         android:layout_height="200dp"
-        app:srcCompat="@drawable/black"
+        app:srcCompat="@drawable/design2"
         android:layout_marginTop="50dp"
         />
-
-
-
-
-
-
-
 
     <Button
         android:id="@+id/button_submitclaim"
