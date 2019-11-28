@@ -9,7 +9,13 @@ public class Main {
 		connect.validLicensePlate();
 		connect.validPinCharacter();
 		connect.validLicensePlateLength();
-		
+		connect.testUserNameFormat();
+		connect.pinExists();
+		connect.claimedLicensePlate();
+		connect.validPassword();
+		connect.testDatabaseEmpty();
+		connect.testSystemStatus();
+		connect.testAvailableSpots();
 	}
 
 }

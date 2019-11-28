@@ -6,6 +6,12 @@ public class DBconnect {
 	private Connection connect;
 	private Statement state;
 	private ResultSet set;
+	String Student_Number;
+	String PIN;
+	String License_Plate;
+	String Lot_Number;
+	String Spot_Number;
+	String Occupany;
 	
 	
 	DBconnect() {
@@ -25,12 +31,12 @@ public class DBconnect {
 			set = state.executeQuery(query);
 			System.out.println("Records from database");
 			while(set.next()) {
-				String Student_Number = set.getString("Student Number");
-				String PIN = set.getString("PIN");
-				String License_Plate = set.getString("License Plate");
-				String Lot_Number = set.getString("Lot Number");
-				String Spot_Number = set.getString("Spot Number");
-				String Occupany = set.getString("Occupany");
+				Student_Number = set.getString("Student Number");
+				PIN = set.getString("PIN");
+				License_Plate = set.getString("License Plate");
+				Lot_Number = set.getString("Lot Number");
+				Spot_Number = set.getString("Spot Number");
+				Occupany = set.getString("Occupany");
 				System.out.println("Student Number: "+Student_Number+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate+" "+"Lot Number: "+Lot_Number+" "+"Spot Number: "+Spot_Number+" "+"Occupany: "+Occupany);
 			}
 		}catch(Exception ex) {
@@ -82,18 +88,26 @@ public class DBconnect {
 			set = state.executeQuery(query);
 			while(set.next()) {
 				String License_Plate = set.getString("License Plate");
-				for(int i=0;i<License_Plate.length();i++) {
-					char b = License_Plate.charAt(i);
-					if(b == '/' ||b == '@' ||b == '%' ||b == '&' ||b == '$') {
-						valid = false;
-						System.out.println("Invalid Plate. Please enter a valid License Plate");
-					} else {
-						valid = true;
+				String a = License_Plate;
+				for (int i=0; i < a.length(  ); i++) {
+					if(i < 4) {
+				    System.out.println("Char " + i + " is " + a.charAt(i));
+				    Character ch =  a.charAt(i);
+				    if (!(  Character.isAlphabetic(ch) ) )  {
+					System.out.println("licence have a wrong digit or character");
+					validPlate = false;
+				    }
+					}if(i >= 4){
+						System.out.println("Char " + i + " is " + a.charAt(i));
+					    Character ch =  a.charAt(i);    
+					if (! ( Character.isDigit(ch))    )  {
+						System.out.println("licence have a wrong digit ");
+						validPlate = false;
+					}		
 					}
 				}
-				System.out.println("Valid License Plate");
+				validPlate = true ;
 			}
-			
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
@@ -108,7 +122,7 @@ public class DBconnect {
 				String License_Plate = set.getString("License Plate");
 				int licensePlateLength;
 				licensePlateLength = License_Plate.length();
-				if(licensePlateLength == 6) {
+				if(licensePlateLength == 7) {
 					System.out.println("Valid License Plate length");
 				} else {
 					System.out.println("Invalid License Plate length");
@@ -137,6 +151,157 @@ public class DBconnect {
 					}
 				}
 				System.out.println("Valid four digit PIN");
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	boolean validName;
+	public void testUserNameFormat() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String Student_Number = set.getString("Student Number");
+				String a = Student_Number;
+				for (int i=0; i < a.length(  ); i++) {
+				   Character ch =  a.charAt(i);
+				if (! ( ch == '%' ||    ch =='@' ||    ch=='+' ||  ch=='*' ||  ch== '/' || Character.isDigit(ch) ||  Character.isAlphabetic(ch))) {
+					System.out.println("wrong formate surename");
+					validName = false; 
+				}
+			}
+			validName = true;
+			System.out.println("Good Username format");
+			}
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	//Check for UDP connection
+	public void pinExists() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String PIN = set.getString("PIN");
+				if(PIN.equals("2345")) {
+					System.out.println("Pin Exists");
+				} else {
+				System.out.println("Fail, the actual value is "+PIN);
+				}
+			}
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	public void claimedLicensePlate() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String License_Plate = set.getString("License Plate");
+				if(License_Plate.equals("ABCD452")) {
+					System.out.println("Plate Exists");
+				} else {
+				System.out.println("Fail, the actual plate number is "+License_Plate);
+				}
+			}
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	public void validPassword() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String Occupany = set.getString("Occupany");
+				if(Occupany.equals("127")) {
+					System.out.println("Password Exists");
+				} else {
+				System.out.println("Fail, the actual plate number is "+Occupany);
+				}
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	boolean status;
+	public void testDatabaseEmpty() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				if((Student_Number) != null) {
+				System.out.println("Data Exists");
+				status = true;
+			  } else {
+			status = false;
+			System.out.println("Empty Table");
+			  }
+			}
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	public void testSystemStatus() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String Lot_Number = set.getString("Lot Number");
+				//int count;
+				if(Lot_Number == " ") {
+					System.out.println("Parking is now full");
+				}
+			}
+			System.out.println("Parking is not full");
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	
+	public void testAvailableSpots() {
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				String Spot_Number = set.getString("Spot Number");
+				if(Spot_Number.equals("A1")) {
+					System.out.println("A1 is not avalable");
+				}
+				if(Spot_Number.equals("A2")) {
+					System.out.println("A2 is not avalable");
+				}
+				if(Spot_Number.equals("A3")) {
+					System.out.println("A3 is not avalable");
+				}
+				if(Spot_Number.equals("B1")) {
+					System.out.println("B1 is not avalable");
+				}
+				if(Spot_Number.equals("B2")) {
+					System.out.println("B2 is not avalable");
+				}
+				if(Spot_Number.equals("B3")) {
+					System.out.println("B3 is not avalable");
+				}
+				if(Spot_Number.equals("C1")) {
+					System.out.println("C1 is not avalable");
+				}
+				if(Spot_Number.equals("C2")) {
+					System.out.println("C2 is not avalable");
+				}
+				if(Spot_Number.equals("C3")) {
+					System.out.println("C3 is not avalable");
+				}
 			}
 			
 		}catch(Exception ex) {
