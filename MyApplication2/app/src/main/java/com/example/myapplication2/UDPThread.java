@@ -111,9 +111,9 @@ public class UDPThread extends Thread {
                         socket.receive(claimPacket);
                         sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                         if (new String(claimPacket.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].equals("true")) {
-                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, local, 3002));
+                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "ACK").getBytes(), (CLAIM_COMMAND + "ACK").getBytes().length, local, 3005));
                         } else {
-                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "NACK").getBytes(), (CLAIM_COMMAND + "NACK").getBytes().length, local, 3002));
+                            sendSocket.send(new DatagramPacket((CLAIM_COMMAND + "NACK").getBytes(), (CLAIM_COMMAND + "NACK").getBytes().length, local, 3005));
 
                         }
                         appQueue.remove();

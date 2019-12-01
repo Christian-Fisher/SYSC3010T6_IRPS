@@ -300,6 +300,10 @@ public class book extends AppCompatActivity {
 
         } );
     }
+    protected void onResume() {
+        super.onResume();
+        getOccupancy();
+    }
 
     public boolean bookSpot(String spot){
 
