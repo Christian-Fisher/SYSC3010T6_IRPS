@@ -1,52 +1,40 @@
 import time
 import RPi.GPIO as GPIO
-import socket
 
-#msgFromClient       = "Hello UDP Server"
-#bytesToSend         = str.encode(msgFromClient)
-serverAddressPort   = ("127.0.0.1", 20001)
-bufferSize          = 1024
-
-ledPins = [12,13,14,15,16,17,18,19,20]
-ledFlag = []
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+ledPins = [2,3,4,5,6,7,8,9,10] # arrays of GPIO pins as output
 
-for i in range (0,8):
-    GPIO.setup(ledPins[i], GPIO.OUT)
-"""
-GPIO.setup(12,GPIO.OUT)
-GPIO.setup(13,GPIO.OUT)
-GPIO.setup(14,GPIO.OUT)
-GPIO.setup(15,GPIO.OUT)
-GPIO.setup(16,GPIO.OUT)
-GPIO.setup(17,GPIO.OUT)
-GPIO.setup(18,GPIO.OUT)
-GPIO.setup(19,GPIO.OUT)
-GPIO.setup(20,GPIO.OUT)
-"""
+#for i in range (0,2):
+#    GPIO.setup(ledPins[i], GPIO.OUT)
 
-#Below: Receiving string value as UDP datagram forever
+GPIO.setup(2,GPIO.OUT)  #GPIO pin2  -> A0-RG-LED as output
+GPIO.setup(3,GPIO.OUT)  #GPIO pin3  -> A1-RG-LED as output
+GPIO.setup(4,GPIO.OUT)  #GPIO pin4  -> A2-RG-LED as output
+GPIO.setup(5,GPIO.OUT)  #GPIO pin5  -> B0-RG-LED as output
+GPIO.setup(6,GPIO.OUT)  #GPIO pin6  -> B1-RG-LED as output
+GPIO.setup(7,GPIO.OUT)  #GPIO pin7  -> B2-RG-LED as output
+GPIO.setup(8,GPIO.OUT)  #GPIO pin8  -> C0-RG-LED as output
+GPIO.setup(9,GPIO.OUT)  #GPIO pin9  -> C1-RG-LED as output
+GPIO.setup(10,GPIO.OUT) #GPIO pin10 -> C2-RG-LED as output
 
-while True:
-# Create a UDP socket at client side
+def toggleLED(index, state): #method to toggle indexed RG-LED pair
+    if(state): # If state = true R-LED on & G-LED off -> indexed spot occupied/booked
+        GPIO.output (ledPins[index], GPIO.HIGH)
+        print("spot"+str(index)+" is occupied")
+    if(state==False): # If state = false R-LED off & G-LED on -> indexed spot is empty/bookig timeout
+        GPIO.output (ledPins[index], GPIO.LOW)
+        print("spot"+str(index)+" is empty")
+        
+for x in range(0, 9):
+    toggleLED(x, False)
+    time.sleep(2)
+    toggleLED(x, True)
+#toggleLED(0, True)
+#time.sleep(2)
+#toggleLED(1, True)
+#time.sleep(1)
+#toggleLED(0, False)
+GPIO.cleanup()
 
-    UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-    msgFromServer = UDPClientSocket.recvfrom(bufferSize)
-    data = "Message from Server {}".format(msgFromServer[0])
     
-    time.sleep (1)
-    ledFlag = list(data) # Creating a arraylist of char from data
-    for t in range (0,8):
-        if (ledFlag[t] == '1'):
-            GPIO.output (ledPins[t], GPIO.HIGH)
-        elif (ledFlag[t] == '0'):
-            GPIO.output (ledPins[t], GPIO.LOW)
-        else: # Received data incombatible
-            print("Received flag is not recognized")
-finally:
-    GPIO.cleanup()
-    
-    
-            
-
-

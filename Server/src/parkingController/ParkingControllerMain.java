@@ -26,7 +26,7 @@ public class ParkingControllerMain {
     private final static int PACKETSIZE = 100;
     DatagramSocket socket, sendSocket;
     DatagramPacket packet;
-    InetAddress ServerAddress;
+    InetAddress ServerAddress, ParkingControllerAddress;
     Queue<String> parkingControllerQueue;
 
     public static void main(String[] args) {
@@ -47,6 +47,7 @@ public class ParkingControllerMain {
         try {
             parkingControllerQueue = new LinkedList<>();
             ServerAddress = InetAddress.getByName("localhost");
+            ParkingControllerAddress = InetAddress.getByName("192.168.0.182");
             socket = new DatagramSocket(2000);
             socket.setSoTimeout(10000);
             sendSocket = new DatagramSocket();
@@ -79,34 +80,37 @@ public class ParkingControllerMain {
                 if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(ARDUINO_COMMAND)) {
 
                     DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                    try {
                         socket.receive(PinVerificationPacket);
                         sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                        PinVerificationPacket.setAddress(ParkingControllerAddress);
+                        PinVerificationPacket.setPort(3000);
+                        sendSocket.send(PinVerificationPacket);
+                        socket.receive(new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE));
                         parkingControllerQueue.remove();
 
-                    } catch (SocketTimeoutException e) {
-                        socket.send(heartbeatAck);
-                    }
-
+                    
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(IR_COMMAND)) {
-                    try {
+                   
                         DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(IRPacket);
                         parkingControllerQueue.remove();
-                    } catch (SocketTimeoutException e) {
-                        socket.send(heartbeatAck);
-                    }
+                    
                 } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)) {
                     DatagramPacket LEDPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                    try {
+                    
                         socket.receive(LEDPacket);
                         sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                        LEDPacket.setAddress(ParkingControllerAddress);
+                        LEDPacket.setPort(3001);
+                        sendSocket.send(LEDPacket);
                         parkingControllerQueue.remove();
-                    } catch (SocketTimeoutException e) {
-                        socket.send(heartbeatAck);
-                    }
+                    
                 }
             }
+        }else{
+            parkingControllerQueue.add(new String(heartbeat.getData()).trim());
+                System.out.println("Processing Request");
+            
         }
     }
 
