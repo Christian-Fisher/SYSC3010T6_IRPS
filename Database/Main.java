@@ -14,7 +14,6 @@ public class Main {
 		connect.claimedLicensePlate();
 		connect.validPassword();
 		connect.testDatabaseEmpty();
-		connect.testSystemStatus();
 		connect.testAvailableSpots();
 	}
 
