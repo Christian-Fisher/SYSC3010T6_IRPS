@@ -349,7 +349,8 @@ public class DBconnect_loulia {
 		}
 	}
 	
-	public void testAvailableSpots() {
+	public boolean[] testAvailableSpots() {
+		boolean [] array = null;
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
@@ -357,37 +358,74 @@ public class DBconnect_loulia {
 				String Spot_Number = set.getString("Spot Number");
 				if(Spot_Number.equals("A1")) {
 					System.out.println("A1 is not avalable");
+					array[0]= false;
+				}
+				else {
+					array[0]= true;
 				}
 				if(Spot_Number.equals("A2")) {
 					System.out.println("A2 is not avalable");
+					array[1]= false;
+				}
+				else {
+					array[1]= true;
 				}
 				if(Spot_Number.equals("A3")) {
 					System.out.println("A3 is not avalable");
+					array[2]= false;
+				}
+				else {
+					array[2]= true;
 				}
 				if(Spot_Number.equals("B1")) {
 					System.out.println("B1 is not avalable");
+					array[3]= false;
+				}
+				else {
+					array[3]= true;
 				}
 				if(Spot_Number.equals("B2")) {
 					System.out.println("B2 is not avalable");
+					array[4]= false;
+				}
+				else {
+					array[4]= true;
 				}
 				if(Spot_Number.equals("B3")) {
 					System.out.println("B3 is not avalable");
+					array[5]= false;
+				}
+				else {
+					array[5]= true;
 				}
 				if(Spot_Number.equals("C1")) {
 					System.out.println("C1 is not avalable");
+					array[6]= false;
+				}
+				else {
+					array[6]= true;
 				}
 				if(Spot_Number.equals("C2")) {
 					System.out.println("C2 is not avalable");
+					array[7]= false;
+				}
+				else {
+					array[7]= true;
 				}
 				if(Spot_Number.equals("C3")) {
 					System.out.println("C3 is not avalable");
+					array[8]= false;
+				}else {
+					array[8]= true;
 				}
 			}
 			
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
+		return array;
 	}
+	
 
 }
 
