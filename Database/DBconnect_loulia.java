@@ -17,6 +17,19 @@ public class DBconnect_loulia {
 	String Spot_Number;
 	String Occupany;
 	
+	//private Connection connect;
+	//private Statement state;
+	//private ResultSet set;
+	//String userName;
+	//String PIN;
+	String []Password;
+	//String licensePlate;
+	//String bookedSpot;
+	
+	
+	
+	
+	
 	
 	DBconnect_loulia() {
 		try {
@@ -47,7 +60,21 @@ public class DBconnect_loulia {
 			System.out.println(ex);
 		}
 	}
-	
+	public String[] getPassword( ) {
+		int i =0;
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				Password[i] = set.getString("Password");
+				i++;
+			}
+		
+	}catch(Exception ex) {
+		System.out.println(ex);
+	}
+		return Password;
+	}
 	
 	public String[] getPINs( ) {
 		int i =0;
@@ -97,6 +124,9 @@ public class DBconnect_loulia {
 	}
 		return Student_Number1;
 	}
+	
+	
+	
 	
 	
 	public void setPIN(String PIN) {
