@@ -3,19 +3,29 @@ package testing;
 import java.sql.*;
 
 public class DBconnect_loulia {
+	
 	private Connection connect;
 	private Statement state;
 	private ResultSet set;
-	String Student_Number;
-	String [] Student_Number1;
+	//String Student_Number;
+	String [] UserName;
 	String []  PIN;
 	String [] License_Plate;
 	String [] Lot_Number;
 	String  PIN1;
 	String  License_Plate1;
-	String  Lot_Number1;
+	//String  Lot_Number1;
 	String Spot_Number;
 	String Occupany;
+	String UserName1;
+	String []Password;
+	String Password1;
+
+	//String bookedSpot; work on this 
+	
+	
+	
+	
 	
 	
 	DBconnect_loulia() {
@@ -35,19 +45,34 @@ public class DBconnect_loulia {
 			set = state.executeQuery(query);
 			System.out.println("Records from database");
 			while(set.next()) {
-				Student_Number = set.getString("Student Number");
+				UserName1 = set.getString("Student Name");
 				PIN1 = set.getString("PIN");
+				Password1=set.getString("Password");
 				License_Plate1 = set.getString("License Plate");
-				Lot_Number1 = set.getString("Lot Number");
+		//		Lot_Number1 = set.getString("Lot Number");
 				Spot_Number = set.getString("Spot Number");
 				Occupany = set.getString("Occupany");
-				System.out.println("Student Number: "+Student_Number+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate+" "+"Lot Number: "+Lot_Number+" "+"Spot Number: "+Spot_Number+" "+"Occupany: "+Occupany);
+				System.out.println("Student Number: "+UserName1+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate+" "+"Lot Number: "+Lot_Number+" "+"Spot Number: "+Spot_Number+" "+"Occupany: "+Occupany);
 			}
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
 	}
-	
+	public String[] getPasswords( ) {
+		int i =0;
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				Password[i] = set.getString("Password");
+				i++;
+			}
+		
+	}catch(Exception ex) {
+		System.out.println(ex);
+	}
+		return Password;
+	}
 	
 	public String[] getPINs( ) {
 		int i =0;
@@ -88,57 +113,26 @@ public class DBconnect_loulia {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				Student_Number1[i]  = set.getString("Student Number");
+				UserName[i]  = set.getString("Student Name");
 				i++;
 			}
 		
 	}catch(Exception ex) {
 		System.out.println(ex);
 	}
-		return Student_Number1;
-	}
-	
-	
-	public void setPIN(String PIN) {
-		
-		if (validPinLength()) {
-			// set the given pin in database 
-			
-			
-			
-		}
-		
-		
-		
+		return UserName;
 	}
 	
 	
 	
 	
-	public void checkInputs() {
+	
+	public boolean validPinLength(String PIN ) {
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				String PIN = set.getString("PIN");
-				if(PIN.equals("2345")) {
-					System.out.println("Pass");
-				} else {
-				System.out.println("Fail, the actual value is "+PIN);
-				}
-			}
-		}catch(Exception ex) {
-			System.out.println(ex);
-		}
-	}
-	
-	
-	public boolean validPinLength() {
-		try {
-			String query = "select * from IRPS";
-			set = state.executeQuery(query);
-			while(set.next()) {
-				String PIN = set.getString("PIN");
+			//	String PIN = set.getString("PIN");
 				int length;
 				length = PIN.length();
 				if(length == 4) {
@@ -158,7 +152,7 @@ public class DBconnect_loulia {
 	}
 	
 	boolean validPlate;
-	public void validLicensePlate() {
+	public boolean validLicensePlate() {
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
@@ -171,14 +165,14 @@ public class DBconnect_loulia {
 				    Character ch =  a.charAt(i);
 				    if (!(  Character.isAlphabetic(ch) ) )  {
 					System.out.println("licence have a wrong digit or character");
-					validPlate = false;
+					return  false;
 				    }
 					}if(i >= 4){
 						System.out.println("Char " + i + " is " + a.charAt(i));
 					    Character ch =  a.charAt(i);    
 					if (! ( Character.isDigit(ch))    )  {
 						System.out.println("licence have a wrong digit ");
-						validPlate = false;
+						return false;
 					}		
 					}
 				}
@@ -187,10 +181,11 @@ public class DBconnect_loulia {
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
+		return true;
 	}
 	
 	
-	public void validLicensePlateLength() {
+	public boolean validLicensePlateLength() {
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
@@ -200,6 +195,7 @@ public class DBconnect_loulia {
 				licensePlateLength = License_Plate.length();
 				if(licensePlateLength == 7) {
 					System.out.println("Valid License Plate length");
+					return true;
 				} else {
 					System.out.println("Invalid License Plate length");
 				}
@@ -208,10 +204,11 @@ public class DBconnect_loulia {
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
+		return false;
 	}
 	
 	boolean valid;
-	public void validPinCharacter() {
+	public void validPinCharacter() {  // we should take it off if using only numbers
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
@@ -235,6 +232,7 @@ public class DBconnect_loulia {
 	}
 	
 	boolean validName;
+	
 	public void testUserNameFormat() {
 		try {
 			String query = "select * from IRPS";
@@ -295,33 +293,37 @@ public class DBconnect_loulia {
 		return false;
 	}
 	
-	public void validPassword() {
+	public boolean validPassword( String password) {
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				String Occupany = set.getString("Occupany");
-				if(Occupany.equals("127")) {
+				String password1 = set.getString("Password");
+				if(password1.equals(password)) {
+				
 					System.out.println("Password Exists");
+					return true;
 				} else {
-				System.out.println("Fail, the actual plate number is "+Occupany);
+				System.out.println( "doesnt Exists");
 				}
 			}
 			
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
+		return false;
 	}
 	
 	boolean status;
-	public void testDatabaseEmpty() {
+	public boolean testDatabaseEmpty() {
 		try {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				if((Student_Number) != null) {
+				if((UserName1) != null) {
 				System.out.println("Data Exists");
 				status = true;
+				return true;
 			  } else {
 			status = false;
 			System.out.println("Empty Table");
@@ -330,6 +332,7 @@ public class DBconnect_loulia {
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
+		return false;
 	}
 	
 	public void testSystemStatus() {
