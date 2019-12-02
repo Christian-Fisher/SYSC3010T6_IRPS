@@ -36,7 +36,7 @@ public class ServerUDP {
             sendSocket = new DatagramSocket();
             socket.setSoTimeout(2000);
             ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
-            AppAddress = InetAddress.getByName("192.168.0.181"); // Defines the address of the application
+            AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
@@ -72,7 +72,7 @@ public class ServerUDP {
             socket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
             // will throw an exception, which will be caught, and the message will be
             // retransmitted.
-            String messAck = new String(ack.getData()).trim(); // Convertt the response to a usable format.
+            System.out.println(new String(ack.getData()).trim()); // Convertt the response to a usable format.
         } catch (Exception e) {
             System.err.println(e); // The message did not get sent properly, and the message should be
             // retransmitted.
@@ -88,7 +88,7 @@ public class ServerUDP {
 	 * packets.
      */
     public void sendToArduino(Boolean PinCorrect) {
-        String data = ARDUINO_COMMAND + COMMAND_SPLIT_REGEX; // Prefix the message with "Arduino:" to signal the message is
+        String data = ARDUINO_COMMAND + COMMAND_SPLIT_REGEX;// Prefix the message with "Arduino:" to signal the message is
         // meant for the arduino
         data += PinCorrect; // Add the pinCorrect boolean to the messgae
         byte[] byteArray = data.getBytes(); // Convert the message to an array of bytes to add to the packet.
@@ -221,6 +221,7 @@ public class ServerUDP {
 
     public static void main(String[] args) {
         ServerUDP udp = new ServerUDP();
+        
         /*
         INCOMING MESSAGE FORM: XXX:YYY,ZZZ 
         X=LED or APP 
@@ -228,41 +229,42 @@ public class ServerUDP {
         Z=Data
          */
         while (true) {
+            udp.sendToLED("1", Boolean.TRUE);
             try {
-//                String heartbeatParkingResponse = udp.heartbeatParking();
-//
-//                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
-//
-//                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
-//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-//
-//                    if (split1String[0].equals(IR_COMMAND)) {
-//                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
-//
-//                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-//                        udp.sendToArduino(split1String[1].equals("1234"));
-//
-//                    } else if (split1String[0].equals(LED_COMMAND)) {
-//                        udp.sendToLED("A2", Boolean.TRUE);
-//                    }
-//                }
-                String heartbeatAppResponse = udp.heartbeatApp();
-                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
-                    String message = new String(heartbeatAppResponse.getBytes()).trim();
+                String heartbeatParkingResponse = udp.heartbeatParking();
+
+                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
+
+                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
-                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        udp.sendToAppOcccupancy();
+                    if (split1String[0].equals(IR_COMMAND)) {
+                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
 
-                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
-                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
+                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
+                        udp.sendToArduino(split1String[1].equals("1234"));
 
-                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
-                        udp.sendToAppClaim(split1String[1]);
-                    }else if(split1String[0].equals(BOOKING_COMMAND)){
-                        udp.sendToBooking(split1String[1]);
+                    } else if (split1String[0].equals(LED_COMMAND)) {
+                        udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
+//                String heartbeatAppResponse = udp.heartbeatApp();
+//                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
+//                    String message = new String(heartbeatAppResponse.getBytes()).trim();
+//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+//
+//                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+//                        udp.sendToAppOcccupancy();
+//
+//                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
+//                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
+//
+//                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
+//                        udp.sendToAppClaim(split1String[1]);
+//                    }else if(split1String[0].equals(BOOKING_COMMAND)){
+//                        udp.sendToBooking(split1String[1]);
+//                    }
+//                }
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
