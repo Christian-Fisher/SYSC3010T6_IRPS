@@ -5,6 +5,11 @@ IO.setwarnings(False)
 IO.setmode(IO.BCM)
 IRPins = [12,13,14,15,16,17,18,19,20] # array of GPIO pins
 
+Socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+receiveSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+receiveSocket.bind(("", 3001))
+
+
 IO.setup(12,IO.IN) #GPIO 12 -> IR sensorA0 as input
 IO.setup(13,IO.IN) #GPIO 13 -> IR sensorA1 as input
 IO.setup(14,IO.IN) #GPIO 14 -> IR sensorA2 as input
@@ -15,18 +20,18 @@ IO.setup(18,IO.IN) #GPIO 18 -> IR sensorC0 as input
 IO.setup(19,IO.IN) #GPIO 19 -> IR sensorC1 as input
 IO.setup(20,IO.IN) #GPIO 20 -> IR sensorC2 as input
 
-flag=[0,0,0,0,0,0,0,0,0] # initializing sensor states
+flag=[1,1,1,1,1,1,1,1,1] # initializing sensor states
+
+def sendToMain(spot, occuapncy):
+    Socket.sentTo(("IR:"+spot+",occupancy").encode('utf-8'), 127.0.0.1)
+    data, address = receiveSocket.recvfrom(3001)     
+    print(data)
 
 while 1:# polling indefinitely
-    time.sleep (1) # poll interval set to 1 second
-    i=0
-    x=0
+    time.sleep (2) # poll interval set to 2 seconds
     for x in range(0,9): #loop through nine IR sensors
         if(IO.input(IRPins[x])!= flag[x]): #comparing current state with previous state
             flag[x] = (IO.input(IRPins[x])) # update flag element when state change occurs
-    for i in range(0,9):
-        flag[i] = int(not flag[i]) # inverting flag elements to show 0=empty;1=occupied
-    print(flag) #printing overall instantaneous states of the nine spots
-            #UDP
+            sendToMain(x, flag[x])
 GPIO.cleanup() # Clearing GPIO setup at exit
         
