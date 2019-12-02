@@ -16,12 +16,12 @@ public class DBconnect_loulia {
 	String  License_Plate1;
 	//String  Lot_Number1;
 	String Spot_Number;
-	String Occupany;
+	//String Occupany;
 	String UserName1;
 	String []Password;
 	String Password1;
 
-	//String bookedSpot; work on this 
+	String bookedSpot;// work on this 
 	
 	
 	
@@ -45,33 +45,35 @@ public class DBconnect_loulia {
 			set = state.executeQuery(query);
 			System.out.println("Records from database");
 			while(set.next()) {
-				UserName1 = set.getString("Student Name");
+				UserName1 = set.getString("userName");
 				PIN1 = set.getString("PIN");
 				Password1=set.getString("Password");
 				License_Plate1 = set.getString("License Plate");
 		//		Lot_Number1 = set.getString("Lot Number");
-				Spot_Number = set.getString("Spot Number");
-				Occupany = set.getString("Occupany");
-				System.out.println("Student Number: "+UserName1+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate+" "+"Lot Number: "+Lot_Number+" "+"Spot Number: "+Spot_Number+" "+"Occupany: "+Occupany);
+			//	Spot_Number = set.getString("Spot Number");
+				bookedSpot= set.getString(" bookedSpot");
+	    	//  Occupany = set.getString("Occupany");
+				System.out.println("Student Number: "+UserName1+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate);
+				//System.out.println("Student Number: "+UserName1+" "+"PIN: "+PIN+" "+"License Plate: "+License_Plate+" "+"Lot Number: "+Lot_Number+" "+"Spot Number: "+Spot_Number+" "+"Occupany: "+Occupany);
 			}
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
 	}
-	public String[] getPasswords( ) {
-		int i =0;
+	public String[] getNames( ) {
 		try {
+			int i =0;
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				Password[i] = set.getString("Password");
+				UserName[i]  = set.getString("Student Name");
 				i++;
 			}
 		
 	}catch(Exception ex) {
 		System.out.println(ex);
 	}
-		return Password;
+		return UserName;
 	}
 	
 	public String[] getPINs( ) {
@@ -90,6 +92,25 @@ public class DBconnect_loulia {
 		return PIN;
 	}
 	
+	
+	public String[] getPasswords( ) {
+		int i =0;
+		try {
+			String query = "select * from IRPS";
+			set = state.executeQuery(query);
+			while(set.next()) {
+				Password[i] = set.getString("Password");
+				i++;
+			}
+		
+	}catch(Exception ex) {
+		System.out.println(ex);
+	}
+		return Password;
+	}
+	
+	
+	
 	public String[] getLicense_Plates( ) {
 		int i=0;
 		try {
@@ -107,22 +128,6 @@ public class DBconnect_loulia {
 	}
 	
 	
-	public String[] getNames( ) {
-		try {
-			int i =0;
-			String query = "select * from IRPS";
-			set = state.executeQuery(query);
-			while(set.next()) {
-				UserName[i]  = set.getString("Student Name");
-				i++;
-			}
-		
-	}catch(Exception ex) {
-		System.out.println(ex);
-	}
-		return UserName;
-	}
-	
 	
 	
 	
@@ -132,7 +137,7 @@ public class DBconnect_loulia {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-			//	String PIN = set.getString("PIN");
+			
 				int length;
 				length = PIN.length();
 				if(length == 4) {
@@ -151,7 +156,7 @@ public class DBconnect_loulia {
 		
 	}
 	
-	boolean validPlate;
+
 	public boolean validLicensePlate() {
 		try {
 			String query = "select * from IRPS";
@@ -176,7 +181,7 @@ public class DBconnect_loulia {
 					}		
 					}
 				}
-				validPlate = true ;
+				
 			}
 		}catch(Exception ex) {
 			System.out.println(ex);
@@ -238,12 +243,12 @@ public class DBconnect_loulia {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				String Student_Number = set.getString("Student Number");
-				String a = Student_Number;
+				String User_Name = set.getString("userName");
+				String a = User_Name;
 				for (int i=0; i < a.length(  ); i++) {
 				   Character ch =  a.charAt(i);
 				if (! ( ch == '%' ||    ch =='@' ||    ch=='+' ||  ch=='*' ||  ch== '/' || Character.isDigit(ch) ||  Character.isAlphabetic(ch))) {
-					System.out.println("wrong formate surename");
+					System.out.println("wrong formate username");
 					validName = false; 
 				}
 			}
@@ -292,6 +297,7 @@ public class DBconnect_loulia {
 		}
 		return false;
 	}
+	//udp  
 	
 	public boolean validPassword( String password) {
 		try {
@@ -314,7 +320,7 @@ public class DBconnect_loulia {
 		return false;
 	}
 	
-	boolean status;
+
 	public boolean testDatabaseEmpty() {
 		try {
 			String query = "select * from IRPS";
@@ -322,10 +328,10 @@ public class DBconnect_loulia {
 			while(set.next()) {
 				if((UserName1) != null) {
 				System.out.println("Data Exists");
-				status = true;
+				
 				return true;
 			  } else {
-			status = false;
+			
 			System.out.println("Empty Table");
 			  }
 			}
@@ -335,18 +341,24 @@ public class DBconnect_loulia {
 		return false;
 	}
 	
-	public void testSystemStatus() {
+	public void testSystemStatus() { // check this 
+		int count=0;
+		int sum = 9 ;
 		try {
+			
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
 				String Lot_Number = set.getString("Lot Number");
-				//int count;
+				
+				count ++;
+				
 				if(Lot_Number == " ") {
 					System.out.println("Parking is now full");
 				}
 			}
-			System.out.println("Parking is not full");
+			sum=	sum - count ; 
+			System.out.println("Parking is not full the number of remaining spots " + sum  );
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
@@ -358,7 +370,7 @@ public class DBconnect_loulia {
 			String query = "select * from IRPS";
 			set = state.executeQuery(query);
 			while(set.next()) {
-				String Spot_Number = set.getString("Spot Number");
+				String bookedSpot = set.getString("bookedSpot");
 				if(Spot_Number.equals("A1")) {
 					System.out.println("A1 is not avalable");
 					array[0]= false;
