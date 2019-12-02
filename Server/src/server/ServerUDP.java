@@ -178,9 +178,9 @@ public class ServerUDP {
 
     public void sendToAppOcccupancy() {
         try {
-            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "false";
-            for (int x = 1; x < LOT_SIZE; x++) {
-                occupancyMessage += DATA_SPLIT_REGEX + false;
+            String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "false" + DATA_SPLIT_REGEX + false;
+           	for (int x = 2; x < LOT_SIZE; x++) {
+                occupancyMessage += DATA_SPLIT_REGEX + true;
             }
             System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
