@@ -47,7 +47,7 @@ public class ParkingControllerMain {
         try {
             parkingControllerQueue = new LinkedList<>();
             ServerAddress = InetAddress.getByName("localhost");
-            ParkingControllerAddress = InetAddress.getByName("192.168.0.182");
+            ParkingControllerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2000);
             socket.setSoTimeout(10000);
             sendSocket = new DatagramSocket();
@@ -95,22 +95,18 @@ public class ParkingControllerMain {
                         socket.receive(IRPacket);
                         parkingControllerQueue.remove();
                     
-                } else if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)) {
-                    DatagramPacket LEDPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
-                    
-                        socket.receive(LEDPacket);
-                        sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
-                        LEDPacket.setAddress(ParkingControllerAddress);
-                        LEDPacket.setPort(3001);
-                        sendSocket.send(LEDPacket);
-                        parkingControllerQueue.remove();
-                    
                 }
             }
+        }else if (new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LED_COMMAND)){
+                        sendSocket.send(new DatagramPacket((LED_COMMAND + "ACK").getBytes(), (LED_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
+                        heartbeat.setAddress(ParkingControllerAddress);
+                        heartbeat.setPort(3000);
+                        sendSocket.send(heartbeat);
+                        System.out.println("sending internally to LED " + parkingControllerQueue.peek());
+                        
         }else{
             parkingControllerQueue.add(new String(heartbeat.getData()).trim());
                 System.out.println("Processing Request");
-            
         }
     }
 
