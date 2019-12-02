@@ -248,23 +248,23 @@ public class ServerUDP {
                         udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
-//                String heartbeatAppResponse = udp.heartbeatApp();
-//                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
-//                    String message = new String(heartbeatAppResponse.getBytes()).trim();
-//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-//
-//                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-//                        udp.sendToAppOcccupancy();
-//
-//                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
-//                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
-//
-//                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
-//                        udp.sendToAppClaim(split1String[1]);
-//                    }else if(split1String[0].equals(BOOKING_COMMAND)){
-//                        udp.sendToBooking(split1String[1]);
-//                    }
-//                }
+                String heartbeatAppResponse = udp.heartbeatApp();
+                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
+                    String message = new String(heartbeatAppResponse.getBytes()).trim();
+                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+
+                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+                        udp.sendToAppOcccupancy();
+
+                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
+                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
+
+                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
+                        udp.sendToAppClaim(split1String[1]);
+                    }else if(split1String[0].equals(BOOKING_COMMAND)){
+                        udp.sendToBooking(split1String[1]);
+                    }
+                }
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
