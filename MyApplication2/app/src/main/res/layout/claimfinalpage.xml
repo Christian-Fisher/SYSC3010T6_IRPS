@@ -36,7 +36,7 @@
 
         android:layout_width="wrap_content"
         android:layout_height="75dp"
-        android:text="Thank you for submitting the claim. \n \n If you still wish to park, you can find a new spot."
+        android:text="Thank you for submitting the claim. \n \n If you still wish to park, please park in any available spot"
         android:textStyle="bold" />
 
 

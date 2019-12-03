@@ -12,6 +12,8 @@
         <activity android:name=".claim"
             android:noHistory="true"
             />
+        <activity android:name=".claimfinalpage"
+            />
         <activity android:name=".finalpage" />
         <activity android:name=".book" />
         <activity
