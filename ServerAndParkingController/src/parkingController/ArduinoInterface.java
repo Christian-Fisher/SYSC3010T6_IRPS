@@ -34,7 +34,7 @@ public class ArduinoInterface {
                 System.out.println(Arrays.toString(readBuffer));
                 if (!new String(readBuffer).equals("")) {
                     DatagramPacket pinAck = new DatagramPacket(new byte[100], 100);
-                    sendSocket.send(new DatagramPacket(("ARD:" + new String(readBuffer)).getBytes(), ("ARD:" + new String(readBuffer)).getBytes().length, Server, 2000));
+                    sendSocket.send(new DatagramPacket(("ARD:" + new String(readBuffer)).getBytes(), ("ARD:" + new String(readBuffer)).getBytes().length, Server, 2001));
                     socket.receive(pinAck);
                     if (new String(pinAck.getData()).trim().split(":")[1].equals("true")) {
                         port.writeBytes("1".getBytes(), "1".getBytes().length);
