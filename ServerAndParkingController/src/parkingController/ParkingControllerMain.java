@@ -110,6 +110,7 @@ public class ParkingControllerMain {
                 if(parkingControllerQueue.peek().equals(""){
                     System.out.println("Null trying to go into queue");
                     parkingControllerQueue.remove();
+                }
         }
     }
 
