@@ -66,7 +66,7 @@ public class claim extends AppCompatActivity {
                 socket = new DatagramSocket(3005);
                 socket.setSoTimeout(1000);
                 sendSocket = new DatagramSocket();
-                local = InetAddress.getByName("192.168.0.181");
+                local = InetAddress.getByName("localhost");
 
             DatagramPacket claimAck = new DatagramPacket(new byte[100], 100);
 

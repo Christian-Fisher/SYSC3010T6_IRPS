@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".finalpage"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#126AB8"
+    >
+
+
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="200dp"
+        app:srcCompat="@drawable/p"
+
+        />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp">
+
+
+    </LinearLayout>
+
+    <TextView
+
+        android:layout_width="wrap_content"
+        android:layout_height="75dp"
+        android:text="Thank you for submitting the claim. \n \n If you still wish to park, you can find a new spot."
+        android:textStyle="bold" />
+
+
+</LinearLayout>

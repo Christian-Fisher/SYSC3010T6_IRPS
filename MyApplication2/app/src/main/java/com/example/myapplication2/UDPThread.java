@@ -53,9 +53,9 @@ public class UDPThread extends Thread {
             try {
                 appQueue = new LinkedList<>();
                 ServerAddress = InetAddress.getByName("192.168.0.180");
-                local = InetAddress.getByName("192.168.0.181");
+                local = InetAddress.getByName("localhost");
                 socket = new DatagramSocket(2000);
-                socket.setSoTimeout(300);
+                socket.setSoTimeout(2000);
                 sendSocket = new DatagramSocket();
 
             } catch (SocketException | UnknownHostException e) {

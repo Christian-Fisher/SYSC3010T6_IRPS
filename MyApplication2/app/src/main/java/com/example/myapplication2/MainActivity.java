@@ -86,9 +86,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean verifyLogin(String username, String password) {
         try {
             socket = new DatagramSocket(3000);
-            socket.setSoTimeout(1000);
+            socket.setSoTimeout(2000);
             sendSocket = new DatagramSocket();
-            local = InetAddress.getByName("192.168.0.181");
+            local = InetAddress.getByName("localhost");
 
         }catch (SocketException e) {
             e.printStackTrace();

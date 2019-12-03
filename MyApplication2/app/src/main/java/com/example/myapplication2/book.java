@@ -47,7 +47,7 @@ public class book extends AppCompatActivity {
             socket = new DatagramSocket(3001);
             socket.setSoTimeout(1000);
             sendSocket = new DatagramSocket();
-            local = InetAddress.getByName("192.168.0.181");
+            local = InetAddress.getByName("localhost");
 
         }catch (SocketException e) {
             System.out.println(e + "Oh boy");
@@ -307,17 +307,6 @@ public class book extends AppCompatActivity {
 
     public boolean bookSpot(String spot){
 
-        try {
-            socket = new DatagramSocket(3001);
-            socket.setSoTimeout(1000);
-            sendSocket = new DatagramSocket();
-            local = InetAddress.getByName("192.168.0.181");
-
-        }catch (SocketException e) {
-            System.out.println(e + "Oh boy");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
 
         try {
             DatagramPacket bookAck = new DatagramPacket(new byte[100], 100);
