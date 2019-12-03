@@ -25,12 +25,15 @@ IO.setup(20,IO.IN) #GPIO 20 -> IR sensorC2 as input
 flag=[1,1,1,1,1,1,1,1,1] # initializing sensor states
 
 def sendToMain(spot, occupancy):
-    Socket.sendto(("IR:"+str(spot)+", "+str(occupancy)).encode('utf-8'),(local, port))
-
+    Socket.sendto(("IR:"+str(spot)+","+str(occupancy)).encode('utf-8'),(local, port))
+    print("IR:"+str(spot)+","+str(occupancy))
 while 1:# polling indefinitely
+    time.sleep(1)
     for x in range(0,9): #loop through nine IR sensors
         if(IO.input(IRPins[x])!= flag[x]): #comparing current state with previous state
             flag[x] = (IO.input(IRPins[x])) # update flag element when state change occurs
             sendToMain(x, flag[x])
+            
+            
 GPIO.cleanup() # Clearing GPIO setup at exit
         

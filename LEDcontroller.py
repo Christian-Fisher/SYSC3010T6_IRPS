@@ -1,41 +1,41 @@
 import time
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import socket
 
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setwarnings(False)
-
-def toggleLED(index, state): #method to toggle indexed RG-LED pair
-    if(state): # If state = true R-LED on & G-LED off -> indexed spot occupied/booked
- #       GPIO.output (ledPins[index], GPIO.HIGH)
-        print("spot"+str(index)+" is occupied")
-    if(state==False): # If state = false R-LED off & G-LED on -> indexed spot is empty/bookig timeout
-  #      GPIO.output (ledPins[index], GPIO.LOW)
-        print("spot"+str(index)+" is empty")
-
-        
-
-
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 ledPins = [2,3,4,5,6,7,8,9,10] # arrays of GPIO pins as output
         
 receiveSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 receiveSocket.bind(("", 3000))
+for i in range (0,9):
+    GPIO.setup(ledPins[i], GPIO.OUT)
+    GPIO.output(ledPins[i], GPIO.LOW)
+    
+def toggleLED(index, state): #method to toggle indexed RG-LED pair
+    if(state): # If state = true R-LED on & G-LED off -> indexed spot occupied/booked
+        GPIO.output (ledPins[index], GPIO.HIGH)
+        print("spot"+str(index)+" is occupied")
+    if(state==False): # If state = false R-LED off & G-LED on -> indexed spot is empty/bookig timeout
+        GPIO.output (ledPins[index], GPIO.LOW)
+        print("spot"+str(index)+" is empty")
+
+    
 
 while(True):
     print("test")
     data, address = receiveSocket.recvfrom(3000)   
-    print("received")
+    print(str(data))
     message = str(data).split(":")[1]
     indexToChange = message.split(",")[0]
     stateString = message.split(",")[1]
     if(stateString == "true"):
-        stateToChange = True
-    else:
         stateToChange = False
-    
-    toggleLED(indexToChange, stateToChange)
-#for i in range (0,2):
-#    GPIO.setup(ledPins[i], GPIO.OUT)
+    else:
+        stateToChange = True
+        
+    toggleLED(int(indexToChange), stateToChange)
+
 
 #GPIO.setup(2,GPIO.OUT)  #GPIO pin2  -> A0-RG-LED as output
 #GPIO.setup(3,GPIO.OUT)  #GPIO pin3  -> A1-RG-LED as output

@@ -35,8 +35,8 @@ public class ServerUDP {
             socket = new DatagramSocket(1000); // Creates new socket for any outgoing packets
             sendSocket = new DatagramSocket();
             socket.setSoTimeout(2000);
-            ParkingControllerAddress = InetAddress.getByName("192.168.0.101"); // Defines address of the parking controller
-            AppAddress = InetAddress.getByName("192.168.0.200"); // Defines the address of the application
+            ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
+            AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
@@ -115,7 +115,8 @@ public class ServerUDP {
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-            sendToLED(IRMessage[0], IRMessage[1].equals("true"));
+            System.out.println(IRMessage[0]+ " "+IRMessage[1].equals("0"));
+            sendToLED(IRMessage[0],IRMessage[1].equals("1"));
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -247,23 +248,23 @@ public class ServerUDP {
                         udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
-                String heartbeatAppResponse = udp.heartbeatApp();
-                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
-                    String message = new String(heartbeatAppResponse.getBytes()).trim();
-                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+                //String heartbeatAppResponse = udp.heartbeatApp();
+                //if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
+                    //String message = new String(heartbeatAppResponse.getBytes()).trim();
+                    //String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
-                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        udp.sendToAppOcccupancy();
+                    //if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+                        //udp.sendToAppOcccupancy();
 
-                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
-                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
+                    //} else if (split1String[0].equals(LOGIN_COMMAND)) {
+                        //udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
-                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
-                        udp.sendToAppClaim(split1String[1]);
-                    }else if(split1String[0].equals(BOOKING_COMMAND)){
-                        udp.sendToBooking(split1String[1]);
-                    }
-                }
+                    //} else if (split1String[0].equals(CLAIM_COMMAND)) {
+                        //udp.sendToAppClaim(split1String[1]);
+                    //}else if(split1String[0].equals(BOOKING_COMMAND)){
+                        //udp.sendToBooking(split1String[1]);
+                    //}
+                //}
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);

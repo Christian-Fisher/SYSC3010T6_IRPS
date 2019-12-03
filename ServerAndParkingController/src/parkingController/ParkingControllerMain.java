@@ -93,6 +93,7 @@ public class ParkingControllerMain {
                    
                         DatagramPacket IRPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(IRPacket);
+                        System.out.println("IR WAS RUN");
                         parkingControllerQueue.remove();
                     
                 }
@@ -102,7 +103,7 @@ public class ParkingControllerMain {
                         heartbeat.setAddress(ParkingControllerAddress);
                         heartbeat.setPort(3000);
                         sendSocket.send(heartbeat);
-                        System.out.println("sending internally to LED " + parkingControllerQueue.peek());
+                        System.out.println("sending internally to LED ");
                         
         }else{
             parkingControllerQueue.add(new String(heartbeat.getData()).trim());
