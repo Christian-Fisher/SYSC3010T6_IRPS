@@ -107,7 +107,7 @@ public class ParkingControllerMain {
                         
         }else{
                 parkingControllerQueue.add(new String(heartbeat.getData()).trim());
-                if(parkingControllerQueue.peek().equals(""){
+                if(parkingControllerQueue.peek().equals("")){
                     System.out.println("Null trying to go into queue");
                     parkingControllerQueue.remove();
                 }
