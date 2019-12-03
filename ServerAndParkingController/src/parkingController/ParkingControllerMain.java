@@ -106,8 +106,10 @@ public class ParkingControllerMain {
                         System.out.println("sending internally to LED ");
                         
         }else{
-            if(!(new String(heartbeat.getData()).trim().equals(null)))
                 parkingControllerQueue.add(new String(heartbeat.getData()).trim());
+                if(parkingControllerQueue.peek().equals(""){
+                    System.out.println("Null trying to go into queue");
+                    parkingControllerQueue.remove();
         }
     }
 
