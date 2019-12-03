@@ -46,7 +46,7 @@ public class ParkingControllerMain {
     public void setup() {
         try {
             parkingControllerQueue = new LinkedList<>();
-            ServerAddress = InetAddress.getByName("192.168.0.102");
+            ServerAddress = InetAddress.getByName("localhost");
             ParkingControllerAddress = InetAddress.getByName("localhost");
             socket = new DatagramSocket(2001);
             socket.setSoTimeout(10000);
