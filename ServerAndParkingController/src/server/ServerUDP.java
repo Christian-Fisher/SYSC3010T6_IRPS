@@ -36,7 +36,7 @@ public class ServerUDP {
             sendSocket = new DatagramSocket();
             socket.setSoTimeout(2000);
             ParkingControllerAddress = InetAddress.getByName("192.168.0.181"); // Defines address of the parking controller
-            AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
+            AppAddress = InetAddress.getByName("192.168.0.190"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
@@ -124,6 +124,7 @@ public class ServerUDP {
     }
 
     public void sendToAppLogin(String loginMessage[]) {
+        System.out.println("login attempt");
         try {
             if (loginMessage[0].equals("User") && loginMessage[1].equals("Password")) {
                 DatagramPacket loginRequest = new DatagramPacket((LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "true").getBytes(), (LOGIN_COMMAND + COMMAND_SPLIT_REGEX + "true").getBytes().length, AppAddress, 2000);
@@ -162,15 +163,16 @@ public class ServerUDP {
     }
     public void sendToBooking(String spotToBook) {
         try {
-            String ClaimResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
+            String BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
             if (spotToBook.equals("0")||spotToBook.equals("1")) {
-                ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
+                BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "true";
                 System.out.println("Spot booked (A!)");
             }
-            DatagramPacket bookPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
+            DatagramPacket bookPacket = new DatagramPacket(BookResponse.getBytes(), BookResponse.getBytes().length, AppAddress, 2000);
             DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(bookPacket);
             socket.receive(bookAck);
+            sendToLED(spotToBook, false);
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -181,7 +183,7 @@ public class ServerUDP {
         try {
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX + "false";
             for (int x = 1; x < LOT_SIZE; x++) {
-                occupancyMessage += DATA_SPLIT_REGEX + true;
+                occupancyMessage += DATA_SPLIT_REGEX + false;
             }
             System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
@@ -248,23 +250,23 @@ public class ServerUDP {
                         udp.sendToLED("A2", Boolean.TRUE);
                     }
                 }
-                //String heartbeatAppResponse = udp.heartbeatApp();
-                //if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
-                    //String message = new String(heartbeatAppResponse.getBytes()).trim();
-                    //String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+                String heartbeatAppResponse = udp.heartbeatApp();
+                if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
+                    String message = new String(heartbeatAppResponse.getBytes()).trim();
+                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
 
-                    //if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
-                        //udp.sendToAppOcccupancy();
+                    if (split1String[0].equals(OCCUPANCY_UPDATE_COMMAND)) {
+                        udp.sendToAppOcccupancy();
 
-                    //} else if (split1String[0].equals(LOGIN_COMMAND)) {
-                        //udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
+                    } else if (split1String[0].equals(LOGIN_COMMAND)) {
+                        udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
-                    //} else if (split1String[0].equals(CLAIM_COMMAND)) {
-                        //udp.sendToAppClaim(split1String[1]);
-                    //}else if(split1String[0].equals(BOOKING_COMMAND)){
-                        //udp.sendToBooking(split1String[1]);
-                    //}
-                //}
+                    } else if (split1String[0].equals(CLAIM_COMMAND)) {
+                        udp.sendToAppClaim(split1String[1]);
+                    }else if(split1String[0].equals(BOOKING_COMMAND)){
+                        udp.sendToBooking(split1String[1]);
+                    }
+                }
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
