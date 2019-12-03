@@ -35,7 +35,7 @@ public class ServerUDP {
             socket = new DatagramSocket(1000); // Creates new socket for any outgoing packets
             sendSocket = new DatagramSocket();
             socket.setSoTimeout(2000);
-            ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
+            ParkingControllerAddress = InetAddress.getByName("192.168.0.181"); // Defines address of the parking controller
             AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
