@@ -35,8 +35,8 @@ public class ServerUDP {
             socket = new DatagramSocket(1000); // Creates new socket for any outgoing packets
             sendSocket = new DatagramSocket();
             socket.setSoTimeout(2000);
-            ParkingControllerAddress = InetAddress.getByName("localhost"); // Defines address of the parking controller
-            AppAddress = InetAddress.getByName("localhost"); // Defines the address of the application
+            ParkingControllerAddress = InetAddress.getByName("192.168.0.101"); // Defines address of the parking controller
+            AppAddress = InetAddress.getByName("192.168.0.200"); // Defines the address of the application
 //           socket.setSoTimeout(7000); // Sets the timeout time to 2 seconds so the incoming socket will throw
             // an exception every 2 seconds, to check for other commands.
 
@@ -66,7 +66,7 @@ public class ServerUDP {
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet to receive the
             // acknowledgement signal
-            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2000); // Create
+            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2001); // Create
 //            System.out.println(new String(packet.getData()).trim());
             sendSocket.send(packet); // Send the packet
             socket.receive(ack); // Wait for a response from the Parking Controller. If the receive timesout, it
@@ -95,7 +95,7 @@ public class ServerUDP {
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet which will use
             // used to store the ack message
-            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2000);
+            DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length, ParkingControllerAddress, 2001);
             sendSocket.send(packet); // Send this packet
             socket.receive(ack); // Receive the acknowldgement, if this timesout, the exception will be caught,
             // and the message will be retransmitted.
@@ -113,9 +113,9 @@ public class ServerUDP {
     public void sendToIR(String IRMessage[]) {
         String data = IR_COMMAND+"ACK";
         try {
-            DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2000);
+            DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-
+            sendToLED(IRMessage[0], IRMessage[1].equals("true"));
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -194,7 +194,7 @@ public class ServerUDP {
     }
 
     public String heartbeatParking() {
-        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, ParkingControllerAddress, 2000);
+        DatagramPacket heartBeat = new DatagramPacket(HEARTBEAT_MESSAGE, HEARTBEAT_MESSAGE.length, ParkingControllerAddress, 2001);
         DatagramPacket heartAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
         try {
             sendSocket.send(heartBeat);
@@ -229,7 +229,6 @@ public class ServerUDP {
         Z=Data
          */
         while (true) {
-            udp.sendToLED("1", Boolean.TRUE);
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
 
