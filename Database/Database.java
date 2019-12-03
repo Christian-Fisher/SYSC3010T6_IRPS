@@ -7,6 +7,7 @@ import java.sql.Statement;
 public class Database {
 	
 	int PIN1;
+	String usernameDB;
 	String LicensePlate;
 	String[] userNames;
 	String[] LicensePlates;
@@ -20,7 +21,6 @@ public class Database {
 		userNames = new String[10];
 		LicensePlates = new String[10];
 		pins = new int[10];
-		array = new Boolean[10];
 		try {
             connect = DriverManager.getConnection(url);
         } catch (SQLException e) {
@@ -267,13 +267,16 @@ public class Database {
 		return false;
 	}
 	
-	public Boolean[] testAvailableSpots() {
+	public Boolean[] testAllSpots() {
 		String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+		array = new Boolean[10];
 		try(Connection conn = this.connect();
 			Statement stmt  = conn.createStatement();
 			ResultSet rs    = stmt.executeQuery(sql)) {
 			while(rs.next()) {
 				String bookedSpot = rs.getString("BookedSpot");
+				for(int i=0;i<9;i++) {
+				if(array[i] != null) {
 				if(bookedSpot.equals("A1")) {
 					System.out.println("A1 is not avalable");
 					array[0]= false;
@@ -336,8 +339,9 @@ public class Database {
 				}else {
 					array[8]= true;
 				}
+			  }
 			}
-			
+		  }
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
@@ -350,14 +354,13 @@ public class Database {
 			Statement stmt  = conn.createStatement();
 			ResultSet rs    = stmt.executeQuery(sql)) {
 			while(rs.next()) {
-				String namedb = rs.getString("Username");
-				if(namedb.equals(userName)) {
+				usernameDB = rs.getString("Username");
+				if(usernameDB.equals(userName)) {
 					System.out.println("Username Exists");
 					return true;
-				} else {
-                    return false;
+				  } 
 				}
-			}
+			return false;
 		}catch(Exception ex) {
 			System.out.println(ex);
 		}
@@ -378,7 +381,7 @@ public class Database {
         db.claimedLicensePlate("QWER111");
         db.checkDatabaseEmpty();
         db.userNameExists("User");
-        db.testAvailableSpots();
+        db.testAllSpots();
     }
 
 }
