@@ -48,7 +48,7 @@ public class ParkingControllerMain {
             parkingControllerQueue = new LinkedList<>();
             ServerAddress = InetAddress.getByName("localhost");
             ParkingControllerAddress = InetAddress.getByName("localhost");
-            socket = new DatagramSocket(2000);
+            socket = new DatagramSocket(2001);
             socket.setSoTimeout(10000);
             sendSocket = new DatagramSocket();
 
@@ -106,7 +106,7 @@ public class ParkingControllerMain {
                         
         }else{
             parkingControllerQueue.add(new String(heartbeat.getData()).trim());
-                System.out.println("Processing Request");
+                System.out.println(new String(heartbeat.getData()).trim());
         }
     }
 
