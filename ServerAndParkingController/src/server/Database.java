@@ -583,10 +583,11 @@ public class Database {
         return true;
     }
 
-    public boolean bookingTimeOut(String spot, float timeBooked) {
-        String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+    public boolean bookingTimeOut(String spot) {
+        String sql = "SELECT BookTime FROM Lot WHERE SpotNumber = '" + spot +"';";
         // finding the time before the operation is executed
         long currentTime = System.currentTimeMillis();
+        float timeBooked;
         // converting it into seconds
         float sec = currentTime / 1000F;
         // converting it into minutes
@@ -596,11 +597,9 @@ public class Database {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                spot = rs.getString("SpotNumber");
                 timeBooked = rs.getFloat("BookTime");
                 float sec1 = timeBooked / 1000F;
                 float minute1 = sec1 / 60F;
-                Occupancy = rs.getInt("Occupancy");
                 if ((minutes - minute1) >= 10) {
                     Occupancy = 0;
                     System.out.println("Unbook the spot");
@@ -633,7 +632,7 @@ public class Database {
         db.userNameExists("User");
         db.testAllSpots();
         db.getLotOccupancy();
-        db.bookingTimeOut("", 123124324);
+        db.bookingTimeOut("1");
         db.bookSpot("", "");
         db.changeOccupancy("", true);
         db.printAllLot();

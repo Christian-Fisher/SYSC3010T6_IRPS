@@ -222,7 +222,7 @@ public class ServerUDP {
 
     public static void main(String[] args) {
         ServerUDP udp = new ServerUDP();
-
+        Database mainDatabase = new Database();
         /*
         INCOMING MESSAGE FORM: XXX:YYY,ZZZ 
         X=LED or APP 
@@ -230,6 +230,7 @@ public class ServerUDP {
         Z=Data
          */
         while (true) {
+            int x =0;
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
 
@@ -265,6 +266,16 @@ public class ServerUDP {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
                     }
                 }
+                if(x == 12){
+                    x=0;
+                for (int i = 0; i < LOT_SIZE; i++) {
+                    
+                    if (!mainDatabase.bookingTimeOut(Integer.toString((i+1)))) {
+                        mainDatabase.changeOccupancy(Integer.toString(i+1), false);
+                    }
+                }
+                }
+                x++;
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
