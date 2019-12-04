@@ -418,10 +418,50 @@ public class Database {
 				Occupancy = rs.getInt("Occupancy");
 				for(int i=0;i>9;i++) {
 					if(spotArray[i] != null) {
-						if(spotArray[0].equals("A1") && Occupancy ==1) {
-							return spotArray;
+						if(spotNumber.equals("A1") && Occupancy ==1) {
+							spotArray[0] = "A1 Spot Occupied";
 						}else {
-							
+							spotArray[0] = "A1 Spot not Occupied";
+						}
+						if(spotNumber.equals("A2") && Occupancy ==1) {
+							spotArray[1] = "A2 Spot Occupied";
+						}else {
+							spotArray[1] = "A2 Spot  not Occupied";
+						}
+						if(spotNumber.equals("A3") && Occupancy ==1) {
+							spotArray[1] = "A3 Spot Occupied";
+						}else {
+							spotArray[1] = "A3 Spot  not Occupied";
+						}
+						if(spotNumber.equals("B1") && Occupancy ==1) {
+							spotArray[1] = "B1 Spot Occupied";
+						}else {
+							spotArray[1] = "B1 Spot  not Occupied";
+						}
+						if(spotNumber.equals("B2") && Occupancy ==1) {
+							spotArray[1] = "B2 Spot Occupied";
+						}else {
+							spotArray[1] = "B2 Spot  not Occupied";
+						}
+						if(spotNumber.equals("B3") && Occupancy ==1) {
+							spotArray[1] = "B3 Spot Occupied";
+						}else {
+							spotArray[1] = "B3 Spot  not Occupied";
+						}
+						if(spotNumber.equals("C1") && Occupancy ==1) {
+							spotArray[1] = "C1 Spot Occupied";
+						}else {
+							spotArray[1] = "C1 Spot  not Occupied";
+						}
+						if(spotNumber.equals("C2") && Occupancy ==1) {
+							spotArray[1] = "C2 Spot Occupied";
+						}else {
+							spotArray[1] = "C2 Spot  not Occupied";
+						}
+						if(spotNumber.equals("C3") && Occupancy ==1) {
+							spotArray[1] = "C3 Spot Occupied";
+						}else {
+							spotArray[1] = "C3 Spot  not Occupied";
 						}
 					}
 				}
