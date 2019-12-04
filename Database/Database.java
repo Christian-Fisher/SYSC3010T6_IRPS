@@ -386,25 +386,6 @@ public class Database {
         }
     }
 	
-	public void timeOut(double booktime) {
-		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
-        try (Connection conn = this.connect();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)){
-        	 double time = booktime;
-        	 double time1 = time + 60000;
-        	 if(time == time1 ) {
-        		 System.out.println("Unbook the spot");
-        	 }
-        	 System.out.println(System.currentTimeMillis());
-        	
-        	while(rs.next()) {
-        		
-        	}
-        }catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-	}
 	
 	public String[] getLotOccupancy() {
 		String[] spotArray;
