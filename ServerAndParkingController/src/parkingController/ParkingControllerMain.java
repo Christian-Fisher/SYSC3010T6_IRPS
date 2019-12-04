@@ -83,7 +83,7 @@ public class ParkingControllerMain {
                         socket.receive(PinVerificationPacket);
                         sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
                         PinVerificationPacket.setAddress(ParkingControllerAddress);
-                        PinVerificationPacket.setPort(3000);
+                        PinVerificationPacket.setPort(3003);
                         sendSocket.send(PinVerificationPacket);
                         socket.receive(new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE));
                         parkingControllerQueue.remove();
