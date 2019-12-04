@@ -29,10 +29,10 @@ public class ArduinoInterface {
 
             while (true) {
 
-                byte[] readBuffer = new byte[1024];
+                byte[] readBuffer = new byte[20];
                 port.readBytes(readBuffer, readBuffer.length);
                 System.out.println(Arrays.toString(readBuffer));
-                if (!new String(readBuffer).equals("")) {
+                if (!(new String(readBuffer) == null)) {
                     DatagramPacket pinAck = new DatagramPacket(new byte[100], 100);
                     sendSocket.send(new DatagramPacket(("ARD:" + new String(readBuffer)).getBytes(), ("ARD:" + new String(readBuffer)).getBytes().length, Server, 2001));
                     socket.receive(pinAck);
