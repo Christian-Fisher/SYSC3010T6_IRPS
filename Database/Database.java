@@ -525,7 +525,12 @@ public class Database {
 				float min2 = sec2/60F;
 				String bookUser = spot;
 				bookUser = rs.getString("SpotNumber");
+				if(min2 < 10) {
 				carArrived(bookUser,true);
+				return true;
+				}else {
+					return false;
+				}
 			}
 			
 		}catch (SQLException e) {
@@ -584,6 +589,10 @@ public class Database {
         db.userNameExists("User");
         db.testAllSpots();
         db.getLotOccupancy();
+        db.bookingTimeOut("",123124324);
+        db.bookSpot("","");
+        db.carArrived("",true);
+        db.printAllLot();
     }
 
 }
