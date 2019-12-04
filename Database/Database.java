@@ -3,6 +3,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 public class Database {
 	
@@ -49,20 +50,22 @@ public class Database {
         }
     }
 	
-	public Integer getPINs() {
+	public int[] getPINs() {
+		int i=0;
 		String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
 		try(Connection conn = this.connect();
 	        Statement stmt  = conn.createStatement();
 	        ResultSet rs    = stmt.executeQuery(sql)){
 			
 			while(rs.next()) {
-				PIN1 = rs.getInt("PIN");
-				System.out.println(PIN1);
+				pins[i] = rs.getInt("PIN");
+				System.out.println(pins[i]);
+				i++;
 			}
 		}catch (SQLException e) {
             System.out.println(e.getMessage());
 	   }
-		return PIN1;
+		return pins;
    }
 	
 	public String[] getNames() {
@@ -454,7 +457,7 @@ public class Database {
 		return spotArray;
 	}
 	
-	public void carArrived(String spot, boolean occupancy) {
+	public void changeOccupancy(String spot, boolean occupancy) {
 		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
 		try(Connection conn = this.connect();
 		    Statement stmt  = conn.createStatement();
@@ -514,19 +517,34 @@ public class Database {
 		}
 	}
 	
+	public void insertQuery(String spotNum, int occupancy, float data) {
+		String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?,?)";
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			((PreparedStatement) rs).setString(1, spotNum);
+            ((PreparedStatement) rs).setInt(2, occupancy);
+            ((PreparedStatement) rs).setFloat(3,data);
+            ((PreparedStatement) rs).executeUpdate();
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
 	public boolean bookSpot(String spot, String User) {
 		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
 		try(Connection conn = this.connect();
 			Statement stmt  = conn.createStatement();
 			ResultSet rs    = stmt.executeQuery(sql)){
 			while(rs.next()) {
-				Float BookTime = rs.getFloat("BookTime");
+				//Float BookTime = rs.getFloat("BookTime");
+				float BookTime = System.currentTimeMillis();
 				float sec2 = BookTime/1000F;
 				float min2 = sec2/60F;
-				String bookUser = spot;
-				bookUser = rs.getString("SpotNumber");
+				insertQuery(spot,0,min2);
+			
 				if(min2 < 10) {
-				carArrived(bookUser,true);
+				changeOccupancy(User,true);
 				return true;
 				}else {
 					return false;
@@ -591,7 +609,7 @@ public class Database {
         db.getLotOccupancy();
         db.bookingTimeOut("",123124324);
         db.bookSpot("","");
-        db.carArrived("",true);
+        db.changeOccupancy("",true);
         db.printAllLot();
     }
 
