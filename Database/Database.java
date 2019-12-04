@@ -7,6 +7,7 @@ import java.sql.Statement;
 public class Database {
 	
 	int PIN1;
+	int Occupancy;
 	String usernameDB;
 	String LicensePlate;
 	String[] userNames;
@@ -366,6 +367,181 @@ public class Database {
 		}
 		 return false;
 	}
+	
+	public void printAllLot(){
+        String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+        
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+            
+            // loop through the result set
+            while (rs.next()) {
+                System.out.println(rs.getString("SpotNumber") +  "\t" + 
+                                   rs.getInt("Occupancy") + "\t" +
+                                   rs.getFloat("BookTime"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+	
+	public void timeOut(double booktime) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)){
+        	 double time = booktime;
+        	 double time1 = time + 60000;
+        	 if(time == time1 ) {
+        		 System.out.println("Unbook the spot");
+        	 }
+        	 System.out.println(System.currentTimeMillis());
+        	
+        	while(rs.next()) {
+        		
+        	}
+        }catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+	}
+	
+	public String[] getLotOccupancy() {
+		String[] spotArray;
+		spotArray = new String[10];
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		try(Connection conn = this.connect();
+	        Statement stmt  = conn.createStatement();
+	        ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				String spotNumber = rs.getString("SpotNumber");
+				Occupancy = rs.getInt("Occupancy");
+				for(int i=0;i>9;i++) {
+					if(spotArray[i] != null) {
+						if(spotArray[0].equals("A1") && Occupancy ==1) {
+							return spotArray;
+						}else {
+							
+						}
+					}
+				}
+			}
+			
+		}catch (SQLException e) {
+            System.out.println(e.getMessage());
+		}
+		return spotArray;
+	}
+	
+	public void carArrived(String spot, boolean occupancy) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		try(Connection conn = this.connect();
+		    Statement stmt  = conn.createStatement();
+		    ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				spot = rs.getString("SpotNumber");
+				int occupant = (occupancy) ? 1:0;
+				occupant = rs.getInt("Occupancy");
+			if(occupant == 1) {
+				if(spot.equals("A1")) {
+					System.out.println("A1 spot is occupied");
+				}else if(spot.equals("A2")) {
+					System.out.println("A2 spot is occupied");
+				}else if(spot.equals("A3")) {
+					System.out.println("A3 spot is occupied");
+				}else if(spot.equals("B1")) {
+					System.out.println("B1 spot is occupied");
+				}else if(spot.equals("B2")) {
+					System.out.println("B2 spot is occupied");
+				}else if(spot.equals("B3")) {
+					System.out.println("B3 spot is occupied");
+				}else if(spot.equals("C1")) {
+					System.out.println("C1 spot is occupied");
+				}else if(spot.equals("C2")) {
+					System.out.println("C2 spot is occupied");
+				}else if(spot.equals("C3")) {
+					System.out.println("C3 spot is occupied");
+				}
+			} else {
+				if(spot.equals("A1")) {
+					System.out.println("A1 spot is not occupied");
+				}else if(spot.equals("A2")) {
+					System.out.println("A2 spot is not occupied");
+				}else if(spot.equals("A3")) {
+					System.out.println("A3 spot is not occupied");
+				}else if(spot.equals("B1")) {
+					System.out.println("B1 spot is not occupied");
+				}else if(spot.equals("B2")) {
+					System.out.println("B2 spot is not occupied");
+				}else if(spot.equals("B3")) {
+					System.out.println("B3 spot is not occupied");
+				}else if(spot.equals("C1")) {
+					System.out.println("C1 spot is not occupied");
+				}else if(spot.equals("C2")) {
+					System.out.println("C2 spot is not occupied");
+				}else if(spot.equals("C3")) {
+					System.out.println("C3 spot is not occupied");
+				}
+			  }
+			}
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public boolean bookSpot(String spot, String User) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				Float BookTime = rs.getFloat("BookTime");
+				float sec2 = BookTime/1000F;
+				float min2 = sec2/60F;
+				String bookUser = spot;
+				bookUser = rs.getString("SpotNumber");
+				carArrived(bookUser,true);
+			}
+			
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return true;
+	}
+	
+	public boolean bookingTimeOut(String spot, float timeBooked) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		// finding the time before the operation is executed
+	      long currentTime = System.currentTimeMillis();
+	      // converting it into seconds
+	      float sec= currentTime/1000F;
+	      // converting it into minutes
+	      float minutes=sec/60F;
+	      System.out.println(minutes + " minutes");
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				spot = rs.getString("SpotNumber");
+				timeBooked = rs.getFloat("BookTime");
+				float sec1 = timeBooked/1000F;
+				float minute1 = sec1/60F;
+				Occupancy = rs.getInt("Occupancy");
+				if((minutes - minute1) >= 10) {
+					Occupancy = 0;
+					System.out.println("Unbook the spot");
+					return false;
+				}
+				return true;
+			}
+			
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return true;
+	}
+	//Bookedspot is from 0 - 8
+	//if spotnumber = booked occupied  =1 
 
 	public static void main(String[] args) {
         Database db = new Database();
