@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package parkingController;
+package ArduinoReceiver;
 
 import com.fazecast.jSerialComm.*;
 import java.io.IOException;
