@@ -111,7 +111,7 @@ public class Database {
 		    ResultSet rs    = stmt.executeQuery(sql)){
 			while(rs.next()) {
 				PIN1 = rs.getInt("PIN");
-				if(PIN1 == rs.getInt("PIN")) {
+				if(pin == PIN1) {
 					System.out.println("Valid PIN");
 					return true;
 				}else {
@@ -155,16 +155,16 @@ public class Database {
 			while(rs.next()) {
 				LicensePlate = plateNumber;
 				for (int i=0; i < LicensePlate.length(  ); i++) {
-					if(i < 4) {
+					if(i <= 4) {
 				    Character ch =  LicensePlate.charAt(i);
 				    if (!(  Character.isAlphabetic(ch) ) )  {
 					System.out.println("licence have a wrong digit or character");
 					return false;
 				    }
-					}if(i >= 4){
+					}if(i < 4){
 					    Character ch =  LicensePlate.charAt(i);    
 					if (! ( Character.isDigit(ch))    )  {
-						System.out.println("licence plate have a wrong digit ");
+						System.out.println("licence have a wrong digit or character");
 						return false;
 					}		
 					}
@@ -236,7 +236,7 @@ public class Database {
 			ResultSet rs    = stmt.executeQuery(sql)){
 			while(rs.next()) {
 				LicensePlates[i] = rs.getString("LicensePlate");
-				if(license.equals(LicensePlate)) {
+				if(license.equals(LicensePlates[i])) {
 					System.out.println("Correct claimed plate");
 					i++;
 					return true;
@@ -456,6 +456,19 @@ public class Database {
 		}
 		return spotArray;
 	}
+	public void insertOccupancy(String spotNumDB, int occupancyDB) {
+		String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?)";
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			((PreparedStatement) rs).setString(1, spotNumDB);
+            ((PreparedStatement) rs).setInt(2, occupancyDB);
+            //((PreparedStatement) rs).setFloat(3,time);
+            ((PreparedStatement) rs).executeUpdate();
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
 	
 	public void changeOccupancy(String spot, boolean occupancy) {
 		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -463,50 +476,68 @@ public class Database {
 		    Statement stmt  = conn.createStatement();
 		    ResultSet rs    = stmt.executeQuery(sql)){
 			while(rs.next()) {
-				spot = rs.getString("SpotNumber");
+			//String	spotdb = rs.getString("SpotNumber");
 				int occupant = (occupancy) ? 1:0;
-				occupant = rs.getInt("Occupancy");
+				//occupant = rs.getInt("Occupancy");
 			if(occupant == 1) {
 				if(spot.equals("A1")) {
-					System.out.println("A1 spot is occupied");
+					//System.out.println("A1 spot is occupied");
+					insertOccupancy("A1",1);
 				}else if(spot.equals("A2")) {
-					System.out.println("A2 spot is occupied");
+					//System.out.println("A2 spot is occupied");
+					insertOccupancy("A2",1);
 				}else if(spot.equals("A3")) {
-					System.out.println("A3 spot is occupied");
+					//System.out.println("A3 spot is occupied");
+					insertOccupancy("A3",1);
 				}else if(spot.equals("B1")) {
-					System.out.println("B1 spot is occupied");
+					//System.out.println("B1 spot is occupied");
+					insertOccupancy("B1",1);
 				}else if(spot.equals("B2")) {
-					System.out.println("B2 spot is occupied");
+					//System.out.println("B2 spot is occupied");
+					insertOccupancy("B2",1);
 				}else if(spot.equals("B3")) {
-					System.out.println("B3 spot is occupied");
+					//System.out.println("B3 spot is occupied");
+					insertOccupancy("B3",1);
 				}else if(spot.equals("C1")) {
-					System.out.println("C1 spot is occupied");
+					//System.out.println("C1 spot is occupied");
+					insertOccupancy("C1",1);
 				}else if(spot.equals("C2")) {
-					System.out.println("C2 spot is occupied");
+					//System.out.println("C2 spot is occupied");
+					insertOccupancy("C2",1);
 				}else if(spot.equals("C3")) {
-					System.out.println("C3 spot is occupied");
+					//System.out.println("C3 spot is occupied");
+					insertOccupancy("C3",1);
 				}else {
 					System.out.println("Invalid");
 				}
 			} else {
 				if(spot.equals("A1")) {
-					System.out.println("A1 spot is not occupied");
+					//System.out.println("A1 spot is not occupied");
+					insertOccupancy("A1",0);
 				}else if(spot.equals("A2")) {
-					System.out.println("A2 spot is not occupied");
+					//System.out.println("A2 spot is not occupied");
+					insertOccupancy("A2",0);
 				}else if(spot.equals("A3")) {
-					System.out.println("A3 spot is not occupied");
+					//System.out.println("A3 spot is not occupied");
+					insertOccupancy("A3",0);
 				}else if(spot.equals("B1")) {
-					System.out.println("B1 spot is not occupied");
+					//System.out.println("B1 spot is not occupied");
+					insertOccupancy("B1",0);
 				}else if(spot.equals("B2")) {
-					System.out.println("B2 spot is not occupied");
+					//System.out.println("B2 spot is not occupied");
+					insertOccupancy("B2",0);
 				}else if(spot.equals("B3")) {
-					System.out.println("B3 spot is not occupied");
+					//System.out.println("B3 spot is not occupied");
+					insertOccupancy("B3",0);
 				}else if(spot.equals("C1")) {
-					System.out.println("C1 spot is not occupied");
+					//System.out.println("C1 spot is not occupied");
+					insertOccupancy("C1",0);
 				}else if(spot.equals("C2")) {
-					System.out.println("C2 spot is not occupied");
+					//System.out.println("C2 spot is not occupied");
+					insertOccupancy("C2",0);
 				}else if(spot.equals("C3")) {
-					System.out.println("C3 spot is not occupied");
+					//System.out.println("C3 spot is not occupied");
+					insertOccupancy("C3",0);
 				}else {
 					System.out.println("Invalid");
 				}
@@ -517,14 +548,14 @@ public class Database {
 		}
 	}
 	
-	public void insertQuery(String spotNum, int occupancy, float data) {
+	public void insertQuery(String spotNum, int occupancy, float time) {
 		String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?,?)";
 		try(Connection conn = this.connect();
 			Statement stmt  = conn.createStatement();
 			ResultSet rs    = stmt.executeQuery(sql)){
 			((PreparedStatement) rs).setString(1, spotNum);
             ((PreparedStatement) rs).setInt(2, occupancy);
-            ((PreparedStatement) rs).setFloat(3,data);
+            ((PreparedStatement) rs).setFloat(3,time);
             ((PreparedStatement) rs).executeUpdate();
 		}catch (SQLException e) {
 			System.out.println(e.getMessage());
