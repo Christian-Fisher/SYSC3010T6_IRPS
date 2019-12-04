@@ -20,7 +20,9 @@ public class ArduinoInterface {
 
     public static void main(String[] args) {
         try {
+            System.out.println(Arrays.toString(SerialPort.getCommPorts()));
             SerialPort port = SerialPort.getCommPort("0");
+            
             port.setComPortTimeouts(SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING, 2000, 2000);
             port.setBaudRate(9600);
             DatagramSocket socket = new DatagramSocket(3003);
