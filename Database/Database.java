@@ -568,7 +568,6 @@ public class Database {
 			Statement stmt  = conn.createStatement();
 			ResultSet rs    = stmt.executeQuery(sql)){
 			while(rs.next()) {
-				//Float BookTime = rs.getFloat("BookTime");
 				float BookTime = System.currentTimeMillis();
 				float sec2 = BookTime/1000F;
 				float min2 = sec2/60F;
