@@ -78,7 +78,7 @@ void entry() {
 
     if (Serial.available()>=1) {
       String response = Serial.readString();
-      if(response == 1){
+      if(response.equals("1")){
         buzz(true);
         open();
         delay(5000);
@@ -145,4 +145,3 @@ void close() {
   }
   delay(1000);
 }
-
