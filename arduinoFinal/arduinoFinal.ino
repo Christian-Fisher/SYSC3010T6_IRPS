@@ -1,8 +1,9 @@
+#include <Keypad.h>
+
 #include <Wire.h>
 // Include the Servo Motor library
 #include <Servo.h>
 //Iclude the Keypad library
-#include <Keypad.h>
 //Iclude the LCD library
 Servo servoMotor;
 int IRsensor1 = 0;
@@ -29,14 +30,23 @@ const byte ROWS = 4;
 const byte COLUMNS = 4;
 
 char keysPad[ROWS][COLUMNS] = {
-  {'1', '2', '3', 'A'},
-  {'4', '5', '6', 'B'},
-  {'7', '8', '9', 'C'},
-  {'*', '0', '#', 'D'}
+  {
+    '1', '2', '3', 'A'  }
+  ,
+  {
+    '4', '5', '6', 'B'  }
+  ,
+  {
+    '7', '8', '9', 'C'  }
+  ,
+  {
+    '*', '0', '#', 'D'  }
 };
 
-byte pins1[ROWS] = {9, 8, 7, 6};
-byte pins2[COLUMNS] = {5, 4, 3, 2};
+byte pins1[ROWS] = {
+  9, 8, 7, 6};
+byte pins2[COLUMNS] = {
+  5, 4, 3, 2};
 
 Keypad pinKeys = Keypad(makeKeymap(keysPad), pins1, pins2, ROWS, COLUMNS);
 
@@ -53,7 +63,7 @@ void setup() {
 
 void loop() {
   entry();
-  
+
 }
 void entry() {
   char entryKey = pinKeys.getKey();
@@ -62,22 +72,24 @@ void entry() {
     pinReceive[pinReceive_count] = entryKey;
     pinReceive_count++;
   }
-  
+
   if (pinReceive_count == PIN_CodeLength - 1) {
     Serial.println(pinReceive);
-    
+
     if (Serial.available()>=1) {
       String response = Serial.readString();
       if(response == 1){
-      buzz(true)
-      open();
-      delay(5000);
-      close();
-      }else{
-      buzz(false);
+        buzz(true);
+        open();
+        delay(5000);
+        close();
       }
+      else{
+        buzz(false);
+      }
+    }
+    clearData();
   }
-  clearData();F
 }
 void clearData() {
   while (pinReceive_count != 0) {
@@ -86,19 +98,19 @@ void clearData() {
   return;
 }
 
-  void exit(){
-    
-    val = digitalRead(IRsensor1);     // read the input pin
-    //Serial.print(val);
-    //digitalWrite(ledPin, val);    // sets the LED to the button's value
-    if ( val ==1){
-      open();
-      delay(2000);
-      close();      
-    }
+void exit(){
 
-    
+  val = digitalRead(IRsensor1);     // read the input pin
+  //Serial.print(val);
+  //digitalWrite(ledPin, val);    // sets the LED to the button's value
+  if ( val ==1){
+    open();
+    delay(2000);
+    close();      
   }
+
+
+}
 void open() {
   for (rotate = 0; rotate <= 100; rotate += 1) { //rotating the motor to 90 degrees signifies the open gate
     servoMotor.write(rotate);
@@ -108,22 +120,22 @@ void open() {
 }
 
 void buzz(bool isValid){
-  
+
   if (isValid = true){
     tone(buzzer, 1000); // Send 1KHz sound signal...
     delay(100);        // ...for 1 sec
     noTone(buzzer);     // Stop sound...
     delay(100);        // ...for 1sec
-    }
-    if (isValid = false){
-      tone(buzzer, 1000); // Send 1KHz sound signal...
-      delay(100);        // ...for 1 sec
-      //exit;
-      noTone(buzzer);     // Stop sound...
-    }
-    else {
-      noTone(buzzer);     // Stop sound...
-      }
+  }
+  if (isValid = false){
+    tone(buzzer, 1000); // Send 1KHz sound signal...
+    delay(100);        // ...for 1 sec
+    //exit;
+    noTone(buzzer);     // Stop sound...
+  }
+  else {
+    noTone(buzzer);     // Stop sound...
+  }
 }
 
 void close() {
@@ -133,3 +145,4 @@ void close() {
   }
   delay(1000);
 }
+
