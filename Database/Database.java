@@ -482,6 +482,8 @@ public class Database {
 					System.out.println("C2 spot is occupied");
 				}else if(spot.equals("C3")) {
 					System.out.println("C3 spot is occupied");
+				}else {
+					System.out.println("Invalid");
 				}
 			} else {
 				if(spot.equals("A1")) {
@@ -502,6 +504,8 @@ public class Database {
 					System.out.println("C2 spot is not occupied");
 				}else if(spot.equals("C3")) {
 					System.out.println("C3 spot is not occupied");
+				}else {
+					System.out.println("Invalid");
 				}
 			  }
 			}
