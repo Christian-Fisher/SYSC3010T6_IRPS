@@ -559,6 +559,7 @@ public class Database {
             ((PreparedStatement) rs).setInt(2, occupancy);
             ((PreparedStatement) rs).setFloat(3, time);
             ((PreparedStatement) rs).executeUpdate();
+<<<<<<< HEAD
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -626,6 +627,73 @@ public class Database {
     //if spotnumber = booked occupied  =1 
 
     public static void main(String[] args) {
+=======
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public boolean bookSpot(String spot, String User) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				float BookTime = System.currentTimeMillis();
+				float sec2 = BookTime/1000F;
+				float min2 = sec2/60F;
+				insertQuery(spot,0,min2);
+			
+				if(min2 < 10) {
+				changeOccupancy(User,true);
+				return true;
+				}else {
+					return false;
+				}
+			}
+			
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return true;
+	}
+	
+	public boolean bookingTimeOut(String spot, float timeBooked) {
+		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
+		// finding the time before the operation is executed
+	      long currentTime = System.currentTimeMillis();
+	      // converting it into seconds
+	      float sec= currentTime/1000F;
+	      // converting it into minutes
+	      float minutes=sec/60F;
+	      System.out.println(minutes + " minutes");
+		try(Connection conn = this.connect();
+			Statement stmt  = conn.createStatement();
+			ResultSet rs    = stmt.executeQuery(sql)){
+			while(rs.next()) {
+				spot = rs.getString("SpotNumber");
+				timeBooked = rs.getFloat("BookTime");
+				float sec1 = timeBooked/1000F;
+				float minute1 = sec1/60F;
+				Occupancy = rs.getInt("Occupancy");
+				if((minutes - minute1) >= 10) {
+					Occupancy = 0;
+					System.out.println("Unbook the spot");
+					return false;
+				}
+				return true;
+			}
+			
+		}catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return true;
+	}
+	//Bookedspot is from 0 - 8
+	//if spotnumber = booked occupied  =1 
+
+	public static void main(String[] args) {
+>>>>>>> b9964c9f28cca9159b02dccb96d42b23807dca55
         Database db = new Database();
         db.printAll();
         db.getPINs();
