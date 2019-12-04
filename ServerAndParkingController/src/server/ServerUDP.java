@@ -268,6 +268,7 @@ public class ServerUDP {
                 }
                 if(x == 12){
                     x=0;
+                    mainDatabase.printAllLot();
                 for (int i = 0; i < LOT_SIZE; i++) {
                     
                     if (!mainDatabase.bookingTimeOut(Integer.toString((i+1)))) {
