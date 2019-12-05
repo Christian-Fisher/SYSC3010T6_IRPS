@@ -133,9 +133,7 @@ public class UDPThread extends Thread {
                     }
                 }
             }else {
-                if(!(new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND))){
-                    appQueue.add(new String(heartbeat.getData()).trim());
-                }else{
+                if((new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(BOOKING_COMMAND))){
                     appQueue.add(new String(heartbeat.getData()).trim() + DATA_SPLIT_REGEX  + user);
                 }
                 if(new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)){

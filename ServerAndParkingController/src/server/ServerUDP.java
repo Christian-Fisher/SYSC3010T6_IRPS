@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 /**
  * This class will be the main server UDP controller, which will accept UDP
  * packet inputs, and will also send any messages the database requires..
@@ -180,7 +181,7 @@ public class ServerUDP {
     public void sendToAppOcccupancy() {
         try {
             String[] occupancyOfLot = d.getLotOccupancy();
-            System.out.println("occupancy was run");
+            System.out.println(Arrays.toString(occupancyOfLot));
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
                 occupancyMessage += DATA_SPLIT_REGEX + occupancyOfLot[x];
