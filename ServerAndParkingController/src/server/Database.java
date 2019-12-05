@@ -233,7 +233,7 @@ public class Database {
             while (rs.next()) {
                 return true;
             }
-            
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -431,8 +431,15 @@ public class Database {
         }
     }
 
-    public void setTime(String spot) {
-        String sql = "UPDATE Lot SET BookTime = '" + System.currentTimeMillis() / 60000 + "' WHERE SpotNumber = '" + spot + "';";
+    public void setTime(String spot, boolean changeToNull) {
+        String sql;
+        if (changeToNull) {
+            sql = "UPDATE Lot SET BookTime = '" + null + "' WHERE SpotNumber = '" + spot + "';";
+
+        } else {
+            sql = "UPDATE Lot SET BookTime = '" + System.currentTimeMillis() / 60000 + "' WHERE SpotNumber = '" + spot + "';";
+
+        }
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
@@ -445,7 +452,7 @@ public class Database {
 
     public boolean bookSpot(String spot, String User) {
         changeOccupancy(spot, true);
-        setTime(spot);
+        setTime(spot, false);
         String sql = "UPDATE Users SET  BookedSpot = '" + spot + "' WHERE Username = '" + User + "';";
         try {
             Connection conn = this.connect();
