@@ -1,4 +1,5 @@
 package server;
+
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -386,65 +387,16 @@ public class Database {
 
     public String[] getLotOccupancy() {
         String[] spotArray;
-        spotArray = new String[10];
-        String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+        spotArray = new String[9];
+        String sql = "SELECT Occupancy FROM Lot";
+        try {
+            Connection conn = this.connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            int i =0;
             while (rs.next()) {
-                String spotNumber = rs.getString("SpotNumber");
-                Occupancy = rs.getInt("Occupancy");
-                for (int i = 0; i > 9; i++) {
-                    if (spotArray[i] != null) {
-                        if (spotNumber.equals("A1") && Occupancy == 1) {
-                            spotArray[0] = "A1 Spot Occupied";
-                        } else {
-                            spotArray[0] = "A1 Spot not Occupied";
-                        }
-                        if (spotNumber.equals("A2") && Occupancy == 1) {
-                            spotArray[1] = "A2 Spot Occupied";
-                        } else {
-                            spotArray[1] = "A2 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("A3") && Occupancy == 1) {
-                            spotArray[2] = "A3 Spot Occupied";
-                        } else {
-                            spotArray[2] = "A3 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("B1") && Occupancy == 1) {
-                            spotArray[3] = "B1 Spot Occupied";
-                        } else {
-                            spotArray[3] = "B1 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("B2") && Occupancy == 1) {
-                            spotArray[4] = "B2 Spot Occupied";
-                        } else {
-                            spotArray[4] = "B2 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("B3") && Occupancy == 1) {
-                            spotArray[5] = "B3 Spot Occupied";
-                        } else {
-                            spotArray[5] = "B3 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("C1") && Occupancy == 1) {
-                            spotArray[6] = "C1 Spot Occupied";
-                        } else {
-                            spotArray[6] = "C1 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("C2") && Occupancy == 1) {
-                            spotArray[7] = "C2 Spot Occupied";
-                        } else {
-                            spotArray[7] = "C2 Spot  not Occupied";
-                        }
-                        if (spotNumber.equals("C3") && Occupancy == 1) {
-                            spotArray[8] = "C3 Spot Occupied";
-                        } else {
-                            spotArray[8] = "C3 Spot  not Occupied";
-                        }
-                    }
-                }
+                spotArray[i] = rs.getString("Occupancy");
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -584,7 +536,7 @@ public class Database {
     }
 
     public boolean bookingTimeOut(String spot) {
-        String sql = "SELECT BookTime FROM Lot WHERE SpotNumber = '" + spot +"';";
+        String sql = "SELECT BookTime FROM Lot WHERE SpotNumber = '" + spot + "';";
         // finding the time before the operation is executed
         long currentTime = System.currentTimeMillis();
         float timeBooked;

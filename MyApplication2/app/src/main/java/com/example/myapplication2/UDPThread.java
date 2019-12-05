@@ -133,11 +133,14 @@ public class UDPThread extends Thread {
                     }
                 }
             }else {
-                appQueue.add(new String(heartbeat.getData()).trim());
+                if(!(new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND))){
+                    appQueue.add(new String(heartbeat.getData()).trim());
+                }else{
+                    appQueue.add(new String(heartbeat.getData()).trim() + DATA_SPLIT_REGEX  + user);
+                }
                 if(new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)){
                     user = new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX)[0];
                 }
-                System.out.println("Processing Request");
         }
 
     }
