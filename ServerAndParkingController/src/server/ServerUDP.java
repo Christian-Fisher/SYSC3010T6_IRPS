@@ -116,9 +116,9 @@ public class ServerUDP {
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-            System.out.println("IR CALL: "+IRMessage[0] + " : " + IRMessage[1].equals("1"));
+            System.out.println("IR CALL: " + IRMessage[0] + " : " + IRMessage[1].equals("1"));
             d.changeOccupancy(IRMessage[0], IRMessage[1].equals("0"));
-            sendToLED(Integer.toString(Integer.parseInt(IRMessage[0])-1), IRMessage[1].equals("1"));
+            sendToLED(Integer.toString(Integer.parseInt(IRMessage[0]) - 1), IRMessage[1].equals("1"));
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -171,7 +171,7 @@ public class ServerUDP {
             DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(bookPacket);
             socket.receive(bookAck);
-            sendToLED(Integer.toString(Integer.parseInt(data[0])-1), false);
+            sendToLED(Integer.toString(Integer.parseInt(data[0]) - 1), false);
         } catch (IOException e) {
             System.err.println(e + "Booking");
         }
@@ -184,21 +184,20 @@ public class ServerUDP {
             System.out.println(Arrays.toString(occupancyOfLot));
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
-                if(x==8){
+                if (x == 8) {
                     if (occupancyOfLot[x].equals("0")) {
-                    occupancyMessage += false;
+                        occupancyMessage += false;
+                    } else {
+                        occupancyMessage += true;
+
+                    }
+                } else if (occupancyOfLot[x].equals("0")) {
+                    occupancyMessage += false + DATA_SPLIT_REGEX;
                 } else {
-                    occupancyMessage += true;
+                    occupancyMessage += true + DATA_SPLIT_REGEX;
 
                 }
-                }
-                if (occupancyOfLot[x].equals("0")) {
-                    occupancyMessage += false+DATA_SPLIT_REGEX;
-                } else {
-                    occupancyMessage += true + DATA_SPLIT_REGEX  ;
 
-                }
-                
             }
             System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
