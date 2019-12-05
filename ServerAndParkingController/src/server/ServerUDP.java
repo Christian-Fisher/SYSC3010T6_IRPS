@@ -180,6 +180,7 @@ public class ServerUDP {
     public void sendToAppOcccupancy() {
         try {
             String[] occupancyOfLot = d.getLotOccupancy();
+            System.out.println("occupancy was run");
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
                 occupancyMessage += DATA_SPLIT_REGEX + occupancyOfLot[x];

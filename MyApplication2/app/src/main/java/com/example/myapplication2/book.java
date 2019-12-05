@@ -99,7 +99,7 @@ public class book extends AppCompatActivity {
         lot[0].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                if (bookSpot("0")){
+                if (bookSpot("1")){
                 Intent finalpageIntent= new Intent(book.this,finalpage.class);
                 // after booking we go to another page with telss the user's booking is successfuly  done
                 startActivity(finalpageIntent);}
@@ -120,7 +120,7 @@ public class book extends AppCompatActivity {
         lot[1].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                if (bookSpot("1")){
+                if (bookSpot("2")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -144,7 +144,7 @@ public class book extends AppCompatActivity {
         lot[2].setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                if (bookSpot("2")){
+                if (bookSpot("3")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -166,7 +166,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("3")){
+                if (bookSpot("4")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -190,7 +190,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("4")){
+                if (bookSpot("5")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -213,7 +213,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("5")){
+                if (bookSpot("6")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -237,7 +237,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("6")){
+                if (bookSpot("7")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -259,7 +259,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("7")){
+                if (bookSpot("8")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
@@ -282,7 +282,7 @@ public class book extends AppCompatActivity {
 
             public void onClick(View view) {
 
-                if (bookSpot("8")){
+                if (bookSpot("9")){
                     Intent finalpageIntent= new Intent(book.this,finalpage.class);
                     // after booking we go to another page with telss the user's booking is successfuly  done
                     startActivity(finalpageIntent);}
