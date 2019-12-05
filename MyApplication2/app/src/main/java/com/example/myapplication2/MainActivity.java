@@ -84,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
     
 
     public boolean verifyLogin(String username, String password) {
+        if(username.equals("")||password.equals("")){
+            return false;
+        }
         try {
             socket = new DatagramSocket(3000);
             socket.setSoTimeout(2000);
