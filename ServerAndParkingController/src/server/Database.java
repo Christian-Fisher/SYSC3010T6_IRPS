@@ -470,7 +470,7 @@ public class Database {
         changeOccupancy(spot, true);
         setTime(spot);
         
-        String sql= "UPDATE Username SET  BookedSpot = '" + spot+ "' WHERE Users = '" + User + "';";
+        String sql= "UPDATE Users SET  BookedSpot = '" + spot+ "' WHERE Username = '" + User + "';";
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
