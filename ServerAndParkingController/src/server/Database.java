@@ -382,6 +382,7 @@ public class Database {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            System.out.println("Print lot failed");
         }
     }
 
@@ -399,6 +400,7 @@ public class Database {
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            System.out.println("getLotOccupancy failed");
         }
         return spotArray;
     }
@@ -432,6 +434,7 @@ public class Database {
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            System.out.println("changeOccupancy failed");
         }
     }
 
