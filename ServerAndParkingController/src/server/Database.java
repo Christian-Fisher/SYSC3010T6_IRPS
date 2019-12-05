@@ -393,7 +393,7 @@ public class Database {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
-            int i =0;
+            int i = 0;
             while (rs.next()) {
                 spotArray[i] = rs.getString("Occupancy");
             }
@@ -418,78 +418,18 @@ public class Database {
     }
 
     public void changeOccupancy(String spot, boolean occupancy) {
-        String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                //String	spotdb = rs.getString("SpotNumber");
-                int occupant = (occupancy) ? 1 : 0;
-                //occupant = rs.getInt("Occupancy");
-                if (occupant == 1) {
-                    if (spot.equals("A1")) {
-                        //System.out.println("A1 spot is occupied");
-                        insertOccupancy("A1", 1);
-                    } else if (spot.equals("A2")) {
-                        //System.out.println("A2 spot is occupied");
-                        insertOccupancy("A2", 1);
-                    } else if (spot.equals("A3")) {
-                        //System.out.println("A3 spot is occupied");
-                        insertOccupancy("A3", 1);
-                    } else if (spot.equals("B1")) {
-                        //System.out.println("B1 spot is occupied");
-                        insertOccupancy("B1", 1);
-                    } else if (spot.equals("B2")) {
-                        //System.out.println("B2 spot is occupied");
-                        insertOccupancy("B2", 1);
-                    } else if (spot.equals("B3")) {
-                        //System.out.println("B3 spot is occupied");
-                        insertOccupancy("B3", 1);
-                    } else if (spot.equals("C1")) {
-                        //System.out.println("C1 spot is occupied");
-                        insertOccupancy("C1", 1);
-                    } else if (spot.equals("C2")) {
-                        //System.out.println("C2 spot is occupied");
-                        insertOccupancy("C2", 1);
-                    } else if (spot.equals("C3")) {
-                        //System.out.println("C3 spot is occupied");
-                        insertOccupancy("C3", 1);
-                    } else {
-                        System.out.println("Invalid");
-                    }
-                } else {
-                    if (spot.equals("A1")) {
-                        //System.out.println("A1 spot is not occupied");
-                        insertOccupancy("A1", 0);
-                    } else if (spot.equals("A2")) {
-                        //System.out.println("A2 spot is not occupied");
-                        insertOccupancy("A2", 0);
-                    } else if (spot.equals("A3")) {
-                        //System.out.println("A3 spot is not occupied");
-                        insertOccupancy("A3", 0);
-                    } else if (spot.equals("B1")) {
-                        //System.out.println("B1 spot is not occupied");
-                        insertOccupancy("B1", 0);
-                    } else if (spot.equals("B2")) {
-                        //System.out.println("B2 spot is not occupied");
-                        insertOccupancy("B2", 0);
-                    } else if (spot.equals("B3")) {
-                        //System.out.println("B3 spot is not occupied");
-                        insertOccupancy("B3", 0);
-                    } else if (spot.equals("C1")) {
-                        //System.out.println("C1 spot is not occupied");
-                        insertOccupancy("C1", 0);
-                    } else if (spot.equals("C2")) {
-                        //System.out.println("C2 spot is not occupied");
-                        insertOccupancy("C2", 0);
-                    } else if (spot.equals("C3")) {
-                        //System.out.println("C3 spot is not occupied");
-                        insertOccupancy("C3", 0);
-                    } else {
-                        System.out.println("Invalid");
-                    }
-                }
-            }
+        String sql;
+        if (occupancy) {
+             sql = "UPDATE Lot SET Occupancy = '1' WHERE SpotNumber = '" + spot + "'  ;";
+        } else {
+             sql = "UPDATE Lot SET Occupancy = '0' WHERE SpotNumber = '" + spot + "'  ;";
+
+        }
+        try {
+            Connection conn = this.connect();
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(sql);
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -515,7 +455,6 @@ public class Database {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                //Float BookTime = rs.getFloat("BookTime");
                 float BookTime = System.currentTimeMillis();
                 float sec2 = BookTime / 1000F;
                 float min2 = sec2 / 60F;
