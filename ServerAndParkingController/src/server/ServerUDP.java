@@ -275,6 +275,7 @@ public class ServerUDP {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
                     }
                 }
+                System.out.println(Arrays.toString(mainDatabase.getLotOccupancy()));
                 if (x == 20) {
                     x = 0;
                     mainDatabase.printAllLot();
