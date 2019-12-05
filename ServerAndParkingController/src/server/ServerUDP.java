@@ -116,7 +116,7 @@ public class ServerUDP {
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-            System.out.println(IRMessage[0] + " : " + IRMessage[1].equals("1"));
+            System.out.println("IR CALL: "+IRMessage[0] + " : " + IRMessage[1].equals("1"));
             d.changeOccupancy(IRMessage[0], IRMessage[1].equals("1"));
             sendToLED(IRMessage[0], IRMessage[1].equals("1"));
         } catch (IOException e) {
@@ -275,17 +275,17 @@ public class ServerUDP {
                     }
                 }
                 System.out.println(Arrays.toString(mainDatabase.getLotOccupancy()));
-                if (x == 20) {
-                    x = 0;
-                    mainDatabase.printAllLot();
-                    for (int i = 1; i <= LOT_SIZE; i++) {
-
-                        if (!mainDatabase.bookingTimeOut(Integer.toString((i)))) {
-//                            mainDatabase.changeOccupancy(Integer.toString(i), false);
-                        }
-                    }
-                }
-                x++;
+//                if (x == 20) {
+//                    x = 0;
+//                    mainDatabase.printAllLot();
+//                    for (int i = 1; i <= LOT_SIZE; i++) {
+//
+//                        if (!mainDatabase.bookingTimeOut(Integer.toString((i)))) {
+////                            mainDatabase.changeOccupancy(Integer.toString(i), false);
+//                        }
+//                    }
+//                }
+//                x++;
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 System.err.println(e);
