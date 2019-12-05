@@ -465,6 +465,16 @@ public class Database {
         
         changeOccupancy(spot, true);
         setTime(spot);
+        
+        String sql= "UPDATE User SET  BookedSpot = '" + spot+ "' WHERE Users = '" + User + "';";
+        try {
+            Connection conn = this.connect();
+            Statement stmt = conn.createStatement();
+            stmt.execute(sql);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
        return true;
     }
 

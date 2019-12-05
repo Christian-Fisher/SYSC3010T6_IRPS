@@ -231,7 +231,9 @@ public class ServerUDP {
          */
          int x =0;
         while (true) {
-           mainDatabase.bookSpot("0", "Schramm");
+            mainDatabase.bookSpot("2", "Schramm");
+            mainDatabase.printAll();
+            mainDatabase.printAllLot();
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
 
