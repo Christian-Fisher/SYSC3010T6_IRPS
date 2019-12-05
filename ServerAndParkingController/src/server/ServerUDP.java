@@ -232,9 +232,6 @@ public class ServerUDP {
          */
          int x =0;
         while (true) {
-            mainDatabase.bookSpot("2", "Schramm");
-            mainDatabase.printAll();
-            mainDatabase.printAllLot();
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
 
@@ -270,7 +267,7 @@ public class ServerUDP {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
                     }
                 }
-                if(x == 12){
+                if(x == 20){
                     x=0;
                     mainDatabase.printAllLot();
                 for (int i = 0; i < LOT_SIZE; i++) {
