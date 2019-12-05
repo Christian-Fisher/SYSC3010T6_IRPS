@@ -106,7 +106,7 @@ public class Database {
     }
 
     public boolean PINexists(int pin) {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -127,7 +127,7 @@ public class Database {
     }
 
     public boolean validPINlength(int pin) {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -149,7 +149,7 @@ public class Database {
     }
 
     public boolean validLicensePlate(String plateNumber) {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -182,7 +182,7 @@ public class Database {
     }
 
     public boolean validUsernameFormat() {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -200,7 +200,7 @@ public class Database {
     }
 
     public boolean checkPINcharacter() {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -226,7 +226,7 @@ public class Database {
 
     public boolean claimedLicensePlate(String license) {
         int i = 0;
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -248,7 +248,7 @@ public class Database {
     }
 
     public boolean checkDatabaseEmpty() {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -268,7 +268,7 @@ public class Database {
     }
 
     public Boolean[] testAllSpots() {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         array = new Boolean[10];
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
@@ -348,7 +348,7 @@ public class Database {
                 return false;
             }
         }
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM User";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
