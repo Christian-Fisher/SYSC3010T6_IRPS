@@ -32,7 +32,7 @@ public class ArduinoInterface {
         port.setBaudRate(9600);
 
         int numRead[] = new int[5];
-        byte[] readBuffer = new byte[6];
+        byte[] readBuffer;
         boolean run = true;
         String pin = "";
 
@@ -41,38 +41,38 @@ public class ArduinoInterface {
             DatagramSocket sendSocket = new DatagramSocket();
             InetAddress ParkingController = InetAddress.getByName("localhost");
             while (true) {
+                int x = 0;
                 while (run) {
-                    int x = 0;
-                    readBuffer = new byte[6];
-                    port.readBytes(readBuffer, 2);
+
+                    if (x == 4) {
+                        run = false;
+                    }
+                    readBuffer = new byte[1];
+                    port.readBytes(readBuffer, 1);
                     if (readBuffer[0] != 0) {
-                        
-//                        System.out.println(Arrays.toString(readBuffer));
-//
-//                        numRead[x] = readBuffer[0];
-//                        if (numRead[x] == 10) {
-//                            run = false;
-//                        }
-//                        x++;
-//                    }
-//                    Thread.sleep(100);
+                        if (readBuffer[0] != 13) {
+                            if (readBuffer[0] != 10) {
+                                System.out.println(Arrays.toString(readBuffer));
+                                pin += new String(readBuffer);
+                                x++;
+                            }
+                        }
+                    }
+                    Thread.sleep(100);
                 }
-                for (int i = 0; i < 4; i++) {
-                    numRead[i] = numRead[i] - 48;
-                    pin += Integer.toString(numRead[i]);
+                System.out.println("Test " + pin);
+                DatagramPacket ack = new DatagramPacket(new byte[20], 20);
+                sendSocket.send(new DatagramPacket(pin.getBytes(), pin.getBytes().length, ParkingController, 2001));
+                socket.receive(ack);
+                if (new String(ack.getData()).trim().split(":")[1].equals("true")) {
+                byte response[] = new byte[1];
+                port.writeBytes(response, 1);
+                } else {
+                    byte response[] = new byte[0];
+                    port.writeBytes(response, 0);
                 }
-//                DatagramPacket ack = new DatagramPacket(new byte[20], 20);
-//                sendSocket.send(new DatagramPacket(pin.getBytes(), pin.getBytes().length, ParkingController, 2001));
-//                socket.receive(ack);
-//                if (new String(ack.getData()).trim().split(":")[1].equals("true")) {
-                    byte response[] = new byte[1];
-                    port.writeBytes(response, 1);
-//                } else {
-//                    byte response[] = new byte[0];
-//                    port.writeBytes(response, 0);
-//                }
                 port.closePort();
-                run =true;
+                run = true;
             }
         } catch (SerialPortInvalidPortException e) {
             System.err.println(e);
@@ -86,7 +86,5 @@ public class ArduinoInterface {
             Logger.getLogger(ArduinoInterface.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }   catch (SocketException ex) {
-            Logger.getLogger(ArduinoInterface.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    }
 }

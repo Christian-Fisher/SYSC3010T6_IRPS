@@ -22,7 +22,7 @@ char entryKey; // user
 const byte ROWS = 4;
 const byte COLUMNS = 4;
 char pinSet[] = "1234";
-
+String inputString = "";
 char keysPad[ROWS][COLUMNS] = {
   {
     '1', '2', '3', 'A'
@@ -136,22 +136,29 @@ void entry() {
   }
 
   if (pinReceive_count == PIN_CodeLength - 1) {
-//    for (int i = 0; i < 4; i++) {
-//      byte lengthArray[pinReceive[i]] = {0,0,0,0,0,0,0,0,0};
-//          Serial.println((sizeof(lengthArray) / sizeof(lengthArray[0])));
-//          delay(100);
-//    }
-//    byte LengthArray[10] = {0,0,0,0,0,0,0,0,0,0};
-//    Serial.println((sizeof(LengthArray) / sizeof(LengthArray[0])));
-    Serial.println(pinReceive);
+    //    for (int i = 0; i < 4; i++) {
+    //      byte lengthArray[pinReceive[i]] = {0,0,0,0,0,0,0,0,0};
+    //          Serial.println((sizeof(lengthArray) / sizeof(lengthArray[0])));
+    //          delay(100);
+    //    }
+    //    byte LengthArray[10] = {0,0,0,0,0,0,0,0,0,0};
+    //    Serial.println((sizeof(LengthArray) / sizeof(LengthArray[0])));
+    Serial.println(pinReceive[0]);
+    delay(100);
+    Serial.println(pinReceive[1]);
+    delay(100);
+    Serial.println(pinReceive[2]);
+    delay(100);
+    Serial.println(pinReceive[3]);
+
     while (!Serial.available()) {}
-    while(Serial.available()){
+    while (Serial.available()) {
       delay(3);
       char character = Serial.read();
       inputString += character;
     }
     inputString.trim();
-    if (inputString.length()>0) {
+    if (inputString.length() > 0) {
       buzz(true);
       delay(1000);
       buzz('1');
