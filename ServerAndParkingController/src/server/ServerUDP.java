@@ -241,7 +241,7 @@ public class ServerUDP {
         while (true) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
-
+                System.out.println(heartbeatParkingResponse);
                 if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
 
                     String message = new String(heartbeatParkingResponse.getBytes()).trim();
@@ -258,6 +258,7 @@ public class ServerUDP {
                     }
                 }
                 String heartbeatAppResponse = udp.heartbeatApp();
+                System.out.println(heartbeatAppResponse);
                 if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
                     String message = new String(heartbeatAppResponse.getBytes()).trim();
                     String[] split1String = message.split(COMMAND_SPLIT_REGEX);
