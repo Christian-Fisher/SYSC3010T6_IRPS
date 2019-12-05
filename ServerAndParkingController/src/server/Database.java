@@ -232,6 +232,7 @@ public class Database {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
+                System.out.println(rs.getString(LicensePlate));
             if(rs.getString(LicensePlate).equals("")){
                 return false;
             }
