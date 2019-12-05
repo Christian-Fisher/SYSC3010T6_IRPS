@@ -428,7 +428,7 @@ public class Database {
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
-            stmt.executeQuery(sql);
+            stmt.execute(sql);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -454,7 +454,7 @@ public class Database {
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
-            stmt.executeQuery(sql);
+            stmt.execute(sql);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
