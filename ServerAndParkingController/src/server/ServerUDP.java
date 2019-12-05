@@ -2,7 +2,6 @@ package server;
 
 import java.io.IOException;
 import java.net.*;
-
 /**
  * This class will be the main server UDP controller, which will accept UDP
  * packet inputs, and will also send any messages the database requires..
