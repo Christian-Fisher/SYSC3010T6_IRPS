@@ -423,9 +423,9 @@ public class Database {
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql;
         if (occupancy) {
-             sql = "UPDATE Lot SET Occupancy = '1' WHERE SpotNumber = '" + spot + "'  ;";
+             sql = "UPDATE Lot SET Occupancy = 1 WHERE SpotNumber = '" + spot + "'  ;";
         } else {
-             sql = "UPDATE Lot SET Occupancy = '0' WHERE SpotNumber = '" + spot + "'  ;";
+             sql = "UPDATE Lot SET Occupancy = 0 WHERE SpotNumber = '" + spot + "'  ;";
 
         }
         try {
@@ -466,10 +466,8 @@ public class Database {
     }
     
     public boolean bookSpot(String spot, String User) {
-        
         changeOccupancy(spot, true);
         setTime(spot);
-        
         String sql= "UPDATE Users SET  BookedSpot = '" + spot+ "' WHERE Username = '" + User + "';";
         try {
             Connection conn = this.connect();
