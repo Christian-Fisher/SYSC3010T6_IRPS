@@ -143,22 +143,16 @@ void entry() {
     //    }
     //    byte LengthArray[10] = {0,0,0,0,0,0,0,0,0,0};
     //    Serial.println((sizeof(LengthArray) / sizeof(LengthArray[0])));
-    Serial.println(pinReceive[0]);
-    delay(100);
-    Serial.println(pinReceive[1]);
-    delay(100);
-    Serial.println(pinReceive[2]);
-    delay(100);
-    Serial.println(pinReceive[3]);
 
-    while (!Serial.available()) {}
-    while (Serial.available()) {
-      delay(3);
-      char character = Serial.read();
-      inputString += character;
-    }
+//
+//    while (!Serial.available()) {}
+//    while (Serial.available()) {
+//      delay(3);
+//      char character = Serial.read();
+//      inputString += character;
+//    }
     inputString.trim();
-    if (inputString.length() > 0) {
+    if (strcmp(pinReceive, pinSet)) {
       buzz(true);
       delay(1000);
       buzz('1');
