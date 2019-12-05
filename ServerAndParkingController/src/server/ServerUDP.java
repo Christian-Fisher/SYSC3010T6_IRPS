@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
+
 /**
  * This class will be the main server UDP controller, which will accept UDP
  * packet inputs, and will also send any messages the database requires..
@@ -184,7 +185,12 @@ public class ServerUDP {
             System.out.println(Arrays.toString(occupancyOfLot));
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
-                occupancyMessage += DATA_SPLIT_REGEX + occupancyOfLot[x];
+                if (occupancyOfLot[x].equals("0") || occupancyOfLot[x] == null) {
+                    occupancyMessage += DATA_SPLIT_REGEX + false;
+                } else {
+                    occupancyMessage += DATA_SPLIT_REGEX + true;
+
+                }
             }
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
             DatagramPacket OccAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
@@ -231,7 +237,7 @@ public class ServerUDP {
         Y=Data 
         Z=Data
          */
-         int x =0;
+        int x = 0;
         while (true) {
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
@@ -268,15 +274,15 @@ public class ServerUDP {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
                     }
                 }
-                if(x == 20){
-                    x=0;
+                if (x == 20) {
+                    x = 0;
                     mainDatabase.printAllLot();
-                for (int i = 0; i < LOT_SIZE; i++) {
-                    
-                    if (!mainDatabase.bookingTimeOut(Integer.toString((i+1)))) {
-                        mainDatabase.changeOccupancy(Integer.toString(i+1), false);
+                    for (int i = 0; i < LOT_SIZE; i++) {
+
+                        if (!mainDatabase.bookingTimeOut(Integer.toString((i + 1)))) {
+                            mainDatabase.changeOccupancy(Integer.toString(i + 1), false);
+                        }
                     }
-                }
                 }
                 x++;
                 Thread.sleep(250);
