@@ -92,7 +92,11 @@ public class ServerUDP {
     public void sendToArduino(String pin) {
         String data = ARDUINO_COMMAND + COMMAND_SPLIT_REGEX;// Prefix the message with "Arduino:" to signal the message is
         // meant for the arduino
-        data += d.PINexists(Integer.parseInt(pin)); // Add the pinCorrect boolean to the messgae
+        if (d.PINexists(Integer.parseInt(pin))) {
+            data += "true"; // Add the pinCorrect boolean to the messgae
+        } else {
+            data += "false";
+        }
         try {
             DatagramPacket ack = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE); // create a packet which will use
             // used to store the ack message
@@ -116,9 +120,9 @@ public class ServerUDP {
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-            d.changeOccupancy(Integer.toString(Integer.parseInt(IRMessage[0])+1), IRMessage[1].equals("0"));
+            d.changeOccupancy(Integer.toString(Integer.parseInt(IRMessage[0]) + 1), IRMessage[1].equals("0"));
             sendToLED(IRMessage[0], IRMessage[1].equals("1"));
-            if(IRMessage[1].equals("0")){
+            if (IRMessage[1].equals("0")) {
                 d.setTime(IRMessage[0], true);
             }
         } catch (IOException e) {

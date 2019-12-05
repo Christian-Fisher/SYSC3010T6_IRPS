@@ -25,13 +25,12 @@ public class ArduinoInterface {
     public static void main(String[] args) {
 
         SerialPort[] ports = SerialPort.getCommPorts();
-
+        System.out.println(Arrays.toString(ports));
         SerialPort port = ports[0];
         port.openPort();
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 2000, 0);
         port.setBaudRate(9600);
 
-        int numRead[] = new int[5];
         byte[] readBuffer;
         boolean run = true;
         String pin = "";
