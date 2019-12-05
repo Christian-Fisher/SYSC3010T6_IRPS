@@ -145,8 +145,7 @@ public class ServerUDP {
     public void sendToAppClaim(String ClaimMessage) {
         try {
             String ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "false";
-            System.out.println("Incoming: "+ClaimResponse);
-            if (d.claimedLicensePlate(ClaimResponse)) {
+            if (d.claimedLicensePlate(ClaimMessage)) {
                 ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
             }
             DatagramPacket ClaimPacket = new DatagramPacket(ClaimResponse.getBytes(), ClaimResponse.getBytes().length, AppAddress, 2000);
@@ -269,7 +268,6 @@ public class ServerUDP {
                         udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
                     } else if (split1String[0].equals(CLAIM_COMMAND)) {
-                        System.out.println("Incoming from app: "+split1String[1]);
                         udp.sendToAppClaim(split1String[1]);
                     } else if (split1String[0].equals(BOOKING_COMMAND)) {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
