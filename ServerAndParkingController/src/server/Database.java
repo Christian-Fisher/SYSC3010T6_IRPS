@@ -18,7 +18,7 @@ public class Database {
     Boolean[] array;
 
     private Connection connect() {
-        String url = "jdbc:sqlite:home/pi/Desktop/SYSC3010T6_IRPS/Database/IRPSDatabase.db";
+        String url = "jdbc:sqlite:IRPSDatabase.db";
         Connection connect = null;
         //PIN1 = new Integer[10];
         userNames = new String[10];
