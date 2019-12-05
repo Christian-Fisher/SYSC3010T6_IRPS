@@ -145,6 +145,7 @@ public class ServerUDP {
     public void sendToAppClaim(String ClaimMessage) {
         try {
             String ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "false";
+            System.out.println(ClaimResponse);
             if (d.claimedLicensePlate(ClaimResponse)) {
                 ClaimResponse = CLAIM_COMMAND + COMMAND_SPLIT_REGEX + "true";
             }

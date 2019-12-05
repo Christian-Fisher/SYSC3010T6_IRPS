@@ -117,7 +117,7 @@ public class Database {
                 if (pin == PIN1) {
                     System.out.println("Valid PIN");
                     return true;
-                } 
+                }
             }
             return false;
 
@@ -227,25 +227,19 @@ public class Database {
 
     public boolean claimedLicensePlate(String license) {
         int i = 0;
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT LicensePlate FROM Users WHERE LicensePlate = '" + license + "';";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                LicensePlates[i] = rs.getString("LicensePlate");
-                if (license.equals(LicensePlates[i])) {
-                    System.out.println("Correct claimed plate");
-                    i++;
-                    return true;
-                } else {
-                    System.out.println("Incorrect claimed plate");
-                    return false;
-                }
+            if(rs.getString(LicensePlate).equals("")){
+                return false;
+            }
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return false;
+        return true;
     }
 
     public boolean checkDatabaseEmpty() {
@@ -423,9 +417,9 @@ public class Database {
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql;
         if (occupancy) {
-             sql = "UPDATE Lot SET Occupancy = 1 WHERE SpotNumber = '" + spot + "'  ;";
+            sql = "UPDATE Lot SET Occupancy = 1 WHERE SpotNumber = '" + spot + "'  ;";
         } else {
-             sql = "UPDATE Lot SET Occupancy = 0 WHERE SpotNumber = '" + spot + "'  ;";
+            sql = "UPDATE Lot SET Occupancy = 0 WHERE SpotNumber = '" + spot + "'  ;";
 
         }
         try {
@@ -454,7 +448,7 @@ public class Database {
     }
 
     public void setTime(String spot) {
-        String sql= "UPDATE Lot SET BookTime = '" + System.currentTimeMillis()/60000+ "' WHERE SpotNumber = '" + spot + "';";
+        String sql = "UPDATE Lot SET BookTime = '" + System.currentTimeMillis() / 60000 + "' WHERE SpotNumber = '" + spot + "';";
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
@@ -464,11 +458,11 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-    
+
     public boolean bookSpot(String spot, String User) {
         changeOccupancy(spot, true);
         setTime(spot);
-        String sql= "UPDATE Users SET  BookedSpot = '" + spot+ "' WHERE Username = '" + User + "';";
+        String sql = "UPDATE Users SET  BookedSpot = '" + spot + "' WHERE Username = '" + User + "';";
         try {
             Connection conn = this.connect();
             Statement stmt = conn.createStatement();
@@ -478,7 +472,7 @@ public class Database {
             System.out.println(e.getMessage());
             System.out.println("book spot failed");
         }
-       return true;
+        return true;
     }
 
     public boolean bookingTimeOut(String spot) {
