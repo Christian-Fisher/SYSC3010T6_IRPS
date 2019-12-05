@@ -30,19 +30,17 @@ public class ArduinoInterface {
         port.openPort();
         port.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 2000, 0);
         port.setBaudRate(9600);
-
         byte[] readBuffer;
         boolean run = true;
-        String pin = "";
 
         try {
             DatagramSocket socket = new DatagramSocket(3003);
             DatagramSocket sendSocket = new DatagramSocket();
             InetAddress ParkingController = InetAddress.getByName("localhost");
             while (true) {
+                String pin = "";
                 int x = 0;
                 while (run) {
-
                     if (x == 4) {
                         run = false;
                     }
@@ -64,8 +62,8 @@ public class ArduinoInterface {
                 sendSocket.send(new DatagramPacket(pin.getBytes(), pin.getBytes().length, ParkingController, 2001));
                 socket.receive(ack);
                 if (new String(ack.getData()).trim().split(":")[1].equals("true")) {
-                byte response[] = new byte[1];
-                port.writeBytes(response, 1);
+                    byte response[] = new byte[1];
+                    port.writeBytes(response, 1);
                 } else {
                     byte response[] = new byte[0];
                     port.writeBytes(response, 0);

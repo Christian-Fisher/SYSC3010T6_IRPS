@@ -77,7 +77,7 @@ public class ParkingControllerMain {
                 sendSocket.send(heartbeatAck);
 
                 if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(ARDUINO_COMMAND)) {
-
+                    System.out.println("ARD run");
                     DatagramPacket PinVerificationPacket = new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE);
                         socket.receive(PinVerificationPacket);
                         sendSocket.send(new DatagramPacket((ARDUINO_COMMAND + "ACK").getBytes(), (ARDUINO_COMMAND + "ACK").getBytes().length, ServerAddress, 1000));
@@ -85,6 +85,7 @@ public class ParkingControllerMain {
                         PinVerificationPacket.setPort(3003);
                         sendSocket.send(PinVerificationPacket);
                         socket.receive(new DatagramPacket(new byte[PACKETSIZE], PACKETSIZE));
+                        
                         parkingControllerQueue.remove();
 
                     
