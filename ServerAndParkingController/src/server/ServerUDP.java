@@ -118,7 +118,7 @@ public class ServerUDP {
             sendSocket.send(LoginAck);
             System.out.println("IR CALL: "+IRMessage[0] + " : " + IRMessage[1].equals("1"));
             d.changeOccupancy(IRMessage[0], IRMessage[1].equals("0"));
-            sendToLED(IRMessage[0], IRMessage[1].equals("1"));
+            sendToLED(Integer.toString(Integer.parseInt(IRMessage[0])-1), IRMessage[1].equals("1"));
         } catch (IOException e) {
             System.err.println(e);
         }
