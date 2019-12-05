@@ -166,15 +166,14 @@ public class ServerUDP {
 
             if (d.bookSpot(data[0], data[1])) {
                 BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "true";
-                System.out.println("Spot booked (A!)");
             }
             DatagramPacket bookPacket = new DatagramPacket(BookResponse.getBytes(), BookResponse.getBytes().length, AppAddress, 2000);
             DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(bookPacket);
             socket.receive(bookAck);
-            sendToLED(data[0], false);
+//            sendToLED(data[0], false);
         } catch (IOException e) {
-            System.err.println(e);
+            System.err.println(e + "Booking");
         }
 
     }

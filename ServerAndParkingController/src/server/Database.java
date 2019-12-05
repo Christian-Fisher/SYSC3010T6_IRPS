@@ -108,7 +108,7 @@ public class Database {
     }
 
     public boolean PINexists(int pin) {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
+        String sql = "SELECT PIN FROM Users";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
@@ -117,11 +117,10 @@ public class Database {
                 if (pin == PIN1) {
                     System.out.println("Valid PIN");
                     return true;
-                } else {
-                    System.out.println("Invalid PIN");
-                    return false;
-                }
+                } 
             }
+            return false;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
