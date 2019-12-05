@@ -164,7 +164,7 @@ public class ServerUDP {
         System.out.println("spot booked");
         try {
             String BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
-            if (d.bookSpot(Integer.toString(Integer.parseInt(data[0])-1), data[1])) {
+            if (d.bookSpot(data[0], data[1])) {
                 BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "true";
             }
             DatagramPacket bookPacket = new DatagramPacket(BookResponse.getBytes(), BookResponse.getBytes().length, AppAddress, 2000);
