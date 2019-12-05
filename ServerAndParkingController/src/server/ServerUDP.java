@@ -238,23 +238,23 @@ public class ServerUDP {
         int x = 0;
         while (true) {
             try {
-//                String heartbeatParkingResponse = udp.heartbeatParking();
-//                System.out.println(heartbeatParkingResponse);
-//                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
-//
-//                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
-//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-//
-//                    if (split1String[0].equals(IR_COMMAND)) {
-//                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
-//
-//                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-//                        udp.sendToArduino(split1String[1]);
-//
-//                    } else if (split1String[0].equals(LED_COMMAND)) {
-//                        udp.sendToLED("A2", Boolean.TRUE);
-//                    }
-//                }
+                String heartbeatParkingResponse = udp.heartbeatParking();
+                System.out.println(heartbeatParkingResponse);
+                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
+
+                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
+                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+
+                    if (split1String[0].equals(IR_COMMAND)) {
+                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
+
+                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
+                        udp.sendToArduino(split1String[1]);
+
+                    } else if (split1String[0].equals(LED_COMMAND)) {
+                        udp.sendToLED("A2", Boolean.TRUE);
+                    }
+                }
                 String heartbeatAppResponse = udp.heartbeatApp();
                 System.out.println(heartbeatAppResponse);
                 if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
