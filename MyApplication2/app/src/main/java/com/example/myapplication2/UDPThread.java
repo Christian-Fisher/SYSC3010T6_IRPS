@@ -138,7 +138,10 @@ public class UDPThread extends Thread {
             } else if (new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)) {
                 user = new String(heartbeat.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX)[0];
                 appQueue.add(new String(heartbeat.getData()).trim());
+            }else {
+                appQueue.add(new String(heartbeat.getData()).trim());
             }
+
         }
 
     }

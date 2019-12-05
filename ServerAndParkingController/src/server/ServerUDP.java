@@ -279,10 +279,10 @@ public class ServerUDP {
                 if (x == 20) {
                     x = 0;
                     mainDatabase.printAllLot();
-                    for (int i = 0; i <= LOT_SIZE; i++) {
+                    for (int i = 1; i <= LOT_SIZE; i++) {
 
-                        if (!mainDatabase.bookingTimeOut(Integer.toString((i + 1)))) {
-//                            mainDatabase.changeOccupancy(Integer.toString(i + 1), false);
+                        if (!mainDatabase.bookingTimeOut(Integer.toString((i)))) {
+//                            mainDatabase.changeOccupancy(Integer.toString(i), false);
                         }
                     }
                 }
