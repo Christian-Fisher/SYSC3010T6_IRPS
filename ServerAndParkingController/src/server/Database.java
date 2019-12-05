@@ -431,20 +431,6 @@ public class Database {
         }
     }
 
-    public void insertQuery(String spotNum, int occupancy, float time) {
-        String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?,?)";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            ((PreparedStatement) rs).setString(1, spotNum);
-            ((PreparedStatement) rs).setInt(2, occupancy);
-            ((PreparedStatement) rs).setFloat(3, time);
-            ((PreparedStatement) rs).executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public void setTime(String spot) {
         String sql = "UPDATE Lot SET BookTime = '" + System.currentTimeMillis() / 60000 + "' WHERE SpotNumber = '" + spot + "';";
         try {
