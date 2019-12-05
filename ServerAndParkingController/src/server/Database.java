@@ -398,6 +398,7 @@ public class Database {
             int i = 0;
             while (rs.next()) {
                 spotArray[i] = rs.getString("Occupancy");
+                i++;
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
