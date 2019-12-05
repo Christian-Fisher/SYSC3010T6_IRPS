@@ -53,59 +53,6 @@ public class Database {
         }
     }
 
-    public int[] getPINs() {
-        int i = 0;
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                pins[i] = rs.getInt("PIN");
-                System.out.println(pins[i]);
-                i++;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return pins;
-    }
-
-    public String[] getNames() {
-        int i = 0;
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                userNames[i] = rs.getString("Username");
-                System.out.println("The usernames present in the database are " + userNames[i]);
-                i++;
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return userNames;
-    }
-
-    public String[] getLicensePlate() {
-        int i = 0;
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                LicensePlates[i] = rs.getString("LicensePlate");
-                System.out.println("The License Plates present in the database are " + LicensePlates[i]);
-                i++;
-            }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return LicensePlates;
-    }
 
     public boolean PINexists(int pin) {
         String sql = "SELECT PIN FROM Users";
@@ -260,79 +207,6 @@ public class Database {
         return false;
     }
 
-    public Boolean[] testAllSpots() {
-        String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
-        array = new Boolean[10];
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                String bookedSpot = rs.getString("BookedSpot");
-                for (int i = 0; i < 9; i++) {
-                    if (array[i] != null) {
-                        if (bookedSpot.equals("A1")) {
-                            System.out.println("A1 is not avalable");
-                            array[0] = false;
-                        } else {
-                            array[0] = true;
-                        }
-                        if (bookedSpot.equals("A2")) {
-                            System.out.println("A2 is not avalable");
-                            array[1] = false;
-                        } else {
-                            array[1] = true;
-                        }
-                        if (bookedSpot.equals("A3")) {
-                            System.out.println("A3 is not avalable");
-                            array[2] = false;
-                        } else {
-                            array[2] = true;
-                        }
-                        if (bookedSpot.equals("B1")) {
-                            System.out.println("B1 is not avalable");
-                            array[3] = false;
-                        } else {
-                            array[3] = true;
-                        }
-                        if (bookedSpot.equals("B2")) {
-                            System.out.println("B2 is not avalable");
-                            array[4] = false;
-                        } else {
-                            array[4] = true;
-                        }
-                        if (bookedSpot.equals("B3")) {
-                            System.out.println("B3 is not avalable");
-                            array[5] = false;
-                        } else {
-                            array[5] = true;
-                        }
-                        if (bookedSpot.equals("C1")) {
-                            System.out.println("C1 is not avalable");
-                            array[6] = false;
-                        } else {
-                            array[6] = true;
-                        }
-                        if (bookedSpot.equals("C2")) {
-                            System.out.println("C2 is not avalable");
-                            array[7] = false;
-                        } else {
-                            array[7] = true;
-                        }
-                        if (bookedSpot.equals("C3")) {
-                            System.out.println("C3 is not avalable");
-                            array[8] = false;
-                        } else {
-                            array[8] = true;
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            System.out.println(ex);
-        }
-        return array;
-    }
-
     public boolean userNameExists(String userName) {
         for (int i = 0; i < userName.length(); i++) {
             Character ch = userName.charAt(i);
@@ -398,19 +272,6 @@ public class Database {
         return spotArray;
     }
 
-    public void insertOccupancy(String spotNumDB, int occupancyDB) {
-        String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?)";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            ((PreparedStatement) rs).setString(1, spotNumDB);
-            ((PreparedStatement) rs).setInt(2, occupancyDB);
-            //((PreparedStatement) rs).setFloat(3,time);
-            ((PreparedStatement) rs).executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql;
@@ -502,9 +363,7 @@ public class Database {
     public static void main(String[] args) {
         Database db = new Database();
         db.printAll();
-        db.getPINs();
-        db.getNames();
-        db.getLicensePlate();
+   
         db.PINexists(1111);
         db.validPINlength(1111);
         db.validLicensePlate("QWER111");
@@ -513,7 +372,6 @@ public class Database {
         db.claimedLicensePlate("QWER111");
         db.checkDatabaseEmpty();
         db.userNameExists("User");
-        db.testAllSpots();
         db.getLotOccupancy();
         db.bookingTimeOut("1");
         db.bookSpot("", "");
