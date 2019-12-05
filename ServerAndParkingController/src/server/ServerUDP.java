@@ -269,13 +269,12 @@ public class ServerUDP {
                         udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
                     } else if (split1String[0].equals(CLAIM_COMMAND)) {
-                        System.out.println(split1String[1]);
+                        System.out.println("Incoming from app: "+split1String[1]);
                         udp.sendToAppClaim(split1String[1]);
                     } else if (split1String[0].equals(BOOKING_COMMAND)) {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
                     }
                 }
-                udp.sendToAppClaim("AB");
                 System.out.println(Arrays.toString(mainDatabase.getLotOccupancy()));
                 if (x == 20) {
                     x = 0;
