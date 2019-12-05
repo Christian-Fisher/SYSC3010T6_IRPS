@@ -231,15 +231,13 @@ public class Database {
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                System.out.println("This is the sql return: "+rs.getString(LicensePlate));
-            if(rs.getString(LicensePlate).equals("")){
-                return false;
+                return true;
             }
-            }
+            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return true;
+        return false;
     }
 
     public boolean checkDatabaseEmpty() {
