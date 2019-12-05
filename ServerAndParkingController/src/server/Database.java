@@ -449,29 +449,23 @@ public class Database {
         }
     }
 
-    public boolean bookSpot(String spot, String User) {
-        String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
-        try (Connection conn = this.connect();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-            while (rs.next()) {
-                float BookTime = System.currentTimeMillis();
-                float sec2 = BookTime / 1000F;
-                float min2 = sec2 / 60F;
-                insertQuery(spot, 0, min2);
-
-                if (min2 < 10) {
-                    changeOccupancy(User, true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+    public void setTime(String spot) {
+        String sql= "UPDATE Lot SET BookTime = '" + System.currentTimeMillis()/60000+ "' WHERE SpotNumber = '" + spot + "';";
+        try {
+            Connection conn = this.connect();
+            Statement stmt = conn.createStatement();
+            stmt.executeQuery(sql);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return true;
+    }
+    
+    public boolean bookSpot(String spot, String User) {
+        
+        changeOccupancy(spot, true);
+        setTime(spot);
+       return true;
     }
 
     public boolean bookingTimeOut(String spot) {
