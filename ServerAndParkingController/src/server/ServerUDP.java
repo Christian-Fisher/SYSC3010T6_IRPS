@@ -276,6 +276,7 @@ public class ServerUDP {
                     }
                 }
                 System.out.println(Arrays.toString(mainDatabase.getLotOccupancy()));
+                mainDatabase.bookSpot("2", "Schramm");
                 if (x == 20) {
                     x = 0;
                     mainDatabase.printAllLot();
