@@ -72,9 +72,12 @@ public class UDPThread extends Thread {
                 sendSocket.send(heartbeatAck);
             } else {
                 String heartbeatRespond = appQueue.peek();
-                DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
-                sendSocket.send(heartbeatAck);
-
+                if(!heartbeatRespond.equals("OCCACK")) {
+                    DatagramPacket heartbeatAck = new DatagramPacket(heartbeatRespond.getBytes(), heartbeatRespond.getBytes().length, ServerAddress, 1000);
+                    sendSocket.send(heartbeatAck);
+                }else{
+                    appQueue.remove();
+                }
                 if (heartbeatRespond.split(COMMAND_SPLIT_REGEX)[0].equals(LOGIN_COMMAND)) {
 
                     DatagramPacket login = new DatagramPacket(new byte[200], 200);
