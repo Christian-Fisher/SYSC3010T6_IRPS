@@ -269,6 +269,7 @@ public class ServerUDP {
                         udp.sendToAppLogin(split1String[1].split(DATA_SPLIT_REGEX));
 
                     } else if (split1String[0].equals(CLAIM_COMMAND)) {
+                        System.out.println(split1String[1]);
                         udp.sendToAppClaim(split1String[1]);
                     } else if (split1String[0].equals(BOOKING_COMMAND)) {
                         udp.sendToBooking(split1String[1].split(DATA_SPLIT_REGEX));
