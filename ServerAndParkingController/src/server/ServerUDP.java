@@ -185,7 +185,7 @@ public class ServerUDP {
             System.out.println(Arrays.toString(occupancyOfLot));
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
-                if (occupancyOfLot[x].equals("0") || occupancyOfLot[x] == null) {
+                if (occupancyOfLot[x].equals("0")) {
                     occupancyMessage += DATA_SPLIT_REGEX + false;
                 } else {
                     occupancyMessage += DATA_SPLIT_REGEX + true;
@@ -240,23 +240,23 @@ public class ServerUDP {
         int x = 0;
         while (true) {
             try {
-                String heartbeatParkingResponse = udp.heartbeatParking();
-                System.out.println(heartbeatParkingResponse);
-                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
-
-                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
-                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
-
-                    if (split1String[0].equals(IR_COMMAND)) {
-                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
-
-                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
-                        udp.sendToArduino(split1String[1]);
-
-                    } else if (split1String[0].equals(LED_COMMAND)) {
-                        udp.sendToLED("A2", Boolean.TRUE);
-                    }
-                }
+//                String heartbeatParkingResponse = udp.heartbeatParking();
+//                System.out.println(heartbeatParkingResponse);
+//                if (!heartbeatParkingResponse.equals(NOTHING_TO_REPORT)) {
+//
+//                    String message = new String(heartbeatParkingResponse.getBytes()).trim();
+//                    String[] split1String = message.split(COMMAND_SPLIT_REGEX);
+//
+//                    if (split1String[0].equals(IR_COMMAND)) {
+//                        udp.sendToIR(split1String[1].split(DATA_SPLIT_REGEX));
+//
+//                    } else if (split1String[0].equals(ARDUINO_COMMAND)) {
+//                        udp.sendToArduino(split1String[1]);
+//
+//                    } else if (split1String[0].equals(LED_COMMAND)) {
+//                        udp.sendToLED("A2", Boolean.TRUE);
+//                    }
+//                }
                 String heartbeatAppResponse = udp.heartbeatApp();
                 System.out.println(heartbeatAppResponse);
                 if (!heartbeatAppResponse.equals(NOTHING_TO_REPORT)) {
@@ -276,14 +276,13 @@ public class ServerUDP {
                     }
                 }
                 System.out.println(Arrays.toString(mainDatabase.getLotOccupancy()));
-                mainDatabase.bookSpot("2", "Schramm");
                 if (x == 20) {
                     x = 0;
                     mainDatabase.printAllLot();
-                    for (int i = 0; i < LOT_SIZE; i++) {
+                    for (int i = 0; i <= LOT_SIZE; i++) {
 
                         if (!mainDatabase.bookingTimeOut(Integer.toString((i + 1)))) {
-                            mainDatabase.changeOccupancy(Integer.toString(i + 1), false);
+//                            mainDatabase.changeOccupancy(Integer.toString(i + 1), false);
                         }
                     }
                 }

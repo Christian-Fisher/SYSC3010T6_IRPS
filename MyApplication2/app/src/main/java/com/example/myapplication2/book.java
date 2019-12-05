@@ -66,7 +66,6 @@ public class book extends AppCompatActivity {
         lot[6]=(Button)findViewById(R.id.C1);
         lot[7]=(Button)findViewById(R.id.C2);
         lot[8]=(Button)findViewById(R.id.C3);
-        getOccupancy();
 
 
         mButtonsubmitclaim = (Button)findViewById(R.id.button_submitclaim);
@@ -337,9 +336,7 @@ public class book extends AppCompatActivity {
 
                 String dataToSend = OCCUPANCY_UPDATE_COMMAND+ COMMAND_SPLIT_REGEX ;
                 DatagramPacket occPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
-
                 sendSocket.send(occPacket);
-
                 socket.receive(occAck);
                 String receivedData[] = new String(occAck.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX);
                 sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, local, 2000));
