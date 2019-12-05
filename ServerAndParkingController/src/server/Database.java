@@ -415,9 +415,9 @@ public class Database {
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql;
         if (occupancy) {
-            sql = "UPDATE Lot SET Occupancy = 1 WHERE SpotNumber = '" + spot + "'  ;";
+            sql = "UPDATE Lot SET Occupancy = 1 WHERE SpotNumber = '" + spot + "';";
         } else {
-            sql = "UPDATE Lot SET Occupancy = 0 WHERE SpotNumber = '" + spot + "'  ;";
+            sql = "UPDATE Lot SET Occupancy = 0 WHERE SpotNumber = '" + spot + "';";
 
         }
         try {

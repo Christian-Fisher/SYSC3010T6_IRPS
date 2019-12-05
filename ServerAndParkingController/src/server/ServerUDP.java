@@ -116,7 +116,7 @@ public class ServerUDP {
         try {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
-            d.changeOccupancy(IRMessage[0], IRMessage[1].equals("1"));
+            d.changeOccupancy(IRMessage[0], IRMessage[1].equals("1")); //ADD ONE TO IRMESSAGE[0]
             sendToLED(IRMessage[0], IRMessage[1].equals("1"));
         } catch (IOException e) {
             System.err.println(e);
