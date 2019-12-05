@@ -158,6 +158,7 @@ public class ServerUDP {
     }
 
     public void sendToBooking(String[] data) {
+        System.out.println("spot booked");
         try {
             String BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
 
@@ -228,8 +229,9 @@ public class ServerUDP {
         Y=Data 
         Z=Data
          */
+         int x =0;
         while (true) {
-            int x =0;
+           mainDatabase.bookSpot("0", "Schramm");
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
 
