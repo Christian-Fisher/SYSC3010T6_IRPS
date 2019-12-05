@@ -237,6 +237,7 @@ public class ServerUDP {
          */
         int x = 0;
         while (true) {
+            udp.sendToAppClaim("a");
             try {
 //                String heartbeatParkingResponse = udp.heartbeatParking();
 //                System.out.println(heartbeatParkingResponse);
@@ -284,6 +285,7 @@ public class ServerUDP {
                         }
                     }
                 }
+                udp.sendToAppClaim("ABCD123");
                 x++;
                 Thread.sleep(250);
             } catch (InterruptedException e) {

@@ -226,13 +226,12 @@ public class Database {
     }
 
     public boolean claimedLicensePlate(String license) {
-        int i = 0;
         String sql = "SELECT LicensePlate FROM Users WHERE LicensePlate = '" + license + "';";
         try (Connection conn = this.connect();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                System.out.println(rs.getString(LicensePlate));
+                System.out.println("This is the sql return: "+rs.getString(LicensePlate));
             if(rs.getString(LicensePlate).equals("")){
                 return false;
             }
