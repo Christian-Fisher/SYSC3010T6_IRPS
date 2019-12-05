@@ -229,7 +229,6 @@ public class ServerUDP {
         Z=Data
          */
         while (true) {
-            mainDatabase.PINexists(1234);
             int x =0;
             try {
                 String heartbeatParkingResponse = udp.heartbeatParking();
