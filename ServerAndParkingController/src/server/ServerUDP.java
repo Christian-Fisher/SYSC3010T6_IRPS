@@ -117,8 +117,8 @@ public class ServerUDP {
             DatagramPacket LoginAck = new DatagramPacket(data.getBytes(), data.getBytes().length, ParkingControllerAddress, 2001);
             sendSocket.send(LoginAck);
             System.out.println("IR CALL: "+IRMessage[0] + " : " + IRMessage[1].equals("1"));
-            d.changeOccupancy(Integer.toString(Integer.parseInt(IRMessage[0])-1), IRMessage[1].equals("0"));
-            sendToLED(IRMessage[0], IRMessage[1].equals("1"));
+            d.changeOccupancy(IRMessage[0], IRMessage[1].equals("0"));
+            sendToLED(Integer.toString(Integer.parseInt(IRMessage[0])-1), IRMessage[1].equals("1"));
         } catch (IOException e) {
             System.err.println(e);
         }
@@ -164,14 +164,14 @@ public class ServerUDP {
         System.out.println("spot booked");
         try {
             String BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "false";
-            if (d.bookSpot(Integer.toString(Integer.parseInt(data[0]) - 1), data[1])) {
+            if (d.bookSpot(data[0], data[1])) {
                 BookResponse = BOOKING_COMMAND + COMMAND_SPLIT_REGEX + "true";
             }
             DatagramPacket bookPacket = new DatagramPacket(BookResponse.getBytes(), BookResponse.getBytes().length, AppAddress, 2000);
             DatagramPacket bookAck = new DatagramPacket(new byte[PACKET_SIZE], PACKET_SIZE);
             sendSocket.send(bookPacket);
             socket.receive(bookAck);
-            sendToLED(data[0], false);
+            sendToLED(Integer.toString(Integer.parseInt(data[0])-1), false);
         } catch (IOException e) {
             System.err.println(e + "Booking");
         }
