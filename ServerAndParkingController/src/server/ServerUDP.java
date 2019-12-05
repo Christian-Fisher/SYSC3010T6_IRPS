@@ -184,12 +184,21 @@ public class ServerUDP {
             System.out.println(Arrays.toString(occupancyOfLot));
             String occupancyMessage = OCCUPANCY_UPDATE_COMMAND + COMMAND_SPLIT_REGEX;
             for (int x = 0; x < LOT_SIZE; x++) {
-                if (occupancyOfLot[x].equals("0")) {
-                    occupancyMessage += DATA_SPLIT_REGEX + false;
+                if(x==8){
+                    if (occupancyOfLot[x].equals("0")) {
+                    occupancyMessage += false;
                 } else {
-                    occupancyMessage += DATA_SPLIT_REGEX + true;
+                    occupancyMessage += true;
 
                 }
+                }
+                if (occupancyOfLot[x].equals("0")) {
+                    occupancyMessage += false+DATA_SPLIT_REGEX;
+                } else {
+                    occupancyMessage += true + DATA_SPLIT_REGEX  ;
+
+                }
+                
             }
             System.out.println(occupancyMessage);
             DatagramPacket OccupancyUpdate = new DatagramPacket(occupancyMessage.getBytes(), occupancyMessage.getBytes().length, AppAddress, 2000);
