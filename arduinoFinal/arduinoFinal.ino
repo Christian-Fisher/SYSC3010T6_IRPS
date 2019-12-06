@@ -1,8 +1,8 @@
 #include <Keypad.h>
+//Iclude the Keypad library
 #include <Wire.h>
 // Include the Servo Motor library
 #include <Servo.h>
-//Iclude the Keypad library
 Servo servoExit, servoEntry;
 int IRsensor = 13;
 int PIN_CodeLength = 5;
@@ -51,16 +51,14 @@ byte pins2[COLUMNS] = {
 Keypad pinKeys = Keypad(makeKeymap(keysPad), pins1, pins2, ROWS, COLUMNS);
 
 void setup() {
-  Serial.begin(9600);        //Serial connection initial setup at 9600 bits of data per second
-  //pinMode(11, OUTPUT);       //setting the pin 13 in the arduino board as output pin
-  servoEntry.attach(12);      // attaching the servo motor function to pin 9
-  servoEntry.write(100);       // intial set up of the position of the servo motor which is now at 0 degrees
-  servoExit.attach(11);      // attaching the servo motor function to pin 9
-  servoExit.write(0);
+  Serial.begin(9600);        // Serial connection initial setup at 9600 bits of data per second
+  servoEntry.attach(12);     // attaching the servo motor function to pin 12
+  servoEntry.write(100);     // intial set up of the position of the entry servo motor which is now at 100 degrees
+  servoExit.attach(11);      // attaching the servo motor function to pin 11
+  servoExit.write(0);        // intial set up of the position of the exit servo motor which is now at 0 degrees
   pinKeys.begin(makeKeymap(keysPad));
-  pinMode(buzzer, OUTPUT); // Set buzzer - pin 10 as an output
-  //pinMode(ledPin, OUTPUT); // Set buzzer - pin 12 as an output
-  pinMode(IRsensor, INPUT); //setting the first IR sensor as input
+  pinMode(buzzer, OUTPUT);  // Set buzzer - pin 10 as an output
+  pinMode(IRsensor, INPUT); //setting the exit IR sensor as input
 
 }
 
@@ -72,8 +70,8 @@ void exitGate() {
       servoExit.write(rotate);
       delay(15);
     }
-    delay(5000);
-    for (rotate = 100; rotate >= 1; rotate -= 1) { // closing gate after a delay
+    delay(5000); // stay open for 5 seconds to allow the car to drive through
+    for (rotate = 100; rotate >= 1; rotate -= 1) { // closing gate after 5 seconds delay
       servoExit.write(rotate);
       delay(15);
     }
@@ -100,14 +98,13 @@ void clearData() {
 void buzz(boolean isValid) {
 
   if (isValid == false) {
-    tone(buzzer, 100); // Send 1KHz sound signal...
+    tone(buzzer, 100); // output 100Hz sound signal...
     delay(1000);
-    noTone(buzzer);     // Stop sound...
-    //delay(100);        // ...for 1sec
-  }
+    noTone(buzzer);    // Stop sound...
+    }
   else if (isValid == true) {
-    tone(buzzer, 100); // Send 1KHz sound signal...
-    delay(100);        // ...for 1 sec
+    tone(buzzer, 100); // output 100Hz sound signal...
+    delay(100);        // ...for 0.1 sec
     noTone(buzzer);    // Stop sound...
     tone(buzzer, 100);
     noTone(buzzer);
@@ -124,7 +121,7 @@ void entryGate(boolean pinOK) {
       servoEntry.write(rotate);
       delay(15);
     }
-    delay(5000);
+    delay(5000); // wait 5 seconds to allow the car to drive through
     for (rotate = 0; rotate <= 100; rotate += 1) { // close gate after a delay
       servoEntry.write(rotate);
       delay(15);
@@ -170,6 +167,4 @@ void entry() {
     }
     clearData();
   }
-
-
 }
