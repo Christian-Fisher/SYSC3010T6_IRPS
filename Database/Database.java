@@ -612,8 +612,9 @@ public class Database {
         }
     }
 
-// this method books the given spot and assign it to the given user from the APP in the database.
-
+/* This method books the given spot and assigns it to the given user from the APP into the database.
+*  @param spot: String,
+*  @param User: String */
 
     public boolean bookSpot(String spot, String User) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -641,7 +642,9 @@ public class Database {
         return true;
     }
 
-// this method checks if the booking time is more than 10 mins and the user didnt showe up so we unbook the spot. it retrun true if the time is still with in the 10 mins period
+/* This method checks if the booking time is more than 10 mins and the user didnt showe up so we unbook the spot. 
+*  It returns true if the time is still within the 10 mins period
+*  @param spot: String */
 
     public boolean bookingTimeOut(String spot) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -703,7 +706,12 @@ public class Database {
 		}
 		return true;
 	}
-	
+
+/* This method checks if the booking time is more than 10 mins and the user didnt showe up so we unbook the spot. 
+*  It returns true if the time is still within the 10 mins period
+*  @param spot: String 
+*  @param timeBooked: float */	
+
 	public boolean bookingTimeOut(String spot, float timeBooked) {
 		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
 		// finding the time before the operation is executed
@@ -738,6 +746,7 @@ public class Database {
 	//Bookedspot is from 0 - 8
 	//if spotnumber = booked occupied  =1 
 
+// void main method
 	public static void main1(String[] args) {
 
         Database db = new Database();
