@@ -592,7 +592,10 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-// this method insters spot number , occupancy and the time booked into the database, it doesnt have a retrun statment
+/* This method inserts spot number , occupancy and the time booked into the lot table of the database
+*  @param spotNum: String,
+*  @param occupancy: int,
+*  @param time: float */
 
     public void insertQuery(String spotNum, int occupancy, float time) {
         String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?,?)";
