@@ -64,6 +64,7 @@ void setup() {
 
 }
 
+// Detects the car with the help of IR sensor and allows the car to exit
 void exitGate() {
   pin = digitalRead(IRsensor);
   if (pin == LOW) {
@@ -79,13 +80,15 @@ void exitGate() {
     delay(1000);
   }
 }
+
+// The arduino keeps running until disconnected
 void loop() {
   entry();
-  //buzz(false);
-  //buzz(true);
   exitGate();
 
 }
+
+// Clears all the old data saved in the arduino
 void clearData() {
   while (pinReceive_count != 0) {
     pinReceive[pinReceive_count--] = 0;
@@ -93,6 +96,7 @@ void clearData() {
   return;
 }
 
+// Takes a boolean parameter and the buzzer responds accordingly
 void buzz(boolean isValid) {
 
   if (isValid == false) {
@@ -112,6 +116,8 @@ void buzz(boolean isValid) {
     noTone(buzzer);     // Stop sound...
   }
 }
+
+//Allows the car to enter if the entered PIN is correct taking the pinOK as a boolean input
 void entryGate(boolean pinOK) {
   if (pinOK == true) {
     for (rotate = 100; rotate >= 0; rotate -= 1) { //rotating the motor to 100 degrees to open gate
@@ -127,6 +133,7 @@ void entryGate(boolean pinOK) {
 
 }
 
+//This method was used for testing the connection
 void entry() {
 
   char entryKey = pinKeys.getKey();
