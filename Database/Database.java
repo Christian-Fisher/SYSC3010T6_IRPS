@@ -1,3 +1,4 @@
+package testing;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -8,15 +9,21 @@ import java.sql.PreparedStatement;
 
 public class Database {
 
+// those are the coloms used in our database 
+// each user has pin , license plate 
+// the Occupancy tells us if the spot is booked or not
+// the array are used to return all the PINS , user names and Licenses plate in the get methods.
     int PIN1;
     int Occupancy;
     String usernameDB;
     String LicensePlate;
-    String[] userNames;
+    String[] userNames; 
     String[] LicensePlates;
     int[] pins;
     Boolean[] array;
 
+
+// here we connect the class database to our Sql with a link to the location were it is saved.
     private Connection connect() {
         String url = "jdbc:sqlite:C:\\Users\\Akash\\Desktop\\Important\\Fall 2019\\SYSC 3010\\SYSC3010T6_IRPS\\SYSC3010T6_IRPS\\Database\\IRPSDatabase.db";
         Connection connect = null;
@@ -31,7 +38,7 @@ public class Database {
         }
         return connect;
     }
-
+// this method prints all the database coloms Username, PIN, LicensePlate, BookedSpot.
     public void printAll() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
 
@@ -50,6 +57,7 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
+// this method gets all the PINS from the database.
 
     public int[] getPINs() {
         int i = 0;
@@ -68,6 +76,7 @@ public class Database {
         }
         return pins;
     }
+// this method gets all the user names from the database.
 
     public String[] getNames() {
         int i = 0;
@@ -87,6 +96,7 @@ public class Database {
         return userNames;
     }
 
+// this method gets all the License Plate from the database.
     public String[] getLicensePlate() {
         int i = 0;
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -104,6 +114,9 @@ public class Database {
         }
         return LicensePlates;
     }
+// this method checks in the given pin from the app if it exits in our database. 
+// it also checks if the pin has wrong characters.
+// it returns true if exits.
 
     public boolean PINexists(int pin) {
 
@@ -133,6 +146,8 @@ public class Database {
 
     }
 
+// this methods checks the length of the pin and returns true if its valid.
+
     public boolean validPINlength(int pin) {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
         try (Connection conn = this.connect();
@@ -154,6 +169,9 @@ public class Database {
         }
         return false;
     }
+
+// this method checks the format of the License PLate and return true if it has the right format.
+// linecse plate should have 4 lecters first and 3 numbers after.
 
     public boolean validLicensePlate(String plateNumber) {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -187,6 +205,7 @@ public class Database {
         }
         return true;
     }
+// this method checks the format of the user name and return true if it has the right format.
 
     public boolean validUsernameFormat() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -205,6 +224,7 @@ public class Database {
         }
         return true;
     }
+// 
 
     public boolean checkPINcharacter() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -230,7 +250,8 @@ public class Database {
         }
         return false;
     }
-
+// checks if the given license from the app is registered or not in our database.
+// if it exits it retruns true
     public boolean claimedLicensePlate(String license) {
         int i = 0;
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -253,6 +274,7 @@ public class Database {
         }
         return false;
     }
+// checks if the database is empty or not. return true is the data is not empty
 
     public boolean checkDatabaseEmpty() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -273,6 +295,8 @@ public class Database {
         }
         return false;
     }
+//this methods checks all the spots if they are available or not 
+// this returns an array with each spot avilability, true avilable false for not avilable. 
 
     public Boolean[] testAllSpots() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -346,7 +370,7 @@ public class Database {
         }
         return array;
     }
-
+// checks if the given user name exits in our database and retrun true if it does. 
     public boolean userNameExists(String userName) {
         for (int i = 0; i < userName.length(); i++) {
             Character ch = userName.charAt(i);
@@ -372,7 +396,7 @@ public class Database {
         }
         return false;
     }
-
+ //print the parking database data such as the spot number and Occupancy and booktime..
     public void printAllLot() {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
 
@@ -390,6 +414,9 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
+
+// this method get the lot Occupancy and retruns it in an array that has String that discribe each spot ocupancy 
+
 
     public String[] getLotOccupancy() {
         String[] spotArray;
@@ -458,6 +485,8 @@ public class Database {
         return spotArray;
     }
 
+// this method inserts the given Occupancy to a given spot number into the database. 
+
     public void insertOccupancy(String spotNumDB, int occupancyDB) {
         String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?)";
         try (Connection conn = this.connect();
@@ -471,7 +500,7 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-
+// this method is used to update the occupancy. it doesnt have a retrun statment because it updates the database directly
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
         try (Connection conn = this.connect();
@@ -549,6 +578,7 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
+// this method insters spot number , occupancy and the time booked into the database, it doesnt have a retrun statment
 
     public void insertQuery(String spotNum, int occupancy, float time) {
         String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?,?)";
@@ -559,11 +589,14 @@ public class Database {
             ((PreparedStatement) rs).setInt(2, occupancy);
             ((PreparedStatement) rs).setFloat(3, time);
             ((PreparedStatement) rs).executeUpdate();
-<<<<<<< HEAD
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
+
+// this method books the given spot and assign it to the given user from the APP in the database.
+
 
     public boolean bookSpot(String spot, String User) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -590,6 +623,8 @@ public class Database {
         }
         return true;
     }
+
+// this method checks if the booking time is more than 10 mins and the user didnt showe up so we unbook the spot. it retrun true if the time is still with in the 10 mins period
 
     public boolean bookingTimeOut(String spot) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -626,13 +661,7 @@ public class Database {
     //Bookedspot is from 0 - 8
     //if spotnumber = booked occupied  =1 
 
-    public static void main(String[] args) {
-=======
-		}catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-	}
-	
+  
 	public boolean bookSpot(String spot, String User) {
 		String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
 		try(Connection conn = this.connect();
@@ -692,8 +721,8 @@ public class Database {
 	//Bookedspot is from 0 - 8
 	//if spotnumber = booked occupied  =1 
 
-	public static void main(String[] args) {
->>>>>>> b9964c9f28cca9159b02dccb96d42b23807dca55
+	public static void main1(String[] args) {
+
         Database db = new Database();
         db.printAll();
         db.getPINs();
