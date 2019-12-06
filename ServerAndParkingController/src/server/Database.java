@@ -21,6 +21,7 @@ public class Database {
     int[] pins;
     Boolean[] array;
 
+// here we connect the class database to our Sql with a link to the location were it is saved.
     private Connection connect() {
         String url = "jdbc:sqlite:IRPSDatabase.db";
         Connection connect = null;
@@ -35,7 +36,7 @@ public class Database {
         }
         return connect;
     }
-
+// this method prints all the database coloms Username, PIN, LicensePlate, BookedSpot.
     public void printAll() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
 
@@ -56,6 +57,8 @@ public class Database {
         }
     }
 
+// this method checks in the given pin from the app if it exits in our database. 
+// it returns true if exits.
 
     public boolean PINexists(int pin) {
         String sql = "SELECT PIN FROM Users";
@@ -76,6 +79,8 @@ public class Database {
         }
         return false;
     }
+
+// this methods checks the length of the pin and returns true if its valid.
 
     public boolean validPINlength(int pin) {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -98,6 +103,9 @@ public class Database {
         }
         return false;
     }
+
+// this method checks the format of the License PLate and return true if it has the right format.
+// linecse plate should have 4 lecters first and 3 numbers after.
 
     public boolean validLicensePlate(String plateNumber) {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -131,6 +139,7 @@ public class Database {
         }
         return true;
     }
+// this method checks the format of the user name and return true if it has the right format.
 
     public boolean validUsernameFormat() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -149,7 +158,7 @@ public class Database {
         }
         return true;
     }
-
+//this method return true if is doesnt contain invalid characters
     public boolean checkPINcharacter() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
         try (Connection conn = this.connect();
@@ -175,6 +184,9 @@ public class Database {
         return false;
     }
 
+// checks if the given license from the app is registered or not in our database.
+// if it exits it retruns true
+
     public boolean claimedLicensePlate(String license) {
         String sql = "SELECT LicensePlate FROM Users WHERE LicensePlate = '" + license + "';";
         try (Connection conn = this.connect();
@@ -189,6 +201,8 @@ public class Database {
         }
         return false;
     }
+// checks if the database is empty or not. return true is the data is not empty
+
 
     public boolean checkDatabaseEmpty() {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
@@ -209,6 +223,9 @@ public class Database {
         }
         return false;
     }
+
+// checks if the given user name exits in our database and retrun true if it does.
+// checks if the user name has the right format.
 
     public boolean userNameExists(String userName) {
         for (int i = 0; i < userName.length(); i++) {
@@ -235,6 +252,7 @@ public class Database {
         }
         return false;
     }
+//print the parking database data such as the spot number and Occupancy and booktime.
 
     public void printAllLot() {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
@@ -254,6 +272,7 @@ public class Database {
             System.out.println("Print lot failed");
         }
     }
+// this method get the lot Occupancy and retruns it in an array that has String that discribe each spot ocupancy 
 
     public String[] getLotOccupancy() {
         String[] spotArray;
@@ -275,6 +294,7 @@ public class Database {
         return spotArray;
     }
 
+// this method inserts the given Occupancy to a given spot number into the database. 
 
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql;
@@ -295,6 +315,8 @@ public class Database {
         }
     }
 
+// this method set the booking time for the spot 
+
     public void setTime(String spot, boolean changeToNull) {
         String sql;
         if (changeToNull) {
@@ -313,7 +335,7 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-
+// this method update database by adding the new booked spot and the user who booked it 
     public boolean bookSpot(String spot, String User) {
         changeOccupancy(spot, true);
         setTime(spot, false);
@@ -329,7 +351,7 @@ public class Database {
         }
         return true;
     }
-
+// // this method checks if the booking time is more than 10 mins and the user didnt showe up so we unbook the spot. it retrun true if the time is still with in the 10 mins period
     public boolean bookingTimeOut(String spot) {
         String sql = "SELECT BookTime FROM Lot WHERE SpotNumber = '" + spot + "';";
         // finding the time before the operation is executed
