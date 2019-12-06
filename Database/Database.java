@@ -494,7 +494,9 @@ public class Database {
         return spotArray;
     }
 
-// this method inserts the given Occupancy to a given spot number into the database. 
+/* This method inserts the given Occupancy to a given spot number into the Lot table of the database. 
+*  @param spotNumDB: String
+*  @param occupancyDB: String */
 
     public void insertOccupancy(String spotNumDB, int occupancyDB) {
         String sql = "INSERT INTO Lot(spotNum,occupancy,data) VALUES(?,?)";
@@ -509,7 +511,10 @@ public class Database {
             System.out.println(e.getMessage());
         }
     }
-// this method is used to update the occupancy. it doesnt have a retrun statment because it updates the database directly
+/* This method is used to update the occupancy where it updates the lot table of the database directly
+* @param spot: String
+* @param occupancy: boolean */
+
     public void changeOccupancy(String spot, boolean occupancy) {
         String sql = "SELECT SpotNumber, Occupancy, BookTime FROM Lot";
         try (Connection conn = this.connect();
