@@ -1,4 +1,4 @@
-package server;
+﻿package server;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
@@ -8,7 +8,10 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 
 public class Database {
-
+// those are the coloms used in our database 
+// each user has pin , license plate 
+// the Occupancy tells us if the spot is booked or not
+// the array are used to return all the PINS , user names and Licenses plate in the get methods.
     int PIN1;
     int Occupancy;
     String usernameDB;
