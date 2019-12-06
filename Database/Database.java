@@ -423,7 +423,8 @@ public class Database {
         }
     }
 
-// this method get the lot Occupancy and retruns it in an array that has String that discribe each spot ocupancy 
+// This method gets the lot Occupancy and returns it in an array form that has String that describes each spot ocupancy 
+// whether it is occupied or not 
 
 
     public String[] getLotOccupancy() {
