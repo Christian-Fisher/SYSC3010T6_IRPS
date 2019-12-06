@@ -171,9 +171,9 @@ public class Database {
         return false;
     }
 
-/* this method checks the format of the License PLate and return true if it has the right format else returns false.
-* linecse plate should have 4 lecters first and 3 numbers after.
-* @param plateNumber: String */
+/* This method checks the format of the License PLate and return true if it has the right format else returns false.
+*  linecse plate should have 4 lecters first and 3 numbers after.
+*  @param plateNumber: String */
 
     public boolean validLicensePlate(String plateNumber) {
         String sql = "SELECT Username, PIN, LicensePlate, BookedSpot FROM Users";
