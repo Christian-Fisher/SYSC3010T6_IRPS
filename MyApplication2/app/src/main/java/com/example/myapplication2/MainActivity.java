@@ -84,21 +84,21 @@ public class MainActivity extends AppCompatActivity {
     
 
     public boolean verifyLogin(String username, String password) {
-        if(username.equals("")||password.equals("")){
-            return false;
+        if(username.equals("")||password.equals("")){ //If the user does not enter a username or pin
+            return false;//reject the attempt
         }
-        try {
+        try {//attempt to create the socket
             socket = new DatagramSocket(3000);
             socket.setSoTimeout(2000);
             sendSocket = new DatagramSocket();
             local = InetAddress.getByName("localhost");
 
         }catch (SocketException e) {
-            e.printStackTrace();
+            e.printStackTrace();    //Socket could not be created, usually due to conflicting ports
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        if(username.equals("Admin")&&password.equals("Admin")){
+        if(username.equals("Admin")&&password.equals("Admin")){//if logging into the admin account which does not require server verification
             return true;
         }
         try {
@@ -108,18 +108,15 @@ public class MainActivity extends AppCompatActivity {
             String dataToSend = LOGIN_COMMAND + COMMAND_SPLIT_REGEX + username + DATA_SPLIT_REGEX + password;
             DatagramPacket loginPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
 
-            sendSocket.send(loginPacket);
+            sendSocket.send(loginPacket);//Send the username and Pin to the UDPThread
 
-            socket.receive(loginAck);
-            System.out.println(new String(loginAck.getData()).trim());
+            socket.receive(loginAck);//get the response
 
 
-            return (new String(loginAck.getData()).trim().equals("LOGACK"));
+            return (new String(loginAck.getData()).trim().equals("LOGACK"));//If acknowldgeed positively, the login is valid, else deny entry
 
-        } catch (SocketTimeoutException ex) {
-            Toast.makeText(MainActivity.this, "Socket timed pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-        } catch (IOException e) {
-            Toast.makeText(MainActivity.this, "IO Bad wtf", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+        } catch (IOException ex) {
+            Toast.makeText(MainActivity.this, "Connection To Server Interrupted", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }
     return false;
     }

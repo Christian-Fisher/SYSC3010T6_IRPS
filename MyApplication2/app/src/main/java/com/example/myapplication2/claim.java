@@ -58,37 +58,33 @@ public class claim extends AppCompatActivity {
         });
 
     }
-
+/*
+The method attempts to claim a license plate
+ */
     public boolean verifyClaim(String license) {
-        if(license.equals("abc")){
-            return true;
-        }
         DatagramSocket sendSocket=null,socket=null;
         InetAddress local=null;
         try{
-                socket = new DatagramSocket(3005);
+                socket = new DatagramSocket(3005);  //Attempts to create the socket.
                 socket.setSoTimeout(1000);
                 sendSocket = new DatagramSocket();
                 local = InetAddress.getByName("localhost");
 
-            DatagramPacket claimAck = new DatagramPacket(new byte[100], 100);
+            DatagramPacket claimAck = new DatagramPacket(new byte[100], 100);//create packet to receive into
 
-            String dataToSend = CLAIM_COMMAND+ COMMAND_SPLIT_REGEX + license;
-            DatagramPacket claimPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
-            sendSocket.send(claimPacket);
+            String dataToSend = CLAIM_COMMAND+ COMMAND_SPLIT_REGEX + license;//Format request
+            DatagramPacket claimPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);//create packet to send
+            sendSocket.send(claimPacket);//send request
 
-            socket.receive(claimAck);
+            socket.receive(claimAck);//receive response
             System.out.println(new String(claimAck.getData()).trim());
             return (new String(claimAck.getData()).trim().equals(CLAIM_COMMAND+"ACK"));
 
-        } catch (SocketTimeoutException ex) {
-            Toast.makeText(claim.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-        } catch (IOException e) {
-            Toast.makeText(claim.this, "IO Ex", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
-
+        } catch (IOException ex) {
+            Toast.makeText(claim.this, "Connection Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }finally{
             socket.close();
-            sendSocket.close();
+            sendSocket.close();//Close sockets after use
         }
 
         return false;

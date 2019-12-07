@@ -299,11 +299,13 @@ public class book extends AppCompatActivity {
 
         } );
     }
-    protected void onResume() {
+    protected void onResume() { //This method is run on the start of the app, and when the app is returned to. This allows the occupancy to update whenever the user enters the page
         super.onResume();
         getOccupancy();
     }
-
+/*
+books a given spot for a user
+ */
     public boolean bookSpot(String spot){
 
 
@@ -313,20 +315,21 @@ public class book extends AppCompatActivity {
             String dataToSend = BOOKING_COMMAND+ COMMAND_SPLIT_REGEX + spot;
             DatagramPacket bookPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
 
-            sendSocket.send(bookPacket);
+            sendSocket.send(bookPacket);//Sends the booking request. The UDPThread will handle adding the username to the message
 
-            socket.receive(bookAck);
-            System.out.println(new String(bookAck.getData()).trim());
+            socket.receive(bookAck);//receive response
             return (new String(bookAck.getData()).trim().equals(BOOKING_COMMAND+"ACK"));
 
         } catch (SocketTimeoutException ex) {
-            Toast.makeText(book.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+            Toast.makeText(book.this, "Connection Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         } catch (IOException e) {
             Toast.makeText(book.this, e.getMessage(), Toast.LENGTH_SHORT).show(); // if not give the user an error msg
         }
         return false;
     }
-
+/*
+Retrieves the occupancy of the lot, and updates the buttons accordingly
+ */
     public void getOccupancy(){
 
 
@@ -336,34 +339,34 @@ public class book extends AppCompatActivity {
 
                 String dataToSend = OCCUPANCY_UPDATE_COMMAND+ COMMAND_SPLIT_REGEX ;
                 DatagramPacket occPacket = new DatagramPacket(dataToSend.getBytes(), dataToSend.getBytes().length, local, 2000);
-                sendSocket.send(occPacket);
-                socket.receive(occAck);
-                String receivedData[] = new String(occAck.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX);
-                sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, local, 2000));
-                for(int i =0; i<flags.length; i++){
+                sendSocket.send(occPacket); //Send request
+                socket.receive(occAck);//receive response
+                String receivedData[] = new String(occAck.getData()).trim().split(COMMAND_SPLIT_REGEX)[1].split(DATA_SPLIT_REGEX);//Format the data into an array of strings only containing true or false
+                sendSocket.send(new DatagramPacket((OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes(), (OCCUPANCY_UPDATE_COMMAND + "ACK").getBytes().length, local, 2000));//send acknowledgement
+                for(int i =0; i<flags.length; i++){//Sets the flags to the new values
                     if(receivedData[i].equals("true")){
                         flags[i]=true;
                     }else{
                         flags[i]=false;
                     }
                 }
-                for(int x = 0; x<flags.length; x++){
+                for(int x = 0; x<flags.length; x++){    //based on flags, update the UI
                     if(!flags[x]) {
-                        lot[x].setVisibility(View.VISIBLE);
+                        lot[x].setVisibility(View.VISIBLE); //Enable spot x's button
                     }else{
-                        lot[x].setVisibility(View.INVISIBLE);
+                        lot[x].setVisibility(View.INVISIBLE);//Disable spot x's button
                     }
                 }
 
             } catch (SocketTimeoutException ex) {
-                Toast.makeText(book.this, "Socket bad pls help", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
+                Toast.makeText(book.this, "Connection Error", Toast.LENGTH_SHORT).show(); // if not give the user an error msg
             } catch (IOException e) {
                 Toast.makeText(book.this, e.getMessage(), Toast.LENGTH_SHORT).show(); // if not give the user an error msg
             }
         }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed(){    //Override onBackPressed, so the user cannot go back to the login screen. This is to prevent socket bugs on the main page.
 
     }
 
