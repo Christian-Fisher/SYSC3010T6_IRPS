@@ -13,9 +13,9 @@ Each folder in the main github repository contains all the code relating to a sp
 6. The Server And Parking Controller folder contains the source code and compiled .jar files for the all programs that run on the Server Pi and the ParkingController Pi.
 
 The IP's for each device are as follows:
-Server Pi:192.168.0.180
-ParkingController: 192.168.0.181
-App: 192.168.0.190
+1. Server Pi:192.168.0.180
+2. ParkingController: 192.168.0.181
+3. App: 192.168.0.190
 
 The lot is functional without the application, but will run at half speed.
 UDP losses are handled through the use of Queues. Only verified commands are removed from the queue, which allows the system to not drop any commands.
